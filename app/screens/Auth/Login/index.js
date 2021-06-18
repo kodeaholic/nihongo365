@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, StyleSheet, View, ToastAndroid } from 'react-native';
-import { Text } from 'react-native-paper';
+import { ActivityIndicator, Text } from 'react-native-paper';
 import Background from '../../../components/Background';
 import Logo from '../../../components/Logo';
 import Header from '../../../components/Header';
@@ -10,11 +10,15 @@ import BackButton from '../../../components/BackButton';
 import { theme } from '../../../theme/authTheme';
 import { emailValidator } from '../../../helpers/emailValidator';
 import { passwordValidator } from '../../../helpers/passwordValidator';
-
+import { apiConfig } from '../../../api/config/apiConfig';
+import { authHeader } from '../../../api/authHeader';
+import AsyncStorage from '@react-native-community/async-storage';
+import _ from 'lodash';
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
-
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [result, setResult] = useState({});
   const onLoginPressed = () => {
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
@@ -22,13 +26,69 @@ export default function LoginScreen({ navigation }) {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
       return;
+    } else {
+      setIsSubmitted(true);
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Home' }],
-    });
   };
 
+  useEffect(() => {
+    if (isSubmitted) {
+      async function loginRequest(bodyPayload) {
+        const headers = await authHeader();
+        const requestOptions = {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(bodyPayload),
+        };
+        let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/auth/login`;
+        try {
+          const response = await fetch(url, requestOptions);
+          const data = await response.json();
+          setResult(data);
+          setIsSubmitted(false);
+          return data;
+        } catch (error) {
+          return error;
+        }
+      }
+      loginRequest({
+        email: email.value,
+        password: password.value,
+      });
+    }
+  }, [email, isSubmitted, navigation, password]);
+
+  useEffect(() => {
+    if (result && result.user && result.tokens) {
+      try {
+        (async () => {
+          await AsyncStorage.setItem('user', JSON.stringify(result.user));
+          await AsyncStorage.setItem('tokens', JSON.stringify(result.tokens));
+        })();
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
+      } catch (error) {
+        // Error saving data
+        ToastAndroid.showWithGravityAndOffset(
+          'Email hoặc mật khẩu chưa đúng',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+      }
+    } else if (result) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Email hoặc mật khẩu chưa đúng',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+    }
+  }, [navigation, result]);
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
@@ -70,15 +130,26 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
         {/* <Text style={styles.forgot}>Bạn quên mật khẩu?</Text> */}
       </View>
-      <Button mode="contained" onPress={onLoginPressed}>
-        Đăng nhập
-      </Button>
-      <View style={styles.row}>
-        <Text>Bạn chưa có tài khoản? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
-          <Text style={styles.link}>Đăng ký</Text>
-        </TouchableOpacity>
-      </View>
+      {!isSubmitted && (
+        <Button mode="contained" onPress={onLoginPressed}>
+          Đăng nhập
+        </Button>
+      )}
+      {isSubmitted && (
+        <View style={[styles.container, styles.horizontal, styles.row]}>
+          <ActivityIndicator size="large" />
+          {/* <StatusBar barStyle="default" /> */}
+        </View>
+      )}
+      {!isSubmitted && (
+        <View style={styles.row}>
+          <Text>Bạn chưa có tài khoản? </Text>
+          <TouchableOpacity
+            onPress={() => navigation.replace('RegisterScreen')}>
+            <Text style={styles.link}>Đăng ký</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </Background>
   );
 }
@@ -100,5 +171,13 @@ const styles = StyleSheet.create({
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });

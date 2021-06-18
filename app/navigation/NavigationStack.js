@@ -6,13 +6,19 @@ import DeviceInfo from 'react-native-device-info';
 import { IconButton } from 'react-native-paper';
 import { navigationRef } from './NavigationService';
 import Login from 'app/screens/Login';
+import LoginScreen from 'app/screens/Auth/Login';
+import RegisterScreen from 'app/screens/Auth/Register';
+import AuthLoadingScreen from 'app/screens/Auth/Loading';
+import StartScreen from 'app/screens/Auth/Start';
 import AppointmentDetail from 'app/screens/AppointmentDetail';
 import Tabs from './Tabs';
 
 const Stack = createStackNavigator();
 
 function App() {
-  const stackProps = DeviceInfo.isTablet() ? { headerMode: 'none' } : {};
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'none' };
 
   return (
     <NavigationContainer ref={navigationRef}>
@@ -29,7 +35,11 @@ function App() {
           },
           headerBackTitleVisible: false,
         }}>
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
+        {/* <Stack.Screen name="Login" component={Login} /> */}
+        <Stack.Screen name="StartScreen" component={StartScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         <Stack.Screen
           name="Home"
           component={Tabs}

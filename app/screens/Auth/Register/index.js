@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ToastAndroid } from 'react-native';
 import { Text } from 'react-native-paper';
 import Background from '../../../components/Background';
 import Logo from '../../../components/Logo';
@@ -27,10 +27,17 @@ export default function RegisterScreen({ navigation }) {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Home' }],
-    });
+    ToastAndroid.showWithGravityAndOffset(
+      'Tính năng đăng ký dùng thử chưa được đưa vào sử dụng chính thức',
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      0,
+      100,
+    );
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: 'Home' }],
+    // });
   };
 
   return (

@@ -55,7 +55,7 @@ const Footer = () => (
   </SafeAreaView>
 );
 
-function AppointmentDetail({ theme }) {
+function ProgramDetail({ theme }) {
   const selectedID = useSelector(state => state.appointmentReducer.selectedID);
 
   const appointments = useSelector(
@@ -103,4 +103,4 @@ function AppointmentDetail({ theme }) {
   );
 }
 
-export default withTheme(AppointmentDetail);
+export default withTheme(ProgramDetail);

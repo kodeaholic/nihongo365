@@ -4,7 +4,7 @@
 import createReducer from 'app/lib/createReducer';
 import * as types from 'app/actions/types';
 
-import { DATA } from 'app/screens/MyAppointments/fake_data';
+import { DATA } from 'app/screens/Programs/fake_data';
 
 const initialState = {
   appointments: DATA,

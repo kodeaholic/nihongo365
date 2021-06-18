@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import MyAppointments from './index.mobile';
-import AppointmentDetail from 'app/screens/AppointmentDetail';
+import Programs from './index.mobile';
+import ProgramDetail from 'app/screens/AppointmentDetail';
 import Calendar from 'app/screens/Calendar';
 
 export default function Appointments({ navigation }) {
@@ -10,10 +10,10 @@ export default function Appointments({ navigation }) {
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
       <View style={{ flex: 1.2 }}>
-        <MyAppointments />
+        <Programs />
       </View>
       <View style={{ flex: 1.2 }}>
-        <AppointmentDetail />
+        <ProgramDetail />
       </View>
       <View style={{ flex: 2 }}>
         <Calendar />

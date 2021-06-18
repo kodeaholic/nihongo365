@@ -6,7 +6,7 @@ import styles from './styles';
 export default function Patients() {
   return (
     <View style={styles.container}>
-      <Text style={styles.login}>Patients</Text>
+      <Text style={styles.login}>Từ điển Nihongo</Text>
     </View>
   );
 }

@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSafeArea } from 'react-native-safe-area-context';
 import { Portal, FAB } from 'react-native-paper';
 import DeviceInfo from 'react-native-device-info';
 
-import MyAppointments from 'app/screens/MyAppointments';
+import Programs from 'app/screens/Programs';
 import Departments from 'app/screens/Departments';
 import Patients from 'app/screens/Patients';
 import Reports from 'app/screens/Reports';
@@ -36,28 +36,38 @@ function Tabs() {
       <Tab.Navigator
         initialRouteName="Feed"
         shifting={true}
-        labeled={false}
+        labeled={true}
         sceneAnimationEnabled={false}
         activeColor="#00aea2"
         inactiveColor="#95a5a6"
         barStyle={{ backgroundColor: '#ffff' }}
-        {...tabBarProps}>
+        {...tabBarProps}
+        tabBarOptions={{ showLabel: true, labelPosition: 'below-icon' }}>
         <Tab.Screen
-          name="Appointments"
-          component={MyAppointments}
+          name="Học"
+          component={Programs}
           options={{
-            tabBarIcon: 'calendar-clock',
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="clipboard-list-outline"
+                color={color}
+                size={26}
+              />
+            ),
           }}
         />
 
         <Tab.Screen
-          name="Patients"
+          name="Từ điển"
           component={Patients}
           options={{
-            tabBarIcon: 'account-multiple',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="magnify" color={color} size={26} />
+            ),
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Departments"
           component={Departments}
           options={{
@@ -70,9 +80,9 @@ function Tabs() {
           options={{
             tabBarIcon: 'book-open',
           }}
-        />
+        /> */}
       </Tab.Navigator>
-      <Portal>
+      {/* <Portal>
         <FAB
           visible={isFocused} // show FAB only when this screen is focused
           icon="plus-box"
@@ -84,7 +94,7 @@ function Tabs() {
             },
           ]}
         />
-      </Portal>
+      </Portal> */}
     </React.Fragment>
   );
 }

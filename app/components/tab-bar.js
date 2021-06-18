@@ -96,17 +96,16 @@ function TabBar({
             anchor={
               <TouchableOpacity onPress={() => setvisible(true)}>
                 <View style={styles.dropView}>
-                  <Text style={styles.name}>Dr. Christian Wade</Text>
+                  <Text style={styles.name}>Học viên A</Text>
                   <Icon name="keyboard-arrow-down" size={24} color="#bdc3c7" />
                 </View>
               </TouchableOpacity>
             }>
-            <Menu.Item onPress={() => {}} title="Request Leave" />
-            <Menu.Item onPress={() => {}} title="Provide Feeback" />
+            <Menu.Item onPress={() => {}} title="Cài đặt" />
+            <Menu.Item onPress={() => {}} title="Gửi Feeback" />
 
             <Divider />
-            <Menu.Item onPress={() => {}} title="Check for Updates" />
-            <Menu.Item onPress={() => {}} title="Logout " />
+            <Menu.Item onPress={() => {}} title="Thoát " />
           </Menu>
 
           <Avatar.Image
@@ -117,9 +116,9 @@ function TabBar({
                 'https://i.ya-webdesign.com/images/male-avatar-icon-png-7.png',
             }}
           />
-          <CustomIcon name="bell" />
+          {/* <CustomIcon name="bell" />
           <CustomIcon name="settings" />
-          <CustomIcon name="magnify" />
+          <CustomIcon name="magnify" /> */}
         </View>
       </View>
       <Animated.View

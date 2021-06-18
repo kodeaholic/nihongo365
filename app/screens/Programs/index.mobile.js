@@ -8,7 +8,7 @@ import moment from 'moment';
 import Item from './components/item';
 import styles from './styles';
 
-export default function MyAppointments() {
+export default function Programs() {
   const appointments = useSelector(
     state => state.appointmentReducer.appointments,
   );
@@ -47,7 +47,7 @@ export default function MyAppointments() {
         renderItem={({ item }) => <Item item={item} />}
         renderSectionHeader={({ section: { key } }) => <Title>{key}</Title>}
         ListHeaderComponent={() => (
-          <Headline style={styles.headline}>My Appointments</Headline>
+          <Headline style={styles.headline}>Chương trình học Nihongo</Headline>
         )}
         stickySectionHeadersEnabled={false}
         showsVerticalScrollIndicator={false}

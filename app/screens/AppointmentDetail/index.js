@@ -60,7 +60,7 @@ function ProgramDetail({ theme }) {
 
   const programs = useSelector(state => state.appointmentReducer.programs);
 
-  const appointment = programs.find(itx => itx.id === selectedID);
+  const program = programs.find(itx => itx.id === selectedID);
 
   return (
     <View forceInset={{ top: 'never' }} style={styles.container}>
@@ -68,25 +68,26 @@ function ProgramDetail({ theme }) {
         <View style={{ marginHorizontal: 24 }}>
           {selectedID !== -1 && (
             <React.Fragment>
-              <AppointmentInfo theme={theme} appointment={appointment} />
+              <Text style={[styles.title, styles.head]}>Chương trình học</Text>
+              <AppointmentInfo theme={theme} appointment={program} />
               <PatientInfo />
-              <Text style={[styles.title, styles.head]}>Recent Documents</Text>
+              <Text style={[styles.title, styles.head]}>Chứng chỉ</Text>
 
               <View style={styles.documents}>
                 <DocIcon
-                  name="Chest X-ray"
+                  name="N1"
                   fileSize="1.7 MB"
                   icon="image"
                   type="image"
                 />
                 <DocIcon
-                  name="Blood Test"
+                  name="N2"
                   fileSize="1.4 MB"
                   icon="picture-as-pdf"
                   type="PDF"
                 />
                 <DocIcon
-                  name="Lab results"
+                  name="JLPT 01"
                   fileSize="1.2 MB"
                   icon="picture-as-pdf"
                   type="PDF"
@@ -96,7 +97,7 @@ function ProgramDetail({ theme }) {
           )}
         </View>
       </ScrollView>
-      <Footer />
+      {/* <Footer /> */}
     </View>
   );
 }

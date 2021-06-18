@@ -10,21 +10,11 @@ function AppointmentInfo({ theme, appointment }) {
 
   const isTablet = DeviceInfo.isTablet();
   return (
-    <View style={{ marginTop: 24 }}>
+    <View style={{ marginTop: 0 }}>
       {isTablet && <Text style={styles.title}>Appointment Information</Text>}
       <Section
-        name={appointment?.date}
+        name={appointment?.program}
         icon="calendar-blank-outline"
-        color={colors.accent}
-      />
-      <Section
-        name={`${appointment?.startTime}-${appointment?.endTime}`}
-        icon="clock-outline"
-        color={colors.accent}
-      />
-      <Section
-        name={appointment?.tags[0]}
-        icon="plus-box"
         color={colors.accent}
       />
     </View>

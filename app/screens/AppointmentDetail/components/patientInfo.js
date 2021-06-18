@@ -17,36 +17,36 @@ function PatientInfo({ theme }) {
   const { colors } = theme;
   const selectedID = useSelector(state => state.appointmentReducer.selectedID);
   const programs = useSelector(state => state.appointmentReducer.programs);
-  const appointment = programs.find(itx => itx.id === selectedID);
+  const program = programs.find(itx => itx.id === selectedID);
 
   return (
     <React.Fragment>
-      <Text style={styles.title}>Patient Information</Text>
+      <Text style={styles.title}>Thông tin giảng viên</Text>
       <Card style={styles.card}>
         <React.Fragment>
           <ProfileCard
-            name={appointment.name}
-            avatar={appointment.avatar}
+            name={program.name}
+            avatar={program.avatar}
             disableRightBtn={true}
           />
           <View style={styles.content}>
-            <Detail title="Date of Birth" value="02/14/1980" />
-            <Detail title="Gender" value="Male" />
-            <Detail title="Previous Visit" value="02/03/2020" />
+            <Detail title="Ngày sinh" value="02/14/1980" />
+            <Detail title="Giới tính" value="Nam" />
+            <Detail title="Trình độ cao nhất" value="N2" />
 
-            <Text style={[styles.title, styles.head]}>Contacts</Text>
+            <Text style={[styles.title, styles.head]}>Thông tin liên hệ</Text>
             <Section
               name="+1-202-555-0194"
               icon="phone-outline"
               color={colors.accent}
             />
             <Section
-              name="doughlas.schneider@gmail.com"
+              name="vanduc.senpai@gmail.com"
               icon="email-outline"
               color={colors.accent}
             />
             <Section
-              name="615 CArter Roadus Suitr 286"
+              name="Cầu Giấy, Hà Nội"
               icon="home-outline"
               color={colors.accent}
             />

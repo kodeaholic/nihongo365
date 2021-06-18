@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, SectionList } from 'react-native';
+import { SafeAreaView, FlatList } from 'react-native';
 import { Headline, Title } from 'react-native-paper';
 
 import { useSelector } from 'react-redux';
@@ -9,11 +9,9 @@ import Item from './components/item';
 import styles from './styles';
 
 export default function Programs() {
-  const appointments = useSelector(
-    state => state.appointmentReducer.appointments,
-  );
+  const programs = useSelector(state => state.appointmentReducer.programs);
 
-  const localData = [...appointments];
+  const localData = [...programs];
   // Sort data by datetime
   localData.sort((a, b) => {
     return moment(a.date).unix() - moment(b.date).unix();
@@ -21,13 +19,7 @@ export default function Programs() {
 
   // Reduce data for SectionList
   const groupedData = localData.reduce(
-    (
-      accumulator,
-      currentValue,
-      currentIndex,
-      array,
-      key = currentValue.date,
-    ) => {
+    (accumulator, currentValue, currentIndex, array, key = currentValue.id) => {
       const keyObjectPosition = accumulator.findIndex(item => item.key == key);
       if (keyObjectPosition >= 0) {
         accumulator[keyObjectPosition].data.push(currentValue);
@@ -41,9 +33,9 @@ export default function Programs() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <SectionList
+      <FlatList
         style={styles.list}
-        sections={groupedData}
+        data={localData}
         renderItem={({ item }) => <Item item={item} />}
         renderSectionHeader={({ section: { key } }) => <Title>{key}</Title>}
         ListHeaderComponent={() => (

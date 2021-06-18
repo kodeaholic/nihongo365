@@ -58,11 +58,9 @@ const Footer = () => (
 function ProgramDetail({ theme }) {
   const selectedID = useSelector(state => state.appointmentReducer.selectedID);
 
-  const appointments = useSelector(
-    state => state.appointmentReducer.appointments,
-  );
+  const programs = useSelector(state => state.appointmentReducer.programs);
 
-  const appointment = appointments.find(itx => itx.id === selectedID);
+  const appointment = programs.find(itx => itx.id === selectedID);
 
   return (
     <View forceInset={{ top: 'never' }} style={styles.container}>

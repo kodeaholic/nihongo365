@@ -3,9 +3,9 @@ import { StyleSheet } from 'react-native';
 import { Avatar, Card, IconButton } from 'react-native-paper';
 
 export default function profileCard({
-  name,
+  authorName,
   avatar,
-
+  program,
   onSelected,
   disableRightBtn,
 }) {
@@ -28,8 +28,8 @@ export default function profileCard({
   );
   return (
     <Card.Title
-      title={name}
-      subtitle="View profile"
+      title={program}
+      subtitle={authorName}
       left={LeftContent}
       right={disableRightBtn ? null : RightContent}
       titleStyle={styles.cardTitle}

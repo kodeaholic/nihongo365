@@ -4,10 +4,10 @@
 import createReducer from 'app/lib/createReducer';
 import * as types from 'app/actions/types';
 
-import { DATA } from 'app/screens/Programs/fake_data';
+import { DATA } from 'app/screens/Programs/data';
 
 const initialState = {
-  appointments: DATA,
+  programs: DATA,
   selectedID: -1,
 };
 

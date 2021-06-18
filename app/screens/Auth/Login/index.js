@@ -59,7 +59,7 @@ export default function LoginScreen({ navigation }) {
   }, [email, isSubmitted, navigation, password]);
 
   useEffect(() => {
-    if (result && result.user && result.tokens) {
+    if (!_.isEmpty(result) && result.user && result.tokens) {
       try {
         (async () => {
           await AsyncStorage.setItem('user', JSON.stringify(result.user));
@@ -79,7 +79,7 @@ export default function LoginScreen({ navigation }) {
           100,
         );
       }
-    } else if (result) {
+    } else if (!_.isEmpty(result)) {
       ToastAndroid.showWithGravityAndOffset(
         'Email hoặc mật khẩu chưa đúng',
         ToastAndroid.LONG,

@@ -16,10 +16,8 @@ const Detail = ({ title, value }) => (
 function PatientInfo({ theme }) {
   const { colors } = theme;
   const selectedID = useSelector(state => state.appointmentReducer.selectedID);
-  const appointments = useSelector(
-    state => state.appointmentReducer.appointments,
-  );
-  const appointment = appointments.find(itx => itx.id === selectedID);
+  const programs = useSelector(state => state.appointmentReducer.programs);
+  const appointment = programs.find(itx => itx.id === selectedID);
 
   return (
     <React.Fragment>

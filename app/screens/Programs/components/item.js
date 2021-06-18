@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { Button, Card, Divider, Text } from 'react-native-paper';
 
 import { useDispatch } from 'react-redux';
@@ -12,26 +12,40 @@ import ProfileCard from 'app/components/profile-card';
 import * as appointmentActions from 'app/actions/appointmentActions';
 
 const Item = ({ item }) => {
-  const { id, name, startTime, endTime, tags, avatar } = item;
+  const { id, name, description, tags, avatar, program, available } = item;
   const navigation = useNavigation();
   const isTablet = DeviceInfo.isTablet();
 
   const dispatch = useDispatch();
   const onSelected = () => {
-    dispatch(appointmentActions.appointmentSelected(id));
-    if (!isTablet) {
-      navigation.navigate('AppointmentDetail');
+    if (available) {
+      dispatch(appointmentActions.appointmentSelected(id));
+      if (!isTablet) {
+        navigation.navigate('AppointmentDetail');
+      }
+    } else {
+      ToastAndroid.showWithGravityAndOffset(
+        'Tính năng sẽ được ra mắt trong thời gian tới',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
     }
   };
 
   return (
     <Card style={styles.card}>
-      <ProfileCard name={name} avatar={avatar} onSelected={onSelected} />
+      <ProfileCard
+        disableRightButton={!available}
+        authorName={name}
+        program={program}
+        avatar={avatar}
+        onSelected={onSelected}
+      />
       <Card.Content>
         <Divider />
-        <Text style={styles.duration}>
-          {startTime} - {endTime}
-        </Text>
+        <Text style={styles.duration}>{description}</Text>
         <View style={styles.tags}>
           {tags.map((itx, i) => {
             const { labelColor, buttonColor } = random_rgba();

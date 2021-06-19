@@ -2,11 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 
 import Programs from './index.mobile';
-import ProgramDetail from 'app/screens/AppointmentDetail';
+import ProgramDetail from 'app/screens/ProgramDetail';
 import Calendar from 'app/screens/Calendar';
 
-export default function Appointments({ navigation }) {
-  const onClick = () => navigation.navigate('AppointmentDetail');
+export default function TaletPrograms({ navigation }) {
+  const onClick = () => navigation.navigate('ProgramDetail');
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
       <View style={{ flex: 1.2 }}>

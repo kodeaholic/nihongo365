@@ -4,8 +4,7 @@ export const PROGRAM_IDS = {
   NGUPHAP: 3,
   NGHE: 4,
   HOITHOAI: 5,
-  VIET: 6,
-  THI: 7,
+  THI: 6,
 };
 
 export const DATA = [
@@ -71,19 +70,6 @@ export const DATA = [
     tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
     avatar: 'https://nihong0.herokuapp.com/avatars/logo.jpg',
     program: 'Luyện hội thoại',
-    description: 'Học theo cấp độ',
-    available: false,
-  },
-  {
-    id: PROGRAM_IDS.VIET,
-    name: 'Văn Đức sensei',
-    sex: 'M',
-    date: '05/03/2020',
-    startTime: '10:30 AM',
-    endTime: '10:30 AM',
-    tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
-    avatar: 'https://nihong0.herokuapp.com/avatars/logo.jpg',
-    program: 'Luyện viết',
     description: 'Học theo cấp độ',
     available: false,
   },

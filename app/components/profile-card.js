@@ -4,7 +4,6 @@ import { Avatar, Card, IconButton } from 'react-native-paper';
 
 export default function profileCard({
   authorName,
-  avatar,
   program,
   onSelected,
   disableRightBtn,
@@ -24,7 +23,6 @@ export default function profileCard({
   return (
     <Card.Title
       title={program}
-      subtitle={authorName}
       left={LeftContent}
       right={disableRightBtn ? null : RightContent}
       titleStyle={styles.cardTitle}

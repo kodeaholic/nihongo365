@@ -10,7 +10,7 @@ import LoginScreen from 'app/screens/Auth/Login';
 import RegisterScreen from 'app/screens/Auth/Register';
 import AuthLoadingScreen from 'app/screens/Auth/Loading';
 import StartScreen from 'app/screens/Auth/Start';
-import AppointmentDetail from 'app/screens/AppointmentDetail';
+import ProgramDetail from 'app/screens/ProgramDetail';
 import Tabs from './Tabs';
 
 const Stack = createStackNavigator();
@@ -64,9 +64,9 @@ function App() {
           }}
         />
         <Stack.Screen
-          name="AppointmentDetail"
-          component={AppointmentDetail}
-          options={{ title: 'Appointment Information' }}
+          name="ProgramDetail"
+          component={ProgramDetail}
+          options={{ title: 'Thông tin chương trình học' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

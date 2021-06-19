@@ -13,15 +13,15 @@ const Detail = ({ title, value }) => (
   </View>
 );
 
-function PatientInfo({ theme }) {
+function ProgramInfo({ theme }) {
   const { colors } = theme;
-  const selectedID = useSelector(state => state.appointmentReducer.selectedID);
-  const programs = useSelector(state => state.appointmentReducer.programs);
+  const selectedID = useSelector(state => state.programReducer.selectedID);
+  const programs = useSelector(state => state.programReducer.programs);
   const program = programs.find(itx => itx.id === selectedID);
 
   return (
     <React.Fragment>
-      <Text style={styles.title}>Thông tin giảng viên</Text>
+      <Text style={styles.title}>Hướng dẫn học</Text>
       <Card style={styles.card}>
         <React.Fragment>
           <ProfileCard
@@ -34,7 +34,7 @@ function PatientInfo({ theme }) {
             <Detail title="Giới tính" value="Nam" />
             <Detail title="Trình độ cao nhất" value="N2" />
 
-            <Text style={[styles.title, styles.head]}>Thông tin liên hệ</Text>
+            <Text style={[styles.title, styles.head]}>Cách học cụ thể</Text>
             <Section
               name="+1-202-555-0194"
               icon="phone-outline"
@@ -72,4 +72,4 @@ const styles = StyleSheet.create({
   documents: { flexDirection: 'row', justifyContent: 'space-between' },
 });
 
-export default withTheme(PatientInfo);
+export default withTheme(ProgramInfo);

@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import { Button, Text, Divider, withTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import AppointmentInfo from './components/appointmentInfo';
-import PatientInfo from './components/patientInfo';
+import ProgramInfo from './components/programinfo';
+import PatientInfo from './components/programguideline';
 
 import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -56,9 +56,9 @@ const Footer = () => (
 );
 
 function ProgramDetail({ theme }) {
-  const selectedID = useSelector(state => state.appointmentReducer.selectedID);
+  const selectedID = useSelector(state => state.programReducer.selectedID);
 
-  const programs = useSelector(state => state.appointmentReducer.programs);
+  const programs = useSelector(state => state.programReducer.programs);
 
   const program = programs.find(itx => itx.id === selectedID);
 
@@ -71,7 +71,7 @@ function ProgramDetail({ theme }) {
               <Text style={[styles.title, styles.head]}>
                 Chương trình học Nihongo
               </Text>
-              <AppointmentInfo theme={theme} appointment={program} />
+              <ProgramInfo theme={theme} program={program} />
               <PatientInfo />
               {/* <Text style={[styles.title, styles.head]}>Chứng chỉ</Text>
 

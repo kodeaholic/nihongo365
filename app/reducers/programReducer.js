@@ -11,8 +11,8 @@ const initialState = {
   selectedID: -1,
 };
 
-export const appointmentReducer = createReducer(initialState, {
-  [types.APPOINTMENT_SELECTED](state, action) {
+export const programReducer = createReducer(initialState, {
+  [types.PROGRAM_SELECTED](state, action) {
     return {
       ...state,
       selectedID: action.selectedID,

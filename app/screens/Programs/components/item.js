@@ -7,9 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
 
 import { random_rgba } from 'app/utils/random_rgba';
-import ProfileCard from 'app/components/profile-card';
+import ProfileCard from '../../../components/profile-card';
 
-import * as appointmentActions from 'app/actions/appointmentActions';
+import * as programActions from 'app/actions/programActions';
 
 const Item = ({ item }) => {
   const { id, name, description, tags, avatar, program, available } = item;
@@ -19,9 +19,9 @@ const Item = ({ item }) => {
   const dispatch = useDispatch();
   const onSelected = () => {
     if (available) {
-      dispatch(appointmentActions.appointmentSelected(id));
+      dispatch(programActions.programSelected(id));
       if (!isTablet) {
-        navigation.navigate('AppointmentDetail');
+        navigation.navigate('ProgramDetail');
       }
     } else {
       ToastAndroid.showWithGravityAndOffset(

@@ -9,7 +9,7 @@ import Item from './components/item';
 import styles from './styles';
 
 export default function Programs() {
-  const programs = useSelector(state => state.appointmentReducer.programs);
+  const programs = useSelector(state => state.programReducer.programs);
 
   const localData = [...programs];
   // Sort data by datetime
@@ -20,7 +20,7 @@ export default function Programs() {
   // Reduce data for SectionList
   const groupedData = localData.reduce(
     (accumulator, currentValue, currentIndex, array, key = currentValue.id) => {
-      const keyObjectPosition = accumulator.findIndex(item => item.key == key);
+      const keyObjectPosition = accumulator.findIndex(item => item.key === key);
       if (keyObjectPosition >= 0) {
         accumulator[keyObjectPosition].data.push(currentValue);
         return accumulator;

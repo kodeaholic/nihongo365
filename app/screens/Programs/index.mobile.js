@@ -39,7 +39,9 @@ export default function Programs() {
         renderItem={({ item }) => <Item item={item} />}
         renderSectionHeader={({ section: { key } }) => <Title>{key}</Title>}
         ListHeaderComponent={() => (
-          <Headline style={styles.headline}>Chương trình học Nihongo</Headline>
+          <Headline style={styles.headline}>
+            Chương trình học Nihongo365
+          </Headline>
         )}
         stickySectionHeadersEnabled={false}
         showsVerticalScrollIndicator={false}

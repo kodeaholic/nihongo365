@@ -10,12 +10,7 @@ export default function profileCard({
   disableRightBtn,
 }) {
   const LeftContent = props => (
-    <Avatar.Image
-      {...props}
-      source={{
-        uri: avatar,
-      }}
-    />
+    <Avatar.Image {...props} source={require('app/assets/logo.png')} />
   );
   const RightContent = props => (
     <IconButton

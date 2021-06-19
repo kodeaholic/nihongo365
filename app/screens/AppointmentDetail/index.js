@@ -68,10 +68,12 @@ function ProgramDetail({ theme }) {
         <View style={{ marginHorizontal: 24 }}>
           {selectedID !== -1 && (
             <React.Fragment>
-              <Text style={[styles.title, styles.head]}>Chương trình học</Text>
+              <Text style={[styles.title, styles.head]}>
+                Chương trình học Nihongo
+              </Text>
               <AppointmentInfo theme={theme} appointment={program} />
               <PatientInfo />
-              <Text style={[styles.title, styles.head]}>Chứng chỉ</Text>
+              {/* <Text style={[styles.title, styles.head]}>Chứng chỉ</Text>
 
               <View style={styles.documents}>
                 <DocIcon
@@ -92,7 +94,7 @@ function ProgramDetail({ theme }) {
                   icon="picture-as-pdf"
                   type="PDF"
                 />
-              </View>
+              </View> */}
             </React.Fragment>
           )}
         </View>

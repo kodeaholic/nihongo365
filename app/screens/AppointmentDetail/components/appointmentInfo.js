@@ -11,10 +11,10 @@ function AppointmentInfo({ theme, appointment }) {
   const isTablet = DeviceInfo.isTablet();
   return (
     <View style={{ marginTop: 0 }}>
-      {isTablet && <Text style={styles.title}>Appointment Information</Text>}
+      {isTablet && <Text style={styles.title}>Chương trình học</Text>}
       <Section
-        name={appointment?.program}
-        icon="calendar-blank-outline"
+        name="Học từ vựng theo các chủ đề"
+        icon="clipboard-check-outline"
         color={colors.accent}
       />
     </View>

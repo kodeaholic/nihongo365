@@ -33,14 +33,12 @@ const Item = ({ item }) => {
       );
     }
   };
-
   return (
     <Card style={styles.card}>
       <ProfileCard
         disableRightButton={!available}
         authorName={name}
         program={program}
-        avatar={avatar}
         onSelected={onSelected}
       />
       <Card.Content>

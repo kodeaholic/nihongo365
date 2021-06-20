@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Avatar, Card, IconButton } from 'react-native-paper';
+import { Avatar, Card, IconButton, Chip } from 'react-native-paper';
 
 export default function profileCard({
   authorName,
@@ -12,13 +12,13 @@ export default function profileCard({
     <Avatar.Image {...props} source={require('app/assets/logo.png')} />
   );
   const RightContent = props => (
-    <IconButton
-      icon="arrow-right"
-      color="#0097e8"
-      size={20}
+    <Chip
+      mode="flat"
+      icon="comment-question-outline"
       onPress={onSelected}
-      style={{ marginBottom: 24 }}
-    />
+      style={styles.chip}>
+      Cách học
+    </Chip>
   );
   return (
     <Card.Title
@@ -34,4 +34,9 @@ export default function profileCard({
 const styles = StyleSheet.create({
   cardTitle: { fontWeight: 'normal' },
   cardSub: { fontSize: 13, color: '#0097e8' },
+  chip: {
+    marginRight: 5,
+    backgroundColor: '#5cdb5e',
+    color: '#ffffff',
+  },
 });

@@ -3,20 +3,16 @@ import { StyleSheet, View } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import DeviceInfo from 'react-native-device-info';
 
-import Section from 'app/components/section-item';
+import CustomParagraph from '../../../components/paragraph';
 
-function ProgramInfo({ theme, program }) {
+function ProgramInfo({ theme }) {
   const { colors } = theme;
 
   const isTablet = DeviceInfo.isTablet();
   return (
     <View style={{ marginTop: 0 }}>
       {isTablet && <Text style={styles.title}>Chương trình học</Text>}
-      <Section
-        name="Học từ vựng theo các chủ đề"
-        icon="clipboard-check-outline"
-        color={colors.accent}
-      />
+      <CustomParagraph text="Học từ vựng theo các chủ đề" />
     </View>
   );
 }

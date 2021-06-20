@@ -10,50 +10,50 @@ import PatientInfo from './components/programguideline';
 import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const DocIcon = ({ icon, name, type, fileSize }) => {
-  let background, iconColor;
-  if (type === 'image') {
-    iconColor = 'rgba(255,183,104,1)';
-    background = 'rgba(255,183,104,0.1)';
-  } else {
-    iconColor = 'rgba(19,69,149,1)';
-    background = 'rgba(19,69,149,0.1)';
-  }
+// const DocIcon = ({ icon, name, type, fileSize }) => {
+//   let background, iconColor;
+//   if (type === 'image') {
+//     iconColor = 'rgba(255,183,104,1)';
+//     background = 'rgba(255,183,104,0.1)';
+//   } else {
+//     iconColor = 'rgba(19,69,149,1)';
+//     background = 'rgba(19,69,149,0.1)';
+//   }
 
-  return (
-    <View style={[styles.docView, { backgroundColor: background }]}>
-      <Icon name={icon} size={50} color={iconColor} />
-      <Text style={{ marginTop: 12, color: iconColor }}>{name}</Text>
-      <Text style={{ color: iconColor }}>{fileSize}</Text>
-    </View>
-  );
-};
+//   return (
+//     <View style={[styles.docView, { backgroundColor: background }]}>
+//       <Icon name={icon} size={50} color={iconColor} />
+//       <Text style={{ marginTop: 12, color: iconColor }}>{name}</Text>
+//       <Text style={{ color: iconColor }}>{fileSize}</Text>
+//     </View>
+//   );
+// };
 
-const Footer = () => (
-  <SafeAreaView>
-    <Divider />
-    <View style={styles.footer}>
-      <View style={{ flex: 1 }}>
-        <Button
-          style={styles.btn}
-          labelStyle={styles.cancel}
-          mode="text"
-          onPress={() => console.log('Pressed')}>
-          Cancel
-        </Button>
-      </View>
-      <View style={{ flex: 1 }}>
-        <Button
-          style={styles.btn}
-          labelStyle={styles.ok}
-          mode="text"
-          onPress={() => console.log('Pressed')}>
-          Reschedule
-        </Button>
-      </View>
-    </View>
-  </SafeAreaView>
-);
+// const Footer = () => (
+//   <SafeAreaView>
+//     <Divider />
+//     <View style={styles.footer}>
+//       <View style={{ flex: 1 }}>
+//         <Button
+//           style={styles.btn}
+//           labelStyle={styles.cancel}
+//           mode="text"
+//           onPress={() => console.log('Pressed')}>
+//           Cancel
+//         </Button>
+//       </View>
+//       <View style={{ flex: 1 }}>
+//         <Button
+//           style={styles.btn}
+//           labelStyle={styles.ok}
+//           mode="text"
+//           onPress={() => console.log('Pressed')}>
+//           Reschedule
+//         </Button>
+//       </View>
+//     </View>
+//   </SafeAreaView>
+// );
 
 function ProgramDetail({ theme }) {
   const selectedID = useSelector(state => state.programReducer.selectedID);

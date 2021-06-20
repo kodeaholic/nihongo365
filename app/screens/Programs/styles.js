@@ -7,7 +7,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f6f9',
   },
   list: { marginHorizontal: 20 },
-  headline: { marginBottom: 12, marginTop: 24, fontWeight: 'bold' },
+  headline: {
+    marginBottom: 12,
+    marginTop: 24,
+    fontWeight: 'bold',
+    fontFamily: 'SF-Pro-Display-Regular',
+  },
 });
 
 export default styles;

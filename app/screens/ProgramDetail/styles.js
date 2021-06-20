@@ -19,11 +19,12 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   title: {
+    fontFamily: 'SF-Pro-Display-Regular',
     fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 12,
   },
-  head: { marginTop: 24 },
+  head: { marginTop: 24, fontFamily: 'SF-Pro-Display-Regular' },
   btn: {
     justifyContent: 'center',
     alignItems: 'center',

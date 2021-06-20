@@ -10,7 +10,7 @@ import { random_rgba } from 'app/utils/random_rgba';
 import ProfileCard from '../../../components/profile-card';
 
 import * as programActions from 'app/actions/programActions';
-
+import { PROGRAM_IDS } from '../data';
 const Item = ({ item }) => {
   const { id, name, description, tags, avatar, program, available } = item;
   const navigation = useNavigation();
@@ -18,10 +18,20 @@ const Item = ({ item }) => {
 
   const dispatch = useDispatch();
   const onSelected = () => {
+    console.log(available);
     if (available) {
       dispatch(programActions.programSelected(id));
       if (!isTablet) {
-        navigation.navigate('VocabProgramGuideline');
+        switch (id) {
+          case PROGRAM_IDS.TUVUNG:
+            navigation.navigate('VocabProgramGuideline');
+            break;
+          case PROGRAM_IDS.CHUHAN:
+            navigation.navigate('ChuHanProgramGuideline');
+            break;
+          default:
+            break;
+        }
       }
     } else {
       ToastAndroid.showWithGravityAndOffset(

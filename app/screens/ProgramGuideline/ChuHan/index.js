@@ -55,7 +55,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 //   </SafeAreaView>
 // );
 
-function VocabProgramGuideline({ theme }) {
+function ChuHanProgramGuideline({ theme }) {
   const selectedID = useSelector(state => state.programReducer.selectedID);
 
   const programs = useSelector(state => state.programReducer.programs);
@@ -74,7 +74,7 @@ function VocabProgramGuideline({ theme }) {
               <CommonProgramInfo
                 theme={theme}
                 program={program}
-                title="Học từ vựng theo chủ đề"
+                title="Học chữ Hán"
               />
               <VocabGuideline />
               {/* <Text style={[styles.title, styles.head]}>Chứng chỉ</Text>
@@ -108,4 +108,4 @@ function VocabProgramGuideline({ theme }) {
   );
 }
 
-export default withTheme(VocabProgramGuideline);
+export default withTheme(ChuHanProgramGuideline);

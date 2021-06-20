@@ -5,14 +5,13 @@ import DeviceInfo from 'react-native-device-info';
 
 import CustomParagraph from '../../../components/paragraph';
 
-function CommonInfo({ theme }) {
-  const { colors } = theme;
+function CommonInfo({ theme, title }) {
 
   const isTablet = DeviceInfo.isTablet();
   return (
     <View style={{ marginTop: 0 }}>
       {isTablet && <Text style={styles.title}>Chương trình học</Text>}
-      <CustomParagraph text="Học từ vựng theo các chủ đề" />
+      <CustomParagraph text={title} />
     </View>
   );
 }

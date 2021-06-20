@@ -32,7 +32,7 @@ export const DATA = [
     avatar: 'https://nihong0.herokuapp.com/avatars/logo.jpg',
     program: 'Chữ Hán',
     description: 'Học theo cấp độ',
-    available: false,
+    available: true,
   },
   {
     id: PROGRAM_IDS.NGUPHAP,

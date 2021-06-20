@@ -11,6 +11,7 @@ import RegisterScreen from 'app/screens/Auth/Register';
 import AuthLoadingScreen from 'app/screens/Auth/Loading';
 import StartScreen from 'app/screens/Auth/Start';
 import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
+import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
 import Tabs from './Tabs';
 
 const Stack = createStackNavigator();
@@ -66,6 +67,11 @@ function App() {
         <Stack.Screen
           name="VocabProgramGuideline"
           component={VocabProgramGuideline}
+          options={{ title: 'Thông tin chương trình học' }}
+        />
+        <Stack.Screen
+          name="ChuHanProgramGuideline"
+          component={ChuHanProgramGuideline}
           options={{ title: 'Thông tin chương trình học' }}
         />
       </Stack.Navigator>

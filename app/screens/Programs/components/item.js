@@ -21,7 +21,7 @@ const Item = ({ item }) => {
     if (available) {
       dispatch(programActions.programSelected(id));
       if (!isTablet) {
-        navigation.navigate('ProgramDetail');
+        navigation.navigate('VocabProgramGuideline');
       }
     } else {
       ToastAndroid.showWithGravityAndOffset(

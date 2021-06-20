@@ -2,18 +2,18 @@ import React from 'react';
 import { View } from 'react-native';
 
 import Programs from './index.mobile';
-import ProgramDetail from 'app/screens/ProgramDetail';
+import VocabProgramGuideline from '../../screens/ProgramGuideline/Vocab';
 import Calendar from 'app/screens/Calendar';
 
 export default function TaletPrograms({ navigation }) {
-  const onClick = () => navigation.navigate('ProgramDetail');
+  const onClick = () => navigation.navigate('VocabProgramGuideline');
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
       <View style={{ flex: 1.2 }}>
         <Programs />
       </View>
       <View style={{ flex: 1.2 }}>
-        <ProgramDetail />
+        <VocabProgramGuideline />
       </View>
       <View style={{ flex: 2 }}>
         <Calendar />

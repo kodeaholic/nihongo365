@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 import { Button, Text, Divider, withTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import ProgramInfo from './components/programinfo';
-import PatientInfo from './components/programguideline';
+import { CommonProgramInfo } from '../components/commonInfo';
+import { VocabGuideline } from '../components/vocabGuideline';
 
-import styles from './styles';
+import styles from '../styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // const DocIcon = ({ icon, name, type, fileSize }) => {
@@ -55,7 +55,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 //   </SafeAreaView>
 // );
 
-function ProgramDetail({ theme }) {
+function VocabProgramGuideline({ theme }) {
   const selectedID = useSelector(state => state.programReducer.selectedID);
 
   const programs = useSelector(state => state.programReducer.programs);
@@ -71,8 +71,8 @@ function ProgramDetail({ theme }) {
               <Text style={[styles.title, styles.head]}>
                 Chương trình học Nihongo
               </Text>
-              <ProgramInfo theme={theme} program={program} />
-              <PatientInfo />
+              <CommonProgramInfo theme={theme} program={program} />
+              <VocabGuideline />
               {/* <Text style={[styles.title, styles.head]}>Chứng chỉ</Text>
 
               <View style={styles.documents}>
@@ -104,4 +104,4 @@ function ProgramDetail({ theme }) {
   );
 }
 
-export default withTheme(ProgramDetail);
+export default withTheme(VocabProgramGuideline);

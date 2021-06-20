@@ -5,7 +5,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import CustomParagraph from '../../../components/paragraph';
 
-function ProgramInfo({ theme }) {
+function CommonInfo({ theme }) {
   const { colors } = theme;
 
   const isTablet = DeviceInfo.isTablet();
@@ -27,4 +27,4 @@ const styles = StyleSheet.create({
   name: { fontSize: 16 },
 });
 
-export default withTheme(ProgramInfo);
+export const CommonProgramInfo = withTheme(CommonInfo);

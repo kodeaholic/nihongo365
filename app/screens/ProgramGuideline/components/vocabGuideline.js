@@ -1,26 +1,16 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Card, withTheme, Avatar } from 'react-native-paper';
+import { Text, Card, withTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import Section from '../../../components/section-item';
 import { Paragraph } from 'react-native-paper';
-
+import { AvatarSignature } from './avatarSignature';
 function ProgramInfo({ theme }) {
   const { colors } = theme;
   const selectedID = useSelector(state => state.programReducer.selectedID);
   const programs = useSelector(state => state.programReducer.programs);
   const program = programs.find(itx => itx.id === selectedID);
-  const AvatarSignature = props => (
-    <View style={styles.bottomSignature}>
-      <Avatar.Image
-        size={86}
-        {...props}
-        style={{ marginTop: 0, marginBottom: 10, marginLeft: 10 }}
-        source={require('app/assets/logo.png')}
-      />
-    </View>
-  );
   return (
     <React.Fragment>
       <Text style={styles.title}>Hướng dẫn học</Text>
@@ -107,11 +97,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SF-Pro-Display-Regular',
     letterSpacing: 1.5,
   },
-  bottomSignature: {
-    // flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-  },
 });
 
-export default withTheme(ProgramInfo);
+export const VocabGuideline = withTheme(ProgramInfo);

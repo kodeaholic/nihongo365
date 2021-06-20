@@ -5,7 +5,7 @@ import { Button, Text, Divider, withTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { CommonProgramInfo } from '../components/commonInfo';
-import { VocabGuideline } from '../components/vocabGuideline';
+import { ChuHanGuideline } from '../components/chuHanGuideline';
 
 import styles from '../styles';
 import { SafeAreaView } from 'react-native-safe-area-context';

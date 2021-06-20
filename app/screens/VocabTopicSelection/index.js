@@ -5,13 +5,14 @@ import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
 import { useSelector } from 'react-redux';
 import { List } from 'react-native-paper';
-import { SafeAreaView, FlatList } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 export const VocabTopicSelection = () => {
   const [topics, setTopics] = useState([]);
   const [chapters, setChapters] = useState([]);
+  const [lessons, setLessons] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
@@ -39,10 +40,9 @@ export const VocabTopicSelection = () => {
             100,
           );
         } else {
-          //   console.log(data.results);
-          //   console.log(data.chapters);
           setTopics(data.results);
           setChapters(data.chapters);
+          setLessons(data.lessons);
           setIsLoading(false);
         }
       } catch (error) {
@@ -51,22 +51,22 @@ export const VocabTopicSelection = () => {
     }
     getTopics();
   }, [selectedLevel]);
-  //   useEffect(() => {
-  //     setIsLoading(false);
-  //   }, [isLoading, topics, chapters]);
-  //   const Lesson = item => {
-  //     <List.Item title={item.name} key={item.id} id={item.id} />;
-  //   };
 
   const Chapter = props => {
-    const { data } = props;
-    console.log(data);
+    const { data, listOfLessons } = props;
     return (
       <List.Accordion
         title={`${data.name} - ${data.description}`}
         id={data.id}
         left={() => <List.Icon {...props} icon="folder" />}>
-        <List.Item title={data.name} />
+        {listOfLessons.map(lesson => {
+          return (
+            <List.Item
+              title={`${lesson.name} - ${lesson.meaning}`}
+              key={lesson.id}
+            />
+          );
+        })}
       </List.Accordion>
     );
   };
@@ -82,7 +82,16 @@ export const VocabTopicSelection = () => {
           {/**List of chapters goes here */}
           {listOfChapters &&
             listOfChapters.map(chapter => {
-              return <Chapter data={chapter} />;
+              const listOfLessons = lessons.filter(
+                itx => itx.chapter === chapter.id,
+              );
+              return (
+                <Chapter
+                  data={chapter}
+                  key={chapter.id}
+                  listOfLessons={listOfLessons}
+                />
+              );
             })}
         </View>
       </List.AccordionGroup>
@@ -90,24 +99,33 @@ export const VocabTopicSelection = () => {
   };
   return (
     <>
-      <Header title={`Học từ vựng ${selectedLevel}`} />
-      {!isLoading &&
-        topics.map(topic => {
-          return (
-            <Topic
-              item={topic}
-              listOfChapters={chapters.filter(item => item.topic === topic.id)}
-            />
-          );
-        })}
-      {!isLoading && topics.length === 0 && (
-        <View>
-          <Text>Không có chủ đề nào được tạo</Text>
-        </View>
-      )}
-      {isLoading && (
-        <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-      )}
+      <SafeAreaView style={{ flex: 1 }}>
+        <Header title={`Học từ vựng ${selectedLevel}`} />
+        <ScrollView>
+          {!isLoading &&
+            topics.map(topic => {
+              return (
+                <Topic
+                  key={topic.id}
+                  item={topic}
+                  listOfChapters={chapters.filter(
+                    item => item.topic === topic.id,
+                  )}
+                />
+              );
+            })}
+          {!isLoading && topics.length === 0 && (
+            <View>
+              <Text style={{ fontFamily: 'SF-Pro-Display-Regular' }}>
+                Chưa có chủ đề nào được tạo
+              </Text>
+            </View>
+          )}
+          {isLoading && (
+            <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+          )}
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 };

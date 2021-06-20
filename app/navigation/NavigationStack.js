@@ -5,15 +5,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import DeviceInfo from 'react-native-device-info';
 import { IconButton } from 'react-native-paper';
 import { navigationRef } from './NavigationService';
-import Login from 'app/screens/Login';
 import LoginScreen from 'app/screens/Auth/Login';
 import RegisterScreen from 'app/screens/Auth/Register';
 import AuthLoadingScreen from 'app/screens/Auth/Loading';
 import StartScreen from 'app/screens/Auth/Start';
 import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
 import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
+import { VocabTopicSelection } from '../screens/VocabTopicSelection';
 import Tabs from './Tabs';
-
 const Stack = createStackNavigator();
 
 function App() {
@@ -23,47 +22,13 @@ function App() {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-        {...stackProps}
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '##fff',
-            borderBottomWidth: StyleSheet.hairlineWidth,
-          },
-          headerTintColor: '#2c3e50',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          headerBackTitleVisible: false,
-        }}>
+      <Stack.Navigator {...stackProps}>
         <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
         {/* <Stack.Screen name="Login" component={Login} /> */}
         <Stack.Screen name="StartScreen" component={StartScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-        <Stack.Screen
-          name="Home"
-          component={Tabs}
-          options={{
-            headerLeft: null,
-            headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <IconButton
-                  icon="settings"
-                  color="#bdc3c7"
-                  size={20}
-                  onPress={() => {}}
-                />
-                <IconButton
-                  icon="bell"
-                  color="#bdc3c7"
-                  size={20}
-                  onPress={() => {}}
-                />
-              </View>
-            ),
-          }}
-        />
+        <Stack.Screen name="Home" component={Tabs} />
         <Stack.Screen
           name="VocabProgramGuideline"
           component={VocabProgramGuideline}
@@ -73,6 +38,10 @@ function App() {
           name="ChuHanProgramGuideline"
           component={ChuHanProgramGuideline}
           options={{ title: 'Thông tin chương trình học' }}
+        />
+        <Stack.Screen
+          name="VocabTopicSelection"
+          component={VocabTopicSelection}
         />
       </Stack.Navigator>
     </NavigationContainer>

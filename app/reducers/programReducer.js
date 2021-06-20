@@ -9,13 +9,17 @@ import { DATA } from 'app/screens/Programs/data';
 const initialState = {
   programs: DATA,
   selectedID: -1,
+  selectedLevel: '',
 };
 
 export const programReducer = createReducer(initialState, {
-  [types.PROGRAM_SELECTED](state, action) {
+  [types.LEVEL_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { selectedID, selectedLevel } = payload;
     return {
       ...state,
-      selectedID: action.selectedID,
+      selectedID: selectedID,
+      selectedLevel: selectedLevel,
     };
   },
 });

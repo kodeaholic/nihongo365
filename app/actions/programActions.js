@@ -3,9 +3,9 @@
  */
 import * as types from './types';
 
-export function programSelected(selectedID) {
+export function levelSelected(actionPayload) {
   return {
-    type: types.PROGRAM_SELECTED,
-    selectedID,
+    type: types.LEVEL_SELECTED,
+    actionPayload: actionPayload,
   };
 }

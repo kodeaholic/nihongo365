@@ -17,20 +17,6 @@ export default function Programs() {
     return moment(a.date).unix() - moment(b.date).unix();
   });
 
-  // Reduce data for SectionList
-  const groupedData = localData.reduce(
-    (accumulator, currentValue, currentIndex, array, key = currentValue.id) => {
-      const keyObjectPosition = accumulator.findIndex(item => item.key === key);
-      if (keyObjectPosition >= 0) {
-        accumulator[keyObjectPosition].data.push(currentValue);
-        return accumulator;
-      } else {
-        return accumulator.concat({ data: [currentValue], key: key });
-      }
-    },
-    [],
-  );
-
   return (
     <SafeAreaView style={styles.container}>
       <FlatList

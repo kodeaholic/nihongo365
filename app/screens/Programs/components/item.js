@@ -9,18 +9,18 @@ import DeviceInfo from 'react-native-device-info';
 import { random_rgba } from 'app/utils/random_rgba';
 import ProfileCard from '../../../components/profile-card';
 
-import * as programActions from 'app/actions/programActions';
+import * as programActions from '../../../actions/programActions';
 import { PROGRAM_IDS } from '../data';
+import { LEVEL } from '../../../constants/level';
 const Item = ({ item }) => {
   const { id, name, description, tags, avatar, program, available } = item;
   const navigation = useNavigation();
   const isTablet = DeviceInfo.isTablet();
 
   const dispatch = useDispatch();
+
   const onSelected = () => {
-    console.log(available);
     if (available) {
-      dispatch(programActions.programSelected(id));
       if (!isTablet) {
         switch (id) {
           case PROGRAM_IDS.TUVUNG:
@@ -57,15 +57,33 @@ const Item = ({ item }) => {
         <View style={styles.tags}>
           {tags.map((itx, i) => {
             const { labelColor, buttonColor } = random_rgba();
+            const onLevelButtonPressed = () => {
+              dispatch(
+                programActions.levelSelected({
+                  selectedID: id,
+                  selectedLevel: itx,
+                }),
+              );
+              switch (id) {
+                case PROGRAM_IDS.TUVUNG:
+                  navigation.navigate('VocabTopicSelection');
+                  break;
+                default:
+                  break;
+              }
+            };
             return (
               <Button
+                id={`level-${LEVEL[itx]}`}
                 key={i}
-                mode="contained"
-                disabled
                 compact
+                disabled={!available}
                 uppercase={false}
                 style={[styles.tag, { backgroundColor: buttonColor }]}
-                labelStyle={[styles.tagLabel, { color: labelColor }]}>
+                labelStyle={[styles.tagLabel, { color: labelColor }]}
+                onPress={() => {
+                  onLevelButtonPressed();
+                }}>
                 {itx}
               </Button>
             );

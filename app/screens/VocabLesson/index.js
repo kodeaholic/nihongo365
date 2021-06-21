@@ -124,7 +124,7 @@ export const VocabLesson = () => {
                 <Card style={styles.card}>
                   <Card.Content>
                     <View style={styles.parentView}>
-                    <View style={{ flex: 4 }}>
+                      <View style={{ flex: 4 }}>
                         <View style={styles.parentView}>
                           <View style={{ flex: 1 }}>
                             <Text>#{index + 1}</Text>

@@ -1,22 +1,32 @@
 import React from 'react';
-import { StyleSheet, BackHandler, Alert } from 'react-native';
+import { StyleSheet, BackHandler, Alert, ToastAndroid } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage';
 export const Header = props => {
-  const { title, subtitle, disableBackButton = false, customStyles } = props;
+  const confirmExit = text => {
+    Alert.alert('Thông báo', `${text}`, [
+      {
+        text: 'Hủy',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      { text: 'THOÁT', onPress: () => BackHandler.exitApp() },
+    ]);
+  };
+  const {
+    title,
+    subtitle,
+    disableBackButton = false,
+    customStyles,
+    enableLogoutButton = false,
+  } = props;
   const navigation = useNavigation();
   const _goBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
-      Alert.alert('Thông báo', 'Bạn muốn đóng ứng dụng?', [
-        {
-          text: 'Hủy',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        { text: 'THOÁT', onPress: () => BackHandler.exitApp() },
-      ]);
+      confirmExit('Bạn muốn thoát ứng dụng?');
     }
   };
   return (
@@ -30,6 +40,39 @@ export const Header = props => {
         subtitle={subtitle}
         subtitleStyle={styles.subTitle}
       />
+      {enableLogoutButton && (
+        <Appbar.Action
+          color="#fff"
+          icon="exit-to-app"
+          onPress={() => {
+            Alert.alert('Thông báo', 'Bạn muốn đăng xuất khỏi tài khoản?', [
+              {
+                text: 'Hủy',
+                onPress: () => null,
+                style: 'cancel',
+              },
+              {
+                text: 'ĐĂNG XUẤT',
+                onPress: () => {
+                  AsyncStorage.removeItem('user');
+                  AsyncStorage.removeItem('tokens');
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'StartScreen' }],
+                  });
+                  ToastAndroid.showWithGravityAndOffset(
+                    'Đăng xuất thành công',
+                    ToastAndroid.LONG,
+                    ToastAndroid.TOP,
+                    0,
+                    100,
+                  );
+                },
+              },
+            ]);
+          }}
+        />
+      )}
     </Appbar.Header>
   );
 };
@@ -42,4 +85,5 @@ const styles = StyleSheet.create({
   backButton: {},
   title: { color: '#fff', marginLeft: -4 },
   subTitle: { color: '#fff', marginLeft: -4, marginBottom: 5, fontSize: 15 },
+  action: { color: '#fff' },
 });

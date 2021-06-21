@@ -23,6 +23,7 @@ export default function Programs() {
         // disableBackButton={true}
         title={'Chương trình học Nihongo365'}
         customStyles={{ textAlign: 'center' }}
+        enableLogoutButton={true}
       />
       <FlatList
         style={styles.list}

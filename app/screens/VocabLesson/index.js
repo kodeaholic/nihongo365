@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
-import { Button, Text, Chip, Card, Divider } from 'react-native-paper';
+import { Button, Text, Chip, Card, Divider, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
 import { useSelector, useDispatch } from 'react-redux';
@@ -122,49 +122,58 @@ export const VocabLesson = () => {
               const normalExample = !htmlExample.includes('ruby');
               return (
                 <Card style={styles.card}>
-                  <Card.Content>
-                    <View style={styles.parentView}>
-                      <View style={{ flex: 4 }}>
-                        <View style={styles.parentView}>
-                          <View style={{ flex: 1 }}>
-                            <Text>#{index + 1}</Text>
-                            <Text>Play</Text>
-                          </View>
-                          <View style={{ flex: 2 }}>
-                            {normalVocab && (
-                              <Text style={{ fontSize: 20, color: '#000' }}>
-                                {vocab.vocab}
-                              </Text>
-                            )}
-                            {!normalVocab && (
-                              <HTML
-                                source={{ html: html }}
-                                tagsStyles={tagsStyles}
-                                style={{ fontSize: 20 }}
-                              />
-                            )}
-                            <Text>{vocab.vocabMeaning}</Text>
-                          </View>
+                  {/* <Card.Content> */}
+                  <Divider />
+                  <View style={styles.parentView}>
+                    <View
+                      style={{ flex: 4, borderRightWidth: 0.5, marginLeft: 5 }}>
+                      <View style={styles.parentView}>
+                        <View
+                          style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flex: 1,
+                          }}>
+                          <Badge style={{ marginRight: 3.5 }}>
+                            {index + 1}
+                          </Badge>
+                        </View>
+                        <View style={{ flex: 5, marginRight: 5, marginLeft: 5 }}>
+                          {normalVocab && (
+                            <Text style={{ fontSize: 20, color: '#000' }}>
+                              {vocab.vocab}
+                            </Text>
+                          )}
+                          {!normalVocab && (
+                            <HTML
+                              source={{ html: html }}
+                              tagsStyles={tagsStyles}
+                              style={{ fontSize: 20 }}
+                            />
+                          )}
+                          <Text>{vocab.vocabMeaning}</Text>
                         </View>
                       </View>
-                      <View style={{ flex: 5 }}>
-                        {normalExample && (
-                          <Text style={{ fontSize: 20, color: '#000' }}>
-                            {vocab.example}
-                          </Text>
-                        )}
-                        {!normalExample && (
-                          <HTML
-                            source={{ html: htmlExample }}
-                            tagsStyles={tagsStyles}
-                            style={{ fontSize: 20 }}
-                          />
-                        )}
-                        <Text>{vocab.exampleMeaning}</Text>
-                      </View>
                     </View>
-                    <Divider />
-                  </Card.Content>
+                    <View style={{ flex: 5, marginLeft: 5 }}>
+                      {normalExample && (
+                        <Text style={{ fontSize: 20, color: '#000' }}>
+                          {vocab.example}
+                        </Text>
+                      )}
+                      {!normalExample && (
+                        <HTML
+                          source={{ html: htmlExample }}
+                          tagsStyles={tagsStyles}
+                          style={{ fontSize: 20 }}
+                        />
+                      )}
+                      <Text>{vocab.exampleMeaning}</Text>
+                    </View>
+                  </View>
+                  <Divider />
+                  {/* </Card.Content> */}
                 </Card>
               );
             })}
@@ -210,5 +219,8 @@ const styles = StyleSheet.create({
   },
   childView: {
     flex: 1,
+  },
+  card: {
+    margin: 0,
   },
 });

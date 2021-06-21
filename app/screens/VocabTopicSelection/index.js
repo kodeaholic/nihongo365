@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Button, Text, Chip } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { List } from 'react-native-paper';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
+import * as programActions from '../../actions/programActions';
 export const VocabTopicSelection = () => {
   const [topics, setTopics] = useState([]);
   const [chapters, setChapters] = useState([]);
@@ -17,6 +18,7 @@ export const VocabTopicSelection = () => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const navigation = useNavigation();
   useEffect(() => {
     async function getTopics() {
       const headers = await authHeader();
@@ -54,16 +56,38 @@ export const VocabTopicSelection = () => {
 
   const Chapter = props => {
     const { data, listOfLessons } = props;
+    const dispatch = useDispatch();
     return (
       <List.Accordion
         title={`${data.name} - ${data.description}`}
         id={data.id}
         left={() => <List.Icon {...props} icon="folder" />}>
         {listOfLessons.map(lesson => {
+          const navigateToVocabLesson = () => {
+            const chapterName = data.name;
+            const id = lesson.id;
+            const name = lesson.meaning;
+            const chapterDescription = data.description;
+            const audioSrc = data.audioSrc;
+            dispatch(
+              programActions.vocabLessonSelected({
+                selectedVocabLesson: {
+                  id,
+                  chapterName,
+                  name,
+                  chapterDescription,
+                  audioSrc,
+                },
+              }),
+            );
+            navigation.navigate('VocabLesson');
+          };
           return (
             <List.Item
               title={`${lesson.name} - ${lesson.meaning}`}
               key={lesson.id}
+              titleEllipsizeMode="tail"
+              onPress={navigateToVocabLesson}
             />
           );
         })}

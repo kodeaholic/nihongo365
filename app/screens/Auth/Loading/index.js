@@ -1,11 +1,48 @@
 import React from 'react';
-import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  ToastAndroid,
+} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { apiConfig } from '../../../api/config/apiConfig';
+import { authHeader } from '../../../api/authHeader';
+import _ from 'lodash';
 class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
     this._bootstrapAsync();
   }
+
+  _apiTest = async () => {
+    let flag = true;
+    const headers = await authHeader();
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/cards`;
+    try {
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.code) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+        flag = false;
+      } else {
+        flag = true;
+      }
+    } catch (error) {
+      flag = false;
+    }
+    return flag;
+  };
 
   // Fetch the token from storage then navigate to our appropriate place
   _bootstrapAsync = async () => {
@@ -21,7 +58,13 @@ class AuthLoadingScreen extends React.Component {
       index: 0,
       routes: [{ name: 'StartScreen' }],
     };
-    const target = userToken ? navigateHome : navigateStartScreen;
+    let target;
+    let apiTest = await this._apiTest();
+    if (_.isEmpty(userToken)) {
+      target = navigateStartScreen;
+    } else {
+      target = apiTest ? navigateHome : navigateStartScreen;
+    }
     this.props.navigation.reset(target);
   };
 

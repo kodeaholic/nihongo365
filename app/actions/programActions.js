@@ -9,3 +9,10 @@ export function levelSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+
+export function vocabLessonSelected(actionPayload) {
+  return {
+    type: types.VOCAB_LESSON_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

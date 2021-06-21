@@ -10,6 +10,13 @@ const initialState = {
   programs: DATA,
   selectedID: -1,
   selectedLevel: '',
+  selectedVocabLesson: {
+    id: '',
+    name: '',
+    chapterName: '',
+    chapterDescription: '',
+    audioSrc: '',
+  },
 };
 
 export const programReducer = createReducer(initialState, {
@@ -20,6 +27,14 @@ export const programReducer = createReducer(initialState, {
       ...state,
       selectedID: selectedID,
       selectedLevel: selectedLevel,
+    };
+  },
+  [types.VOCAB_LESSON_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { selectedVocabLesson } = payload;
+    return {
+      ...state,
+      selectedVocabLesson: selectedVocabLesson,
     };
   },
 });

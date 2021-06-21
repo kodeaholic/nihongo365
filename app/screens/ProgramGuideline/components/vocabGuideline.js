@@ -41,7 +41,7 @@ function ProgramInfo({ theme }) {
               style={styles.section}
             />
             <Section
-              name="Những từ vựng đã học hãy cố gắng sử dụng để nói chuyện với người Nhật, nếu cách sử dụng không đúng thì người Nhật sẽ tự động sửa giúp mình."
+              name="Những từ đã học thì hãy cố gắng sử dụng vào hội thoại càng nhiều càng tốt."
               icon="check"
               color={colors.accent}
               style={styles.section}
@@ -71,7 +71,7 @@ function ProgramInfo({ theme }) {
               style={styles.section}
             />
           </View>
-          <AvatarSignature />
+          <AvatarSignature text={'Chúc bạn sớm nhớ nhanh chữ Hán!'} />
         </React.Fragment>
       </Card>
     </React.Fragment>

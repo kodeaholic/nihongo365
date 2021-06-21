@@ -2,10 +2,10 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Text } from 'react-native-paper';
 
-export function AvatarSignature() {
+export function AvatarSignature(props) {
   return (
     <View style={styles.bottomSignature}>
-      <Text style={styles.text}>Chúc bạn sớm nhớ nhanh chữ Hán!</Text>
+      <Text style={styles.text}>{props.text}</Text>
       <Avatar.Image
         size={86}
         style={{ marginTop: 0, marginBottom: 10, marginLeft: 10 }}

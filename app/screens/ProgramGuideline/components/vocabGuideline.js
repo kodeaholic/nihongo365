@@ -71,7 +71,7 @@ function ProgramInfo({ theme }) {
               style={styles.section}
             />
           </View>
-          <AvatarSignature text={'Chúc bạn sớm nhớ nhanh chữ Hán!'} />
+          <AvatarSignature text={'Chúc bạn sớm nhớ nhanh từ vựng!'} />
         </React.Fragment>
       </Card>
     </React.Fragment>

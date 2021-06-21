@@ -7,7 +7,7 @@ import moment from 'moment';
 
 import Item from './components/item';
 import styles from './styles';
-
+import { Header } from '../../components/commonHeader';
 export default function Programs() {
   const programs = useSelector(state => state.programReducer.programs);
 
@@ -19,16 +19,21 @@ export default function Programs() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Header
+        // disableBackButton={true}
+        title={'Chương trình học Nihongo365'}
+        customStyles={{ textAlign: 'center' }}
+      />
       <FlatList
         style={styles.list}
         data={localData}
         renderItem={({ item }) => <Item item={item} />}
         renderSectionHeader={({ section: { key } }) => <Title>{key}</Title>}
-        ListHeaderComponent={() => (
-          <Headline style={styles.headline}>
-            Chương trình học Nihongo365
-          </Headline>
-        )}
+        // ListHeaderComponent={() => (
+        //   <Headline style={styles.headline}>
+        //     Chương trình học Nihongo365
+        //   </Headline>
+        // )}
         stickySectionHeadersEnabled={false}
         showsVerticalScrollIndicator={false}
         keyExtractor={item => item.id}

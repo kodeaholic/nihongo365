@@ -1,14 +1,29 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, BackHandler, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar } from 'react-native-paper';
 export const Header = props => {
-  const { title, subtitle } = props;
+  const { title, subtitle, disableBackButton = false, customStyles } = props;
   const navigation = useNavigation();
-  const _goBack = () => navigation.goBack();
+  const _goBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      Alert.alert('Thông báo', 'Bạn muốn đóng ứng dụng?', [
+        {
+          text: 'Hủy',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        { text: 'THOÁT', onPress: () => BackHandler.exitApp() },
+      ]);
+    }
+  };
   return (
-    <Appbar.Header style={styles.header}>
-      <Appbar.BackAction color="#fff" onPress={_goBack} />
+    <Appbar.Header style={[styles.header, customStyles]}>
+      {!disableBackButton && (
+        <Appbar.BackAction color="#fff" onPress={_goBack} />
+      )}
       <Appbar.Content
         titleStyle={styles.title}
         title={title}

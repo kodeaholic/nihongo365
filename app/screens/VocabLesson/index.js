@@ -10,27 +10,9 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
-import { furiganaHTML } from '../../helpers/furigana';
+import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
 import HTML from 'react-native-render-html';
-
-const tagsStyles = {
-  // ruby: {
-  //   display: 'inline-flex',
-  //   flexDirection: 'column-reverse',
-  // },
-  // rb: { display: 'inline', lineHeight: 1 },
-  // rt: {
-  //   display: 'inline',
-  //   lineHeight: 1,
-  // },
-  ruby: {
-    fontSize: 20,
-  },
-  rb: { fontSize: 20 },
-  rt: {
-    fontSize: 10,
-  },
-};
+import { WebView } from 'react-native-webview';
 
 export const VocabLesson = () => {
   const [loading, setLoading] = useState(false);
@@ -116,12 +98,14 @@ export const VocabLesson = () => {
           </Card> */}
           {!loading &&
             vocabs.map((vocab, index) => {
-              const html = furiganaHTML(vocab.vocab);
-              const htmlExample = furiganaHTML(vocab.example);
+              let html = furiganaHTML(vocab.vocab);
+              let htmlExample = furiganaHTML(vocab.example);
               const normalVocab = !html.includes('ruby');
               const normalExample = !htmlExample.includes('ruby');
+              html = rubyHtmlTransform(html, '#f00');
+              htmlExample = rubyHtmlTransform(htmlExample);
               return (
-                <Card style={styles.card}>
+                <Card style={styles.card} key={vocab.id}>
                   {/* <Card.Content> */}
                   <Divider />
                   <View style={styles.parentView}>
@@ -139,36 +123,20 @@ export const VocabLesson = () => {
                             {index + 1}
                           </Badge>
                         </View>
-                        <View style={{ flex: 5, marginRight: 5, marginLeft: 5 }}>
+                        <View
+                          style={{ flex: 5, marginRight: 5, marginLeft: 5 }}>
                           {normalVocab && (
-                            <Text style={{ fontSize: 20, color: '#000' }}>
+                            <Text style={{ fontSize: 20, color: '#f00' }}>
                               {vocab.vocab}
                             </Text>
                           )}
-                          {!normalVocab && (
-                            <HTML
-                              source={{ html: html }}
-                              tagsStyles={tagsStyles}
-                              style={{ fontSize: 20 }}
-                            />
-                          )}
+                          {!normalVocab && <HTML source={{ html: html }} />}
                           <Text>{vocab.vocabMeaning}</Text>
                         </View>
                       </View>
                     </View>
                     <View style={{ flex: 5, marginLeft: 5 }}>
-                      {normalExample && (
-                        <Text style={{ fontSize: 20, color: '#000' }}>
-                          {vocab.example}
-                        </Text>
-                      )}
-                      {!normalExample && (
-                        <HTML
-                          source={{ html: htmlExample }}
-                          tagsStyles={tagsStyles}
-                          style={{ fontSize: 20 }}
-                        />
-                      )}
+                      <HTML source={{ html: htmlExample }} />
                       <Text>{vocab.exampleMeaning}</Text>
                     </View>
                   </View>

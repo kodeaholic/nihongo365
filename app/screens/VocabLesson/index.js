@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid, Slider } from 'react-native';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { Button, Text, Chip, Card, Divider, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
@@ -60,41 +60,16 @@ export const VocabLesson = () => {
   }, [selectedVocabLesson.id]);
   return (
     <>
-      <SafeAreaView style={{ flex: 1, marginBottom: 40 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* <View style={{ flex: 0.15 }}> */}
         <Header
           title={`Học từ vựng ${selectedLevel}`}
           subtitle={`${selectedVocabLesson.chapterName} - ${
             selectedVocabLesson.chapterDescription
           } - ${selectedVocabLesson.name}`}
         />
-        <ScrollView>
-          {/* <View>
-            <Text style={styles.text}>{`Từ vựng ${selectedLevel} - ${
-              selectedVocabLesson.chapterName
-            } (${selectedVocabLesson.chapterDescription})`}</Text>
-            <Text style={styles.text}>{`Bài『 ${
-              selectedVocabLesson.name
-            } 』`}</Text>
-          </View> */}
-          {/* <Card style={styles.card}>
-            <Card.Content>
-              <View style={styles.parentView}>
-                <View style={{ flex: 4 }}>
-                  <View style={styles.parentView}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontWeight: 'bold' }}>STT</Text>
-                    </View>
-                    <View style={{ flex: 2 }}>
-                      <Text style={{ fontWeight: 'bold' }}>Từ vựng</Text>
-                    </View>
-                  </View>
-                </View>
-                <View style={{ flex: 5 }}>
-                  <Text style={{ fontWeight: 'bold' }}>Ví dụ</Text>
-                </View>
-              </View>
-            </Card.Content>
-          </Card> */}
+        {/* </View> */}
+        <ScrollView style={{ flex: 0.65, marginBottom: 50 }}>
           {!loading &&
             vocabs.map((vocab, index) => {
               let html = furiganaHTML(vocab.vocab);
@@ -156,9 +131,18 @@ export const VocabLesson = () => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           )}
         </ScrollView>
-        {!loading && selectedVocabLesson.audioSrc && (
-          <AudioPlayer src={selectedVocabLesson.audioSrc} />
-        )}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 50,
+          }}>
+          {!loading && selectedVocabLesson.audioSrc && (
+            <AudioPlayer src={selectedVocabLesson.audioSrc} />
+          )}
+        </View>
       </SafeAreaView>
     </>
   );
@@ -202,6 +186,6 @@ const styles = StyleSheet.create({
   },
   card: {
     margin: 0,
-    backgroundColor: '#e5dfd7',
+    backgroundColor: '#dbd4c8',
   },
 });

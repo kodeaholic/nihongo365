@@ -76,7 +76,7 @@ function ChuHanProgramGuideline({ theme }) {
                 program={program}
                 title="Học chữ Hán"
               />
-              <VocabGuideline />
+              <ChuHanGuideline />
               {/* <Text style={[styles.title, styles.head]}>Chứng chỉ</Text>
 
               <View style={styles.documents}>

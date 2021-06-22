@@ -4,9 +4,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#f0f6f9',
+    backgroundColor: '#e5dfd7',
   },
-  list: { marginHorizontal: 20 },
+  list: { marginHorizontal: 20, backgroundColor: '#e5dfd7' },
   headline: {
     marginBottom: 12,
     marginTop: 24,

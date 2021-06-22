@@ -56,6 +56,9 @@ target 'MediBuddy' do
 
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
+
+  pod 'RNSound', :path => '../node_modules/react-native-sound'
+
   target 'MediBuddyTests' do
     inherit! :complete
     # Pods for testing

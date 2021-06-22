@@ -1,10 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { View, StyleSheet, ToastAndroid, Slider } from 'react-native';
 import { Button, Text, Chip, Card, Divider, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
 import { useSelector, useDispatch } from 'react-redux';
-import { List } from 'react-native-paper';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
@@ -12,8 +12,7 @@ import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
 import HTML from 'react-native-render-html';
-import { WebView } from 'react-native-webview';
-
+import { AudioPlayer } from '../../components/audio-player';
 export const VocabLesson = () => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
@@ -61,7 +60,7 @@ export const VocabLesson = () => {
   }, [selectedVocabLesson.id]);
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, marginBottom: 40 }}>
         <Header
           title={`Học từ vựng ${selectedLevel}`}
           subtitle={`${selectedVocabLesson.chapterName} - ${
@@ -116,17 +115,25 @@ export const VocabLesson = () => {
                           style={{
                             flex: 1,
                             justifyContent: 'center',
-                            alignItems: 'center',
-                            flex: 1,
                           }}>
-                          <Badge style={{ marginRight: 3.5 }}>
+                          <Badge
+                            style={{
+                              marginRight: 3.5,
+                              backgroundColor: '#fff',
+                              color: '#000',
+                              borderWidth: 0.5,
+                            }}>
                             {index + 1}
                           </Badge>
                         </View>
                         <View
-                          style={{ flex: 5, marginRight: 5, marginLeft: 5 }}>
+                          style={{
+                            flex: 5,
+                            marginRight: 5,
+                            marginLeft: 5,
+                          }}>
                           {normalVocab && (
-                            <Text style={{ fontSize: 20, color: '#f00' }}>
+                            <Text style={{ fontSize: 16, color: '#f00' }}>
                               {vocab.vocab}
                             </Text>
                           )}
@@ -149,6 +156,9 @@ export const VocabLesson = () => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           )}
         </ScrollView>
+        {!loading && selectedVocabLesson.audioSrc && (
+          <AudioPlayer src={selectedVocabLesson.audioSrc} />
+        )}
       </SafeAreaView>
     </>
   );
@@ -184,11 +194,14 @@ const styles = StyleSheet.create({
   },
   parentView: {
     flexDirection: 'row',
+    alignItems: 'stretch',
+    justifyContent: 'center',
   },
   childView: {
     flex: 1,
   },
   card: {
     margin: 0,
+    backgroundColor: '#e5dfd7',
   },
 });

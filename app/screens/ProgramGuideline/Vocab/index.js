@@ -69,7 +69,7 @@ function VocabProgramGuideline({ theme }) {
           {selectedID !== -1 && (
             <React.Fragment>
               <Text style={[styles.title, styles.head]}>
-                Chương trình học Nihongo
+                Chương trình học Nihongo365
               </Text>
               <CommonProgramInfo
                 theme={theme}

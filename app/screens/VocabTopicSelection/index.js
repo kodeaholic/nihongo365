@@ -68,7 +68,7 @@ export const VocabTopicSelection = () => {
             const id = lesson.id;
             const name = lesson.meaning;
             const chapterDescription = data.description;
-            const audioSrc = data.audioSrc;
+            const audioSrc = lesson.audioSrc;
             dispatch(
               programActions.vocabLessonSelected({
                 selectedVocabLesson: {
@@ -125,7 +125,7 @@ export const VocabTopicSelection = () => {
     <>
       <SafeAreaView style={{ flex: 1 }}>
         <Header title={`Học từ vựng ${selectedLevel}`} />
-        <ScrollView>
+        <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             topics.map(topic => {
               return (

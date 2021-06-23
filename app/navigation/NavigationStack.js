@@ -12,6 +12,7 @@ import StartScreen from 'app/screens/Auth/Start';
 import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
 import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
 import { VocabTopicSelection } from '../screens/VocabTopicSelection';
+import { ChuHanBoardSelection } from '../screens/ChuHanBoardSelection';
 import { VocabLesson } from '../screens/VocabLesson';
 import Tabs from './Tabs';
 const Stack = createStackNavigator();
@@ -45,6 +46,10 @@ function App() {
           component={VocabTopicSelection}
         />
         <Stack.Screen name="VocabLesson" component={VocabLesson} />
+        <Stack.Screen
+          name="ChuHanBoardSelection"
+          component={ChuHanBoardSelection}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

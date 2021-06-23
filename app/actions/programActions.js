@@ -16,3 +16,10 @@ export function vocabLessonSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+
+export function chuHanLessonSelected(actionPayload) {
+  return {
+    type: types.CHUHAN_LESSON_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

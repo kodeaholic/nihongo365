@@ -37,4 +37,12 @@ export const programReducer = createReducer(initialState, {
       selectedVocabLesson: selectedVocabLesson,
     };
   },
+  [types.CHUHAN_LESSON_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { selectedChuHanLesson } = payload;
+    return {
+      ...state,
+      selectedChuHanLesson: selectedChuHanLesson,
+    };
+  },
 });

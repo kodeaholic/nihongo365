@@ -68,6 +68,9 @@ const Item = ({ item }) => {
                 case PROGRAM_IDS.TUVUNG:
                   navigation.navigate('VocabTopicSelection');
                   break;
+                case PROGRAM_IDS.CHUHAN:
+                  navigation.navigate('ChuHanBoardSelection');
+                  break;
                 default:
                   break;
               }

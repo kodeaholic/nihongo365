@@ -131,6 +131,7 @@ export const AudioPlayer = props => {
             maximumValue={duration}
             step={1}
             thumbTouchSize={{ width: 40, height: 40 }}
+            minimumTrackTintColor="#5cdb5e"
           />
           <Text style={{ flex: 0.2, textAlign: 'center' }}>
             {getMMSSTimeString(duration + '')}

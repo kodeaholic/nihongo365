@@ -140,7 +140,11 @@ export const VocabTopicSelection = () => {
             })}
           {!isLoading && topics.length === 0 && (
             <View>
-              <Text style={{ fontFamily: 'SF-Pro-Display-Regular' }}>
+              <Text
+                style={{
+                  fontFamily: 'SF-Pro-Display-Regular',
+                  textAlign: 'center',
+                }}>
                 Chưa có chủ đề nào được tạo
               </Text>
             </View>

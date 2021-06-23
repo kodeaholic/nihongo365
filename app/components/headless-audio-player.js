@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { AppState } from 'react-native';
+import { AppState, ActivityIndicator } from 'react-native';
 import { StyleSheet, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'lodash';
@@ -8,7 +8,7 @@ var Sound = require('react-native-sound');
 
 export const HeadlessAudioPlayer = props => {
   const { src, size = 20 } = props;
-  const [playable, setPlayable] = useState(false);
+  //   const [playable, setPlayable] = useState(false);
   const [loading, setLoading] = useState(true);
   let [player, setPlayer] = useState(null);
   const [playing, setPlaying] = useState(false);
@@ -30,69 +30,94 @@ export const HeadlessAudioPlayer = props => {
   };
 
   useEffect(() => {
-    const handleAppStateChange = currentAppState => {
-      if (currentAppState === 'background' || currentAppState === 'inactive') {
-        if (player && player.isPlaying()) {
-          pause();
+    if (!_.isEmpty(src)) {
+      const handleAppStateChange = currentAppState => {
+        if (
+          currentAppState === 'background' ||
+          currentAppState === 'inactive'
+        ) {
+          if (player && player.isPlaying()) {
+            pause();
+          }
         }
-      }
-    };
-    AppState.addEventListener('change', handleAppStateChange);
+      };
+      AppState.addEventListener('change', handleAppStateChange);
+    }
   });
 
   /** Load the file */
   useEffect(() => {
-    if (!player) {
-      // Sound.setCategory('Playback');
-      let soundPlayer;
-      try {
-        soundPlayer = new Sound(src, null, error => {
-          if (error) {
-            setPlayable(false);
-            setPlayer({ player: false });
-            console.log(src);
-            console.log(error);
-          } else {
-            setPlayable(true);
-            setPlayer(soundPlayer);
-            setLoading(false);
-          }
-        });
-      } catch (e) {
-        setPlayer({ player: false });
+    if (!_.isEmpty(src)) {
+      if (!player) {
+        // Sound.setCategory('Playback');
+        let soundPlayer;
+        try {
+          soundPlayer = new Sound(src, null, error => {
+            if (error) {
+              //   setPlayable(false);
+              setPlayer({ player: false });
+            }
+          });
+          //   setPlayable(true);
+          setPlayer(soundPlayer);
+          setLoading(false);
+        } catch (e) {
+          setPlayer({ player: false });
+          setLoading(false);
+        }
       }
-    } else {
-      setPlayable(false);
     }
   }, [src, player]);
-
-  if (loading && !player) {
-    // return (
-    //   <View style={styles.container}>
-    //     <ActivityIndicator size="small" style={{ marginTop: 10 }} />
-    //   </View>
-    // );
-    return <></>;
+  if (_.isEmpty(src)) {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <Icon name="play-circle-outline" size={size} color="#808080" />
+      </View>
+    );
+  } else if (loading && !player) {
+    return <ActivityIndicator size="small" style={{ marginTop: 10 }} />;
   } else {
+    // console.log('LOADING: ', loading);
+    // console.log(playable);
+    // console.log(player);
     return (
       <>
-        {playable && (
+        {true && (
           <>
             {!playing && (
-              <Icon
-                name="play-circle-outline"
-                size={size}
-                color="#5cdb5e"
-                onPress={play}
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="play-circle-outline"
+                  size={size}
+                  color="#5cdb5e"
+                  onPress={play}
+                />
+              </View>
             )}
             {playing && (
-              <Icon
-                name="pause-circle-outline"
-                size={size}
-                color="#5cdb5e"
-                onPress={pause}
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  name="pause-circle-outline"
+                  size={size}
+                  color="#5cdb5e"
+                  onPress={pause}
+                />
+              </View>
             )}
           </>
         )}

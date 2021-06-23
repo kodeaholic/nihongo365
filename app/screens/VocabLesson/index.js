@@ -14,6 +14,7 @@ import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
 import HTML from 'react-native-render-html';
 import { AudioPlayer } from '../../components/audio-player';
 import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
+import _ from 'lodash';
 export const VocabLesson = () => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
@@ -124,8 +125,9 @@ export const VocabLesson = () => {
                           flex: 1,
                           justifyContent: 'center',
                           borderRightWidth: 0.5,
+                          alignItems: 'center',
                         }}>
-                        <HeadlessAudioPlayer src={vocab.audioSrc} size={35} />
+                        <HeadlessAudioPlayer src={vocab.audioSrc} size={20} />
                       </View>
                       <View style={{ flex: 8, paddingLeft: 5 }}>
                         <HTML source={{ html: htmlExample }} />

@@ -69,7 +69,7 @@ export const VocabLesson = () => {
           } - ${selectedVocabLesson.name}`}
         />
         {/* </View> */}
-        <ScrollView style={{ flex: 0.65, marginBottom: 50 }}>
+        <ScrollView style={{ flex: 0.65, marginBottom: 60 }}>
           {!loading &&
             vocabs.map((vocab, index) => {
               let html = furiganaHTML(vocab.vocab);
@@ -137,10 +137,15 @@ export const VocabLesson = () => {
             bottom: 0,
             left: 0,
             right: 0,
-            height: 50,
+            height: 60,
           }}>
           {!loading && selectedVocabLesson.audioSrc && (
             <AudioPlayer src={selectedVocabLesson.audioSrc} />
+          )}
+          {!loading && !selectedVocabLesson.audioSrc && (
+            <Text style={{ textAlign: 'center', marginTop: 10 }}>
+              Bài học không có file audio
+            </Text>
           )}
         </View>
       </SafeAreaView>

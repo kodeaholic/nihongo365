@@ -16,17 +16,30 @@ export const AudioPlayer = props => {
   let [player, setPlayer] = useState(null);
   const [playing, setPlaying] = useState(false);
 
+  /** for timer */
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    let interval = null;
+    if (playing) {
+      interval = setInterval(() => {
+        setSeconds(time => time + 1);
+      }, 1000);
+    } else if (!playing) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [playing, seconds]);
+
   const play = () => {
+    setPlaying(true);
     player.play(success => {
       if (success) {
-        // console.log('Finished!');
         setPlaying(false);
         player.setCurrentTime(0);
-        setCurrent(0);
         pause();
+        setSeconds(0);
       }
     });
-    setPlaying(true);
   };
   const stop = () => {
     player.stop();
@@ -98,22 +111,26 @@ export const AudioPlayer = props => {
     return (
       <View style={styles.container}>
         <View
-          style={{ height: 15, flexDirection: 'row', alignItems: 'center' }}>
+          style={{
+            height: 20,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
           <Text style={{ flex: 0.2, textAlign: 'center' }}>
-            {getMMSSTimeString(current + '')}
+            {getMMSSTimeString(seconds + '')}
           </Text>
           <Slider
             style={styles.slider}
             thumbTintColor="#5cdb5e"
-            value={current}
+            value={seconds}
             onValueChange={value => {
-              setCurrent(value);
+              setSeconds(value);
               player.setCurrentTime(value);
             }}
             minimumValue={0}
             maximumValue={duration}
             step={1}
-            thumbTouchSize={{ width: 50, height: 50 }}
+            thumbTouchSize={{ width: 40, height: 40 }}
           />
           <Text style={{ flex: 0.2, textAlign: 'center' }}>
             {getMMSSTimeString(duration + '')}
@@ -130,8 +147,22 @@ export const AudioPlayer = props => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                <Icon name="play-circle-outline" size={35} color="#5cdb5e" />
-                <Icon name="pause-circle-outline" size={35} color="#5cdb5e" />
+                {!playing && (
+                  <Icon
+                    name="play-circle-outline"
+                    size={35}
+                    color="#5cdb5e"
+                    onPress={play}
+                  />
+                )}
+                {playing && (
+                  <Icon
+                    name="pause-circle-outline"
+                    size={35}
+                    color="#5cdb5e"
+                    onPress={pause}
+                  />
+                )}
               </View>
             </>
           )}
@@ -143,17 +174,21 @@ export const AudioPlayer = props => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 5,
+    height: 60,
+    paddingTop: 2,
+    paddingBottom: 5,
+    marginVertical: 0,
   },
   slider: {
     flex: 1,
-    marginVertical: 5,
+    // marginVertical: 5,
     marginHorizontal: 20,
   },
   button: {
-    height: 25,
+    height: 35,
     flexDirection: 'row',
     alignItems: 'stretch',
     justifyContent: 'center',
+    marginTop: 0,
   },
 });

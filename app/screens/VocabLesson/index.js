@@ -32,7 +32,7 @@ export const VocabLesson = () => {
       };
       let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/vocabs?lesson=${
         selectedVocabLesson.id
-      }`;
+      }&limit=100`;
       try {
         setLoading(true);
         const response = await fetch(url, requestOptions);

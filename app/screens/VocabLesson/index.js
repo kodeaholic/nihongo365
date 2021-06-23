@@ -13,6 +13,7 @@ import * as programActions from '../../actions/programActions';
 import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
 import HTML from 'react-native-render-html';
 import { AudioPlayer } from '../../components/audio-player';
+import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
 export const VocabLesson = () => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
@@ -84,7 +85,7 @@ export const VocabLesson = () => {
                   <Divider />
                   <View style={styles.parentView}>
                     <View
-                      style={{ flex: 4, borderRightWidth: 0.5, marginLeft: 5 }}>
+                      style={{ flex: 3, borderRightWidth: 0.5, marginLeft: 5 }}>
                       <View style={styles.parentView}>
                         <View
                           style={{
@@ -117,9 +118,19 @@ export const VocabLesson = () => {
                         </View>
                       </View>
                     </View>
-                    <View style={{ flex: 5, marginLeft: 5 }}>
-                      <HTML source={{ html: htmlExample }} />
-                      <Text>{vocab.exampleMeaning}</Text>
+                    <View style={{ flex: 5, flexDirection: 'row' }}>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: 'center',
+                          borderRightWidth: 0.5,
+                        }}>
+                        <HeadlessAudioPlayer src={vocab.audioSrc} size={35} />
+                      </View>
+                      <View style={{ flex: 8, paddingLeft: 5 }}>
+                        <HTML source={{ html: htmlExample }} />
+                        <Text>{vocab.exampleMeaning}</Text>
+                      </View>
                     </View>
                   </View>
                   <Divider />
@@ -128,7 +139,9 @@ export const VocabLesson = () => {
               );
             })}
           {loading && (
-            <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+            <>
+              <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+            </>
           )}
         </ScrollView>
         <View
@@ -192,5 +205,6 @@ const styles = StyleSheet.create({
   card: {
     margin: 0,
     backgroundColor: '#dbd4c8',
+    flex: 1,
   },
 });

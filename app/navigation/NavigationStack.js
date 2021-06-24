@@ -14,6 +14,8 @@ import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
 import { VocabTopicSelection } from '../screens/VocabTopicSelection';
 import { ChuHanBoardSelection } from '../screens/ChuHanBoardSelection';
 import { VocabLesson } from '../screens/VocabLesson';
+import { ChuHanLesson } from '../screens/ChuHanLesson';
+import { ChuHanView } from '../screens/ChuHanLesson/webview';
 import Tabs from './Tabs';
 const Stack = createStackNavigator();
 
@@ -50,6 +52,8 @@ function App() {
           name="ChuHanBoardSelection"
           component={ChuHanBoardSelection}
         />
+        <Stack.Screen name="ChuHanLesson" component={ChuHanLesson} />
+        <Stack.Screen name="ChuHanView" component={ChuHanView} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -27,7 +27,7 @@ export const ChuHanBoardSelection = () => {
       };
       let url = `${apiConfig.baseUrl}${
         apiConfig.apiEndpoint
-      }/boards?level=${selectedLevel}&limit=100`;
+      }/boards?level=${selectedLevel}&limit=100&populate=cards`;
       try {
         setIsLoading(true);
         const response = await fetch(url, requestOptions);
@@ -59,11 +59,13 @@ export const ChuHanBoardSelection = () => {
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             boards.map(board => {
-              {/* const data = {
+              {
+                /* const data = {
                 id: board.id,
                 name: board.title,
                 description: board.description,
-              }; */}
+              }; */
+              }
               const navigateToChuHanLesson = () => {
                 dispatch(
                   programActions.chuHanLessonSelected({
@@ -72,9 +74,7 @@ export const ChuHanBoardSelection = () => {
                     },
                   }),
                 );
-                {
-                  /* navigation.navigate('ChuHanLesson'); */
-                }
+                navigation.navigate('ChuHanLesson');
               };
               return (
                 <List.Item

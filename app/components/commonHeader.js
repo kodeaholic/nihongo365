@@ -34,12 +34,15 @@ export const Header = props => {
       {!disableBackButton && (
         <Appbar.BackAction color="#fff" onPress={_goBack} />
       )}
-      <Appbar.Content
-        titleStyle={styles.title}
-        title={title}
-        subtitle={subtitle}
-        subtitleStyle={styles.subTitle}
-      />
+      {subtitle && (
+        <Appbar.Content
+          titleStyle={styles.title}
+          title={title}
+          subtitle={subtitle}
+          subtitleStyle={styles.subTitle}
+        />
+      )}
+      {!subtitle && <Appbar.Content titleStyle={styles.title} title={title} />}
       {enableLogoutButton && (
         <Appbar.Action
           color="#fff"

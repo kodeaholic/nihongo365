@@ -1,7 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Text, Card, Divider, Badge } from 'react-native-paper';
+import {
+  Button,
+  Text,
+  Card,
+  Divider,
+  Badge,
+  RadioButton,
+} from 'react-native-paper';
 import { Header } from '../../components/commonHeader';
 import { useSelector } from 'react-redux';
 import { SafeAreaView, ScrollView } from 'react-native';
@@ -20,7 +27,15 @@ export const ChuHanLesson = ({ navigation }) => {
   const [board, setBoard] = useState(selectedChuHanLesson.board);
   const [loading, setLoading] = useState(true);
   const [cards, setCards] = useState(selectedChuHanLesson.board.cards);
-  const [quizes, setQuizes] = useState(selectedChuHanLesson.board.cards);
+  const [quizes, setQuizes] = useState(selectedChuHanLesson.board.quiz);
+  const [value, setValue] = useState({});
+  const [disabled, setDisabled] = useState({});
+  const [answer, setAnswer] = useState({});
+  const [count, setCount] = useState(0);
+  const [answered, setAnswered] = useState(0);
+  const trueColor = '#5cdb5e';
+  const falseColor = '#f00';
+  const normalColor = '';
   useEffect(() => {
     if (selectedChuHanLesson) {
       setLoading(false);
@@ -138,6 +153,136 @@ export const ChuHanLesson = ({ navigation }) => {
                     </Card>
                   );
                 })}
+              {quizes && quizes.length > 0 && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: 22,
+                      textAlign: 'center',
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                    }}>
+                    Bài tập củng cố
+                  </Text>
+                  {quizes.map((quiz, index) => {
+                    return (
+                      <Card style={styles.card} key={quiz.id}>
+                        {/* <Card.Content> */}
+                        <Divider />
+                        <View style={styles.parentView}>
+                          <View
+                            style={{
+                              paddingTop: 10,
+                              flex: 0.6,
+                              justifyContent: 'flex-start',
+                              borderRightWidth: 0.5,
+                            }}>
+                            <Badge
+                              style={{
+                                marginRight: 3.5,
+                                backgroundColor: '#fff',
+                                color: '#000',
+                                borderWidth: 0.5,
+                              }}>
+                              {index + 1}
+                            </Badge>
+                          </View>
+                          <View
+                            style={{
+                              flex: 3,
+                              borderRightWidth: 0.5,
+                              marginLeft: 5,
+                            }}>
+                            <View style={styles.parentView}>
+                              <View
+                                style={{
+                                  flex: 5,
+                                  marginRight: 5,
+                                  marginLeft: 5,
+                                }}>
+                                <Text style={{ fontSize: 16 }}>
+                                  {quiz.question}
+                                </Text>
+                              </View>
+                            </View>
+                          </View>
+                          <View
+                            style={{
+                              paddingTop: 0,
+                              marginLeft: 5,
+                              flex: 5,
+                              flexDirection: 'column',
+                            }}>
+                            <RadioButton.Group
+                              style={{ marginTop: 0 }}
+                              onValueChange={val => {
+                                let copy = { ...value };
+                                copy['' + index] = val;
+                                setValue(copy);
+                                let clone = { ...disabled };
+                                clone['' + index] = true;
+                                setDisabled(clone);
+                                let dup = { ...answer };
+                                dup['' + index] = quiz.answer;
+                                setAnswer(dup);
+                                if (val === quiz.answer) {
+                                  setCount(count + 1);
+                                }
+                                setAnswered(answered + 1);
+                              }}
+                              value={value['' + index]}>
+                              <RadioButton.Item
+                                label={`A. ${quiz.A}`}
+                                value="A"
+                                disabled={disabled['' + index]}
+                              />
+                              <RadioButton.Item
+                                label={`B. ${quiz.B}`}
+                                value="B"
+                                disabled={disabled['' + index]}
+                              />
+                              <RadioButton.Item
+                                label={`C. ${quiz.C}`}
+                                value="C"
+                                disabled={disabled['' + index]}
+                              />
+                              <RadioButton.Item
+                                label={`D. ${quiz.D}`}
+                                value="D"
+                                disabled={disabled['' + index]}
+                              />
+                              {value['' + index] && (
+                                <Text
+                                  style={{
+                                    color:
+                                      value['' + index] === quiz.answer
+                                        ? trueColor
+                                        : falseColor,
+                                    textAlign: 'left',
+                                    fontSize: 16,
+                                    marginLeft: 17,
+                                  }}>{`Đáp án đúng là ${quiz.answer}`}</Text>
+                              )}
+                            </RadioButton.Group>
+                          </View>
+                        </View>
+                        <Divider />
+                        {/* </Card.Content> */}
+                      </Card>
+                    );
+                  })}
+                  <Text
+                    style={{
+                      height: 40,
+                      marginTop: 8,
+                      fontSize: 18,
+                      textAlign: 'center',
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                    }}>
+                    Đã trả lời {`${answered}/${quizes.length}`} câu. Đúng{' '}
+                    {`${count}/${quizes.length}`} câu
+                  </Text>
+                </>
+              )}
             </>
           )}
         </ScrollView>

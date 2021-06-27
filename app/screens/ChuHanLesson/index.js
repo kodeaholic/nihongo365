@@ -260,7 +260,11 @@ export const ChuHanLesson = ({ navigation }) => {
                                     textAlign: 'left',
                                     fontSize: 16,
                                     marginLeft: 17,
-                                  }}>{`Đáp án đúng là ${quiz.answer}`}</Text>
+                                  }}>{`${
+                                  value['' + index] === quiz.answer
+                                    ? 'Ｘ'
+                                    : 'Ｏ'
+                                }. ${quiz.answer}`}</Text>
                               )}
                             </RadioButton.Group>
                           </View>
@@ -270,22 +274,24 @@ export const ChuHanLesson = ({ navigation }) => {
                       </Card>
                     );
                   })}
-                  <Text
-                    style={{
-                      height: 40,
-                      marginTop: 8,
-                      fontSize: 18,
-                      textAlign: 'center',
-                      fontFamily: 'SF-Pro-Detail-Regular',
-                    }}>
-                    Đã trả lời {`${answered}/${quizes.length}`} câu. Đúng{' '}
-                    {`${count}/${quizes.length}`} câu
-                  </Text>
                 </>
               )}
             </>
           )}
         </ScrollView>
+        {quizes.length > 0 && (
+          <Text
+            style={{
+              height: 40,
+              marginTop: 8,
+              fontSize: 18,
+              textAlign: 'center',
+              fontFamily: 'SF-Pro-Detail-Regular',
+            }}>
+            Đã trả lời {`${answered}/${quizes.length}`} câu. Đúng{' '}
+            {`${count}/${quizes.length}`} câu
+          </Text>
+        )}
       </SafeAreaView>
     </>
   );

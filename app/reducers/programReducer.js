@@ -45,4 +45,12 @@ export const programReducer = createReducer(initialState, {
       selectedChuHanLesson: selectedChuHanLesson,
     };
   },
+  [types.LISTENING_LESSON_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { selectedListeningLesson } = payload;
+    return {
+      ...state,
+      selectedListeningLesson: selectedListeningLesson,
+    };
+  },
 });

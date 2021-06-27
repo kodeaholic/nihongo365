@@ -41,7 +41,7 @@ export const ListeningLessonSelection = () => {
             100,
           );
         } else {
-          console.log(data.results);
+          //   console.log(data.results);
           setBoards(data.results);
           console.log(data.results);
           setIsLoading(false);
@@ -56,7 +56,7 @@ export const ListeningLessonSelection = () => {
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        <Header title={`Học nghe ${selectedLevel}`} />
+        <Header title={`Luyện nghe ${selectedLevel}`} />
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             boards.map(board => {
@@ -67,15 +67,15 @@ export const ListeningLessonSelection = () => {
                 description: board.description,
               }; */
               }
-              const navigateToChuHanLesson = () => {
+              const navigateToListeningLesson = () => {
                 dispatch(
-                  programActions.chuHanLessonSelected({
-                    selectedChuHanLesson: {
+                  programActions.listeningLessonSelected({
+                    selectedListeningLesson: {
                       board,
                     },
                   }),
                 );
-                navigation.navigate('ChuHanLesson');
+                navigation.navigate('ListeningLesson');
               };
               return (
                 <List.Item
@@ -83,7 +83,7 @@ export const ListeningLessonSelection = () => {
                   key={board.id}
                   titleEllipsizeMode="tail"
                   left={props => <List.Icon {...props} icon="folder" />}
-                  //   onPress={navigateToChuHanLesson}
+                  onPress={navigateToListeningLesson}
                 />
               );
             })}

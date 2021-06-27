@@ -23,3 +23,10 @@ export function chuHanLessonSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+
+export function listeningLessonSelected(actionPayload) {
+  return {
+    type: types.LISTENING_LESSON_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

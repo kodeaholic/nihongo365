@@ -64,7 +64,6 @@ export const ChuHanLesson = ({ navigation }) => {
             <>
               {cards &&
                 cards.map((card, index) => {
-                  console.log(card);
                   return (
                     <Card style={styles.card} key={card.id}>
                       {/* <Card.Content> */}

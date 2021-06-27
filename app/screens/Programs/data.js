@@ -1,10 +1,10 @@
 export const PROGRAM_IDS = {
   TUVUNG: 1,
   CHUHAN: 2,
-  NGUPHAP: 3,
-  NGHE: 4,
-  HOITHOAI: 5,
-  THI: 6,
+  NGHE: 3,
+  // NGHE: 4,
+  // HOITHOAI: 5,
+  // THI: 6,
 };
 
 export const DATA = [
@@ -47,19 +47,19 @@ export const DATA = [
   //   description: 'Học theo cấp độ',
   //   available: false,
   // },
-  // {
-  //   id: PROGRAM_IDS.NGHE,
-  //   name: 'Văn Đức sensei',
-  //   sex: 'M',
-  //   date: '05/03/2020',
-  //   startTime: '9:00 AM',
-  //   endTime: '10:00 AM',
-  //   tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
-  //   avatar: 'https://nihong0.herokuapp.com/avatars/logo.jpg',
-  //   program: 'Luyện nghe',
-  //   description: 'Học theo cấp độ',
-  //   available: false,
-  // },
+  {
+    id: PROGRAM_IDS.NGHE,
+    name: 'Văn Đức sensei',
+    sex: 'M',
+    date: '05/03/2020',
+    startTime: '9:00 AM',
+    endTime: '10:00 AM',
+    tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
+    avatar: 'https://nihong0.herokuapp.com/avatars/logo.jpg',
+    program: 'Luyện nghe',
+    description: 'Học theo cấp độ',
+    available: true,
+  },
   // {
   //   id: PROGRAM_IDS.HOITHOAI,
   //   name: 'Văn Đức sensei',

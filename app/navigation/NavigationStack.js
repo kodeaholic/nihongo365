@@ -13,6 +13,7 @@ import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
 import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
 import { VocabTopicSelection } from '../screens/VocabTopicSelection';
 import { ChuHanBoardSelection } from '../screens/ChuHanBoardSelection';
+import { ListeningLessonSelection } from '../screens/ListeningLessonSelection';
 import { VocabLesson } from '../screens/VocabLesson';
 import { ChuHanLesson } from '../screens/ChuHanLesson';
 import { ChuHanView } from '../screens/ChuHanLesson/webview';
@@ -54,6 +55,10 @@ function App() {
         />
         <Stack.Screen name="ChuHanLesson" component={ChuHanLesson} />
         <Stack.Screen name="ChuHanView" component={ChuHanView} />
+        <Stack.Screen
+          name="ListeningLessonSelection"
+          component={ListeningLessonSelection}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

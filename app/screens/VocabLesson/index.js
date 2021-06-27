@@ -50,6 +50,15 @@ export const VocabLesson = () => {
         } else {
           setVocabs(data.results);
           setLoading(false);
+          if (!data.results.length) {
+            ToastAndroid.showWithGravityAndOffset(
+              'Chưa có từ vựng nào được thêm. Xin vui lòng quay lại sau',
+              200,
+              ToastAndroid.TOP,
+              0,
+              100,
+            );
+          }
         }
       } catch (error) {
         return error;
@@ -146,23 +155,25 @@ export const VocabLesson = () => {
             </>
           )}
         </ScrollView>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 60,
-          }}>
-          {!loading && selectedVocabLesson.audioSrc && (
-            <AudioPlayer src={selectedVocabLesson.audioSrc} />
-          )}
-          {!loading && !selectedVocabLesson.audioSrc && (
-            <Text style={{ textAlign: 'center', marginTop: 10 }}>
-              Bài học không có file audio
-            </Text>
-          )}
-        </View>
+        {selectedVocabLesson.src && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 60,
+            }}>
+            {!loading && selectedVocabLesson.audioSrc && (
+              <AudioPlayer src={selectedVocabLesson.audioSrc} />
+            )}
+            {!loading && !selectedVocabLesson.audioSrc && (
+              <Text style={{ textAlign: 'center', marginTop: 10 }}>
+                Bài học không có file audio
+              </Text>
+            )}
+          </View>
+        )}
       </SafeAreaView>
     </>
   );

@@ -14,6 +14,7 @@ export const AudioPlayer = props => {
   const [loading, setLoading] = useState(true);
   const [duration, setDuration] = useState(0);
   let [player, setPlayer] = useState(null);
+  const [displayDuration, setDisplayDuration] = useState(true);
   const [playing, setPlaying] = useState(false);
 
   /** for timer */
@@ -71,20 +72,38 @@ export const AudioPlayer = props => {
       try {
         soundPlayer = new Sound(src, null, error => {
           if (error) {
-            ToastAndroid.showWithGravityAndOffset(
-              'File âm thanh bị hư hại. Xin liên hệ với giảng viên để được hỗ trợ',
-              ToastAndroid.LONG,
-              ToastAndroid.TOP,
-              0,
-              100,
-            );
+            // ToastAndroid.showWithGravityAndOffset(
+            //   'File âm thanh bị hư hại. Xin liên hệ với giảng viên để được hỗ trợ',
+            //   ToastAndroid.LONG,
+            //   ToastAndroid.TOP,
+            //   0,
+            //   100,
+            // );
             setPlayable(false);
             setPlayer({ player: false });
           }
 
-          setPlayable(true);
           setPlayer(soundPlayer);
-          setDuration(soundPlayer.getDuration());
+          if (soundPlayer.isLoaded()) {
+            if (soundPlayer.getDuration() > 0) {
+              setDuration(soundPlayer.getDuration());
+              setDisplayDuration(true);
+            } else {
+              ToastAndroid.showWithGravityAndOffset(
+                'Vấn đề mạng, không lấy được thời gian kết thúc file audio. Vui lòng bấm và đợi nghe cho đến hết bài học',
+                200,
+                ToastAndroid.TOP,
+                0,
+                100,
+              );
+              setDuration(1000);
+              setDisplayDuration(false);
+            }
+            setPlayable(true);
+          } else {
+            setPlayable(false);
+            setDuration(-1);
+          }
           setLoading(false);
         });
       } catch (e) {
@@ -104,72 +123,90 @@ export const AudioPlayer = props => {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="small" style={{ marginTop: 10 }} />
+        <Text style={{ textAlign: 'center' }}>Tải file âm thanh</Text>
       </View>
     );
   } else {
     // console.log(player.isPlaying());
-    return (
-      <View style={styles.container}>
-        <View
-          style={{
-            height: 20,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Text style={{ flex: 0.2, textAlign: 'center' }}>
-            {getMMSSTimeString(seconds + '')}
-          </Text>
-          <Slider
-            style={styles.slider}
-            thumbTintColor="#5cdb5e"
-            value={seconds}
-            onValueChange={value => {
-              setSeconds(value);
-              player.setCurrentTime(value);
-            }}
-            minimumValue={0}
-            maximumValue={duration}
-            step={1}
-            thumbTouchSize={{ width: 40, height: 40 }}
-            minimumTrackTintColor="#5cdb5e"
-          />
-          <Text style={{ flex: 0.2, textAlign: 'center' }}>
-            {getMMSSTimeString(duration + '')}
+    if (duration > 0) {
+      return (
+        <View style={styles.container}>
+          <View
+            style={{
+              height: 20,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={{ flex: 0.2, textAlign: 'center' }}>
+              {getMMSSTimeString(seconds + '')}
+            </Text>
+            <Slider
+              disabled={!displayDuration}
+              style={styles.slider}
+              thumbTintColor="#5cdb5e"
+              value={seconds}
+              onValueChange={value => {
+                setSeconds(value);
+                player.setCurrentTime(value);
+              }}
+              minimumValue={0}
+              maximumValue={duration}
+              step={1}
+              thumbTouchSize={{ width: 40, height: 40 }}
+              minimumTrackTintColor="#5cdb5e"
+            />
+            {displayDuration && (
+              <Text style={{ flex: 0.2, textAlign: 'center' }}>
+                {getMMSSTimeString(duration + '')}
+              </Text>
+            )}
+            {!displayDuration && (
+              <Text style={{ flex: 0.2, textAlign: 'center' }}>--:--</Text>
+            )}
+          </View>
+          <View style={styles.button}>
+            {playable && (
+              <>
+                <View
+                  style={{
+                    // paddingVertical: 15,
+                    paddingHorizontal: 10,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  {!playing && (
+                    <Icon
+                      name="play-circle-outline"
+                      size={35}
+                      color="#5cdb5e"
+                      onPress={play}
+                    />
+                  )}
+                  {playing && (
+                    <Icon
+                      name="pause-circle-outline"
+                      size={35}
+                      color="#5cdb5e"
+                      onPress={pause}
+                    />
+                  )}
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      );
+    }
+    if (duration <= 0) {
+      return (
+        <View style={styles.container}>
+          <Text style={{ textAlign: 'center', marginTop: 5 }}>
+            Không thể phát file âm thanh vào lúc này
           </Text>
         </View>
-        <View style={styles.button}>
-          {playable && (
-            <>
-              <View
-                style={{
-                  // paddingVertical: 15,
-                  paddingHorizontal: 10,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                {!playing && (
-                  <Icon
-                    name="play-circle-outline"
-                    size={35}
-                    color="#5cdb5e"
-                    onPress={play}
-                  />
-                )}
-                {playing && (
-                  <Icon
-                    name="pause-circle-outline"
-                    size={35}
-                    color="#5cdb5e"
-                    onPress={pause}
-                  />
-                )}
-              </View>
-            </>
-          )}
-        </View>
-      </View>
-    );
+      );
+    }
   }
 };
 

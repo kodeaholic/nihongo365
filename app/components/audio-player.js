@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { ToastAndroid, ActivityIndicator, AppState } from 'react-native';
 import Slider from 'react-native-slider';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, BackHandler } from 'react-native';
 import { getMMSSTimeString } from '../helpers/time';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import _ from 'lodash';
+import { useNavigation } from '@react-navigation/native';
 var Sound = require('react-native-sound');
 
 export const AudioPlayer = props => {
@@ -16,7 +18,7 @@ export const AudioPlayer = props => {
   let [player, setPlayer] = useState(null);
   const [displayDuration, setDisplayDuration] = useState(true);
   const [playing, setPlaying] = useState(false);
-
+  const navigation = useNavigation();
   /** for timer */
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
@@ -53,15 +55,39 @@ export const AudioPlayer = props => {
   };
 
   useEffect(() => {
-    const handleAppStateChange = currentAppState => {
-      if (currentAppState === 'background' || currentAppState === 'inactive') {
-        // console.log(currentAppState);
+    if (!_.isEmpty(src)) {
+      const handleAppStateChange = currentAppState => {
+        if (
+          currentAppState === 'background' ||
+          currentAppState === 'inactive'
+        ) {
+          if (player && player.isPlaying()) {
+            pause();
+          }
+        }
+      };
+      AppState.addEventListener('change', handleAppStateChange);
+      const backAction = () => {
+        if (player && player.isPlaying()) {
+          pause();
+          navigation.goBack(null);
+        }
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction,
+      );
+      navigation.addListener('beforeRemove', e => {
         if (player && player.isPlaying()) {
           pause();
         }
-      }
-    };
-    AppState.addEventListener('change', handleAppStateChange);
+      });
+      return () => {
+        backHandler.remove();
+      };
+    }
   });
 
   /** Load the file */

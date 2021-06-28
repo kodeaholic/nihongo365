@@ -43,6 +43,13 @@ export const HeadlessAudioPlayer = props => {
       };
       AppState.addEventListener('change', handleAppStateChange);
     }
+    return () => {
+      if (!_.isEmpty(src)) {
+        if (player && player.isPlaying()) {
+          pause();
+        }
+      }
+    };
   });
 
   /** Load the file */
@@ -125,24 +132,3 @@ export const HeadlessAudioPlayer = props => {
     );
   }
 };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     height: 60,
-//     paddingTop: 2,
-//     paddingBottom: 5,
-//     marginVertical: 0,
-//   },
-//   slider: {
-//     flex: 1,
-//     // marginVertical: 5,
-//     marginHorizontal: 20,
-//   },
-//   button: {
-//     height: 35,
-//     flexDirection: 'row',
-//     alignItems: 'stretch',
-//     justifyContent: 'center',
-//     marginTop: 0,
-//   },
-// });

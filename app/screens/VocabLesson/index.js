@@ -80,7 +80,7 @@ export const VocabLesson = () => {
           } - ${selectedVocabLesson.name}`}
         />
         {/* </View> */}
-        <ScrollView style={{ flex: 0.65, marginBottom: 60 }}>
+        <ScrollView style={{ flex: 1 }}>
           {!loading &&
             vocabs.map((vocab, index) => {
               let html = furiganaHTML(vocab.vocab);
@@ -155,14 +155,15 @@ export const VocabLesson = () => {
             </>
           )}
         </ScrollView>
-        {selectedVocabLesson.src && (
+        {selectedVocabLesson.audioSrc && (
           <View
             style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
+              // position: 'absolute',
               height: 60,
+              marginTop: 8,
+              fontSize: 18,
+              textAlign: 'center',
+              fontFamily: 'SF-Pro-Detail-Regular',
             }}>
             {!loading && selectedVocabLesson.audioSrc && (
               <AudioPlayer src={selectedVocabLesson.audioSrc} />

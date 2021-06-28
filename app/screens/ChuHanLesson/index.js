@@ -13,7 +13,7 @@ import { Header } from '../../components/commonHeader';
 import { useSelector } from 'react-redux';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { ActivityIndicator } from 'react-native';
-import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
+import { htmlEntityDecode } from '../../helpers/htmlentities';
 import HTML from 'react-native-render-html';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -136,12 +136,16 @@ export const ChuHanLesson = ({ navigation }) => {
                           }}>
                           <Text>On: {card.onText}</Text>
                           <HTML
-                            source={{ html: card.onTextExample }}
+                            source={{
+                              html: htmlEntityDecode(card.onTextExample),
+                            }}
                             style={{ color: '#808080' }}
                           />
                           <Text>Kun: {card.kunText}</Text>
                           <HTML
-                            source={{ html: card.kunTextExample }}
+                            source={{
+                              html: htmlEntityDecode(card.kunTextExample),
+                            }}
                             style={{ color: '#808080' }}
                           />
                           {card.note && <Text>Mẹo nhớ: {card.note}</Text>}

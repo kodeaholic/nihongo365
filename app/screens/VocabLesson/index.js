@@ -15,6 +15,8 @@ import HTML from 'react-native-render-html';
 import { AudioPlayer } from '../../components/audio-player';
 import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
 import _ from 'lodash';
+import { htmlEntityDecode } from '../../helpers/htmlentities';
+import { WebView } from 'react-native-webview';
 export const VocabLesson = () => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
@@ -83,12 +85,6 @@ export const VocabLesson = () => {
         <ScrollView style={{ flex: 1 }}>
           {!loading &&
             vocabs.map((vocab, index) => {
-              let html = furiganaHTML(vocab.vocab);
-              let htmlExample = furiganaHTML(vocab.example);
-              const normalVocab = !html.includes('ruby');
-              const normalExample = !htmlExample.includes('ruby');
-              html = rubyHtmlTransform(html, '#f00');
-              htmlExample = rubyHtmlTransform(htmlExample);
               return (
                 <Card style={styles.card} key={vocab.id}>
                   {/* <Card.Content> */}
@@ -115,16 +111,25 @@ export const VocabLesson = () => {
                         <View
                           style={{
                             flex: 5,
-                            marginRight: 5,
-                            marginLeft: 5,
+                            marginRight: 0,
+                            marginLeft: 0,
+                            height: 100,
                           }}>
-                          {normalVocab && (
-                            <Text style={{ fontSize: 16, color: '#f00' }}>
-                              {vocab.vocab}
-                            </Text>
-                          )}
-                          {!normalVocab && <HTML source={{ html: html }} />}
-                          <Text>{vocab.vocabMeaning}</Text>
+                          <WebView
+                            source={{
+                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                                vocab.vocab,
+                              )}</div>`,
+                            }}
+                            style={{ backgroundColor: '#dbd4c8' }}
+                            injectedJavaScript={
+                              "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                            }
+                            scalesPageToFit={false}
+                          />
+                          <Text style={{ marginLeft: 5 }}>
+                            {vocab.vocabMeaning}
+                          </Text>
                         </View>
                       </View>
                     </View>
@@ -138,9 +143,22 @@ export const VocabLesson = () => {
                         }}>
                         <HeadlessAudioPlayer src={vocab.audioSrc} size={20} />
                       </View>
-                      <View style={{ flex: 8, paddingLeft: 5 }}>
-                        <HTML source={{ html: htmlExample }} />
-                        <Text>{vocab.exampleMeaning}</Text>
+                      <View style={{ flex: 8, height: 120 }}>
+                        <WebView
+                          source={{
+                            html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                              vocab.example,
+                            )}</div>`,
+                          }}
+                          style={{ backgroundColor: '#dbd4c8' }}
+                          injectedJavaScript={
+                            "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                          }
+                          scalesPageToFit={false}
+                        />
+                        <Text style={{ marginLeft: 5 }}>
+                          {vocab.exampleMeaning}
+                        </Text>
                       </View>
                     </View>
                   </View>

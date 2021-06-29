@@ -17,6 +17,7 @@ import { htmlEntityDecode } from '../../helpers/htmlentities';
 import HTML from 'react-native-render-html';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { WebView } from 'react-native-webview';
 export const ChuHanLesson = ({ navigation }) => {
   const selectedChuHanLesson = useSelector(
     state => state.programReducer.selectedChuHanLesson,
@@ -133,20 +134,33 @@ export const ChuHanLesson = ({ navigation }) => {
                             marginLeft: 5,
                             flex: 5,
                             flexDirection: 'column',
+                            height: 200,
                           }}>
                           <Text>On: {card.onText}</Text>
-                          <HTML
+                          <WebView
                             source={{
-                              html: htmlEntityDecode(card.onTextExample),
+                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                                card.onTextExample,
+                              )}</div>`,
                             }}
-                            style={{ color: '#808080' }}
+                            style={{ backgroundColor: '#dbd4c8' }}
+                            injectedJavaScript={
+                              "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                            }
+                            scalesPageToFit={false}
                           />
                           <Text>Kun: {card.kunText}</Text>
-                          <HTML
+                          <WebView
                             source={{
-                              html: htmlEntityDecode(card.kunTextExample),
+                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                                card.kunTextExample,
+                              )}</div>`,
                             }}
-                            style={{ color: '#808080' }}
+                            style={{ backgroundColor: '#dbd4c8' }}
+                            injectedJavaScript={
+                              "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                            }
+                            scalesPageToFit={false}
                           />
                           {card.note && <Text>Mẹo nhớ: {card.note}</Text>}
                         </View>

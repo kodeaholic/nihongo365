@@ -70,9 +70,9 @@ export const AudioPlayer = props => {
       const backAction = () => {
         if (player && player.isPlaying()) {
           pause();
-          navigation.goBack(null);
+          // navigation.goBack(null);
         }
-        return true;
+        // return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -86,6 +86,7 @@ export const AudioPlayer = props => {
       });
       return () => {
         backHandler.remove();
+        navigation.removeListener('beforeRemove');
       };
     }
   });

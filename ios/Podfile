@@ -21,8 +21,8 @@ def flipper_post_install(installer)
   end
 end
 
-target 'nihongo365' do
-  # Pods for nihongo365
+target 'Nihongo365' do
+  # Pods for Nihongo365
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -61,7 +61,7 @@ target 'nihongo365' do
 
   pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
 
-  target 'nihongo365Tests' do
+  target 'Nihongo365Tests' do
     inherit! :complete
     # Pods for testing
   end
@@ -78,10 +78,10 @@ target 'nihongo365' do
   end
 end
 
-target 'nihongo365-tvOS' do
-  # Pods for nihongo365-tvOS
+target 'Nihongo365-tvOS' do
+  # Pods for Nihongo365-tvOS
 
-  target 'nihongo365-tvOSTests' do
+  target 'Nihongo365-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

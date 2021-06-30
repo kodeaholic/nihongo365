@@ -21,8 +21,8 @@ def flipper_post_install(installer)
   end
 end
 
-target 'MediBuddy' do
-  # Pods for MediBuddy
+target 'nihongo365' do
+  # Pods for nihongo365
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -61,7 +61,7 @@ target 'MediBuddy' do
 
   pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
 
-  target 'MediBuddyTests' do
+  target 'nihongo365Tests' do
     inherit! :complete
     # Pods for testing
   end
@@ -78,10 +78,10 @@ target 'MediBuddy' do
   end
 end
 
-target 'MediBuddy-tvOS' do
-  # Pods for MediBuddy-tvOS
+target 'nihongo365-tvOS' do
+  # Pods for nihongo365-tvOS
 
-  target 'MediBuddy-tvOSTests' do
+  target 'nihongo365-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

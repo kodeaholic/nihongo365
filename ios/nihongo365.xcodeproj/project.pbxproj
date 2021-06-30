@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* MediBuddyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MediBuddyTests.m */; };
+		00E356F31AD99517003FC87E /* nihongo365Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* nihongo365Tests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -15,11 +15,11 @@
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2DCD954D1E0B4F2C00145EB5 /* MediBuddyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MediBuddyTests.m */; };
-		47B4C851912E66EB331C5F7C /* libPods-MediBuddy-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 09BFA838A706EDDB59327EB9 /* libPods-MediBuddy-tvOS.a */; };
-		94ACC7FAA4CEA10DC64688F6 /* libPods-MediBuddy-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FAB58FEE5E8E76E6FEB899D8 /* libPods-MediBuddy-tvOSTests.a */; };
-		9E74F30763175AD16F224CFD /* libPods-MediBuddy-MediBuddyTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C5F06AF7A79A8F26FE3D064 /* libPods-MediBuddy-MediBuddyTests.a */; };
-		FBFD5835DB98727CA2409D9D /* libPods-MediBuddy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50EF31FBB0FE7C8F9702E316 /* libPods-MediBuddy.a */; };
+		2DCD954D1E0B4F2C00145EB5 /* nihongo365Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* nihongo365Tests.m */; };
+		47B4C851912E66EB331C5F7C /* libPods-nihongo365-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 09BFA838A706EDDB59327EB9 /* libPods-nihongo365-tvOS.a */; };
+		94ACC7FAA4CEA10DC64688F6 /* libPods-nihongo365-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FAB58FEE5E8E76E6FEB899D8 /* libPods-nihongo365-tvOSTests.a */; };
+		9E74F30763175AD16F224CFD /* libPods-nihongo365-nihongo365Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C5F06AF7A79A8F26FE3D064 /* libPods-nihongo365-nihongo365Tests.a */; };
+		FBFD5835DB98727CA2409D9D /* libPods-nihongo365.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50EF31FBB0FE7C8F9702E316 /* libPods-nihongo365.a */; };
 		4E27755BDD034679A210A059 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E12395467E0A40D0A9639C00 /* Montserrat-Bold.ttf */; };
 		7E35D82B0EBC45A19A39A7FE /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7E0AF889F7B445789A76C08 /* Montserrat-Light.ttf */; };
 		6759A16471AE413EAE3443AB /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26EB0AB574E946AAA89361E2 /* Montserrat-Medium.ttf */; };
@@ -55,45 +55,45 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = MediBuddy;
+			remoteInfo = nihongo365;
 		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
-			remoteInfo = "MediBuddy-tvOS";
+			remoteInfo = "nihongo365-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		00E356EE1AD99517003FC87E /* MediBuddyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MediBuddyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* nihongo365Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nihongo365Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* MediBuddyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediBuddyTests.m; sourceTree = "<group>"; };
-		09BFA838A706EDDB59327EB9 /* libPods-MediBuddy-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediBuddy-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0A105B94D4163984097927EF /* Pods-MediBuddy-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-MediBuddy-tvOSTests/Pods-MediBuddy-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		0E83440654447D5C0AA89C12 /* Pods-MediBuddy-MediBuddyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy-MediBuddyTests.debug.xcconfig"; path = "Target Support Files/Pods-MediBuddy-MediBuddyTests/Pods-MediBuddy-MediBuddyTests.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* MediBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = MediBuddy/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = MediBuddy/AppDelegate.m; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* nihongo365Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = nihongo365Tests.m; sourceTree = "<group>"; };
+		09BFA838A706EDDB59327EB9 /* libPods-nihongo365-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nihongo365-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A105B94D4163984097927EF /* Pods-nihongo365-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-nihongo365-tvOSTests/Pods-nihongo365-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		0E83440654447D5C0AA89C12 /* Pods-nihongo365-nihongo365Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365-nihongo365Tests.debug.xcconfig"; path = "Target Support Files/Pods-nihongo365-nihongo365Tests/Pods-nihongo365-nihongo365Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* nihongo365.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nihongo365.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = nihongo365/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = nihongo365/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = MediBuddy/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MediBuddy/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MediBuddy/main.m; sourceTree = "<group>"; };
-		25E0F2E768279CAFFE3DBF49 /* Pods-MediBuddy-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy-tvOS.release.xcconfig"; path = "Target Support Files/Pods-MediBuddy-tvOS/Pods-MediBuddy-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		2D02E47B1E0B4A5D006451C7 /* MediBuddy-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MediBuddy-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D02E4901E0B4A5D006451C7 /* MediBuddy-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MediBuddy-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3197F1497A53C7DB7632F4A5 /* Pods-MediBuddy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy.debug.xcconfig"; path = "Target Support Files/Pods-MediBuddy/Pods-MediBuddy.debug.xcconfig"; sourceTree = "<group>"; };
-		45F76A21DFE68E7620F098B7 /* Pods-MediBuddy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy.release.xcconfig"; path = "Target Support Files/Pods-MediBuddy/Pods-MediBuddy.release.xcconfig"; sourceTree = "<group>"; };
-		50EF31FBB0FE7C8F9702E316 /* libPods-MediBuddy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediBuddy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9397C839DB57AEB7CBB34722 /* Pods-MediBuddy-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-MediBuddy-tvOSTests/Pods-MediBuddy-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		985C6B8191A8F2511B03DA4B /* Pods-MediBuddy-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-MediBuddy-tvOS/Pods-MediBuddy-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		9C5F06AF7A79A8F26FE3D064 /* libPods-MediBuddy-MediBuddyTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediBuddy-MediBuddyTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = nihongo365/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = nihongo365/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = nihongo365/main.m; sourceTree = "<group>"; };
+		25E0F2E768279CAFFE3DBF49 /* Pods-nihongo365-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365-tvOS.release.xcconfig"; path = "Target Support Files/Pods-nihongo365-tvOS/Pods-nihongo365-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		2D02E47B1E0B4A5D006451C7 /* nihongo365-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "nihongo365-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D02E4901E0B4A5D006451C7 /* nihongo365-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "nihongo365-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3197F1497A53C7DB7632F4A5 /* Pods-nihongo365.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365.debug.xcconfig"; path = "Target Support Files/Pods-nihongo365/Pods-nihongo365.debug.xcconfig"; sourceTree = "<group>"; };
+		45F76A21DFE68E7620F098B7 /* Pods-nihongo365.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365.release.xcconfig"; path = "Target Support Files/Pods-nihongo365/Pods-nihongo365.release.xcconfig"; sourceTree = "<group>"; };
+		50EF31FBB0FE7C8F9702E316 /* libPods-nihongo365.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nihongo365.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9397C839DB57AEB7CBB34722 /* Pods-nihongo365-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-nihongo365-tvOSTests/Pods-nihongo365-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		985C6B8191A8F2511B03DA4B /* Pods-nihongo365-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-nihongo365-tvOS/Pods-nihongo365-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		9C5F06AF7A79A8F26FE3D064 /* libPods-nihongo365-nihongo365Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nihongo365-nihongo365Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FAAB37E9A2595365D928AAEF /* Pods-MediBuddy-MediBuddyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediBuddy-MediBuddyTests.release.xcconfig"; path = "Target Support Files/Pods-MediBuddy-MediBuddyTests/Pods-MediBuddy-MediBuddyTests.release.xcconfig"; sourceTree = "<group>"; };
-		FAB58FEE5E8E76E6FEB899D8 /* libPods-MediBuddy-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediBuddy-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAAB37E9A2595365D928AAEF /* Pods-nihongo365-nihongo365Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nihongo365-nihongo365Tests.release.xcconfig"; path = "Target Support Files/Pods-nihongo365-nihongo365Tests/Pods-nihongo365-nihongo365Tests.release.xcconfig"; sourceTree = "<group>"; };
+		FAB58FEE5E8E76E6FEB899D8 /* libPods-nihongo365-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nihongo365-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E12395467E0A40D0A9639C00 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; name = "Montserrat-Bold.ttf"; path = "../assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		C7E0AF889F7B445789A76C08 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; name = "Montserrat-Light.ttf"; path = "../assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		26EB0AB574E946AAA89361E2 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; name = "Montserrat-Medium.ttf"; path = "../assets/fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
@@ -128,7 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E74F30763175AD16F224CFD /* libPods-MediBuddy-MediBuddyTests.a in Frameworks */,
+				9E74F30763175AD16F224CFD /* libPods-nihongo365-nihongo365Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,7 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBFD5835DB98727CA2409D9D /* libPods-MediBuddy.a in Frameworks */,
+				FBFD5835DB98727CA2409D9D /* libPods-nihongo365.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47B4C851912E66EB331C5F7C /* libPods-MediBuddy-tvOS.a in Frameworks */,
+				47B4C851912E66EB331C5F7C /* libPods-nihongo365-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,20 +152,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94ACC7FAA4CEA10DC64688F6 /* libPods-MediBuddy-tvOSTests.a in Frameworks */,
+				94ACC7FAA4CEA10DC64688F6 /* libPods-nihongo365-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* MediBuddyTests */ = {
+		00E356EF1AD99517003FC87E /* nihongo365Tests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* MediBuddyTests.m */,
+				00E356F21AD99517003FC87E /* nihongo365Tests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = MediBuddyTests;
+			path = nihongo365Tests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -176,7 +176,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* MediBuddy */ = {
+		13B07FAE1A68108700A75B9A /* nihongo365 */ = {
 			isa = PBXGroup;
 			children = (
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -187,7 +187,7 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = MediBuddy;
+			name = nihongo365;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -195,10 +195,10 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				50EF31FBB0FE7C8F9702E316 /* libPods-MediBuddy.a */,
-				9C5F06AF7A79A8F26FE3D064 /* libPods-MediBuddy-MediBuddyTests.a */,
-				09BFA838A706EDDB59327EB9 /* libPods-MediBuddy-tvOS.a */,
-				FAB58FEE5E8E76E6FEB899D8 /* libPods-MediBuddy-tvOSTests.a */,
+				50EF31FBB0FE7C8F9702E316 /* libPods-nihongo365.a */,
+				9C5F06AF7A79A8F26FE3D064 /* libPods-nihongo365-nihongo365Tests.a */,
+				09BFA838A706EDDB59327EB9 /* libPods-nihongo365-tvOS.a */,
+				FAB58FEE5E8E76E6FEB899D8 /* libPods-nihongo365-tvOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -206,14 +206,14 @@
 		63DDA987CAAE35C17BDD3235 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3197F1497A53C7DB7632F4A5 /* Pods-MediBuddy.debug.xcconfig */,
-				45F76A21DFE68E7620F098B7 /* Pods-MediBuddy.release.xcconfig */,
-				0E83440654447D5C0AA89C12 /* Pods-MediBuddy-MediBuddyTests.debug.xcconfig */,
-				FAAB37E9A2595365D928AAEF /* Pods-MediBuddy-MediBuddyTests.release.xcconfig */,
-				985C6B8191A8F2511B03DA4B /* Pods-MediBuddy-tvOS.debug.xcconfig */,
-				25E0F2E768279CAFFE3DBF49 /* Pods-MediBuddy-tvOS.release.xcconfig */,
-				9397C839DB57AEB7CBB34722 /* Pods-MediBuddy-tvOSTests.debug.xcconfig */,
-				0A105B94D4163984097927EF /* Pods-MediBuddy-tvOSTests.release.xcconfig */,
+				3197F1497A53C7DB7632F4A5 /* Pods-nihongo365.debug.xcconfig */,
+				45F76A21DFE68E7620F098B7 /* Pods-nihongo365.release.xcconfig */,
+				0E83440654447D5C0AA89C12 /* Pods-nihongo365-nihongo365Tests.debug.xcconfig */,
+				FAAB37E9A2595365D928AAEF /* Pods-nihongo365-nihongo365Tests.release.xcconfig */,
+				985C6B8191A8F2511B03DA4B /* Pods-nihongo365-tvOS.debug.xcconfig */,
+				25E0F2E768279CAFFE3DBF49 /* Pods-nihongo365-tvOS.release.xcconfig */,
+				9397C839DB57AEB7CBB34722 /* Pods-nihongo365-tvOSTests.debug.xcconfig */,
+				0A105B94D4163984097927EF /* Pods-nihongo365-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -228,9 +228,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* MediBuddy */,
+				13B07FAE1A68108700A75B9A /* nihongo365 */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* MediBuddyTests */,
+				00E356EF1AD99517003FC87E /* nihongo365Tests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				63DDA987CAAE35C17BDD3235 /* Pods */,
@@ -244,10 +244,10 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* MediBuddy.app */,
-				00E356EE1AD99517003FC87E /* MediBuddyTests.xctest */,
-				2D02E47B1E0B4A5D006451C7 /* MediBuddy-tvOS.app */,
-				2D02E4901E0B4A5D006451C7 /* MediBuddy-tvOSTests.xctest */,
+				13B07F961A680F5B00A75B9A /* nihongo365.app */,
+				00E356EE1AD99517003FC87E /* nihongo365Tests.xctest */,
+				2D02E47B1E0B4A5D006451C7 /* nihongo365-tvOS.app */,
+				2D02E4901E0B4A5D006451C7 /* nihongo365-tvOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -290,9 +290,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* MediBuddyTests */ = {
+		00E356ED1AD99517003FC87E /* nihongo365Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "MediBuddyTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "nihongo365Tests" */;
 			buildPhases = (
 				B17B155EAAA2DFBF00F78F37 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -305,14 +305,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = MediBuddyTests;
-			productName = MediBuddyTests;
-			productReference = 00E356EE1AD99517003FC87E /* MediBuddyTests.xctest */;
+			name = nihongo365Tests;
+			productName = nihongo365Tests;
+			productReference = 00E356EE1AD99517003FC87E /* nihongo365Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* MediBuddy */ = {
+		13B07F861A680F5B00A75B9A /* nihongo365 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MediBuddy" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "nihongo365" */;
 			buildPhases = (
 				5415A4DF4065AD1EC9446A18 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -326,14 +326,14 @@
 			);
 			dependencies = (
 			);
-			name = MediBuddy;
-			productName = MediBuddy;
-			productReference = 13B07F961A680F5B00A75B9A /* MediBuddy.app */;
+			name = nihongo365;
+			productName = nihongo365;
+			productReference = 13B07F961A680F5B00A75B9A /* nihongo365.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E47A1E0B4A5D006451C7 /* MediBuddy-tvOS */ = {
+		2D02E47A1E0B4A5D006451C7 /* nihongo365-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "MediBuddy-tvOS" */;
+			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "nihongo365-tvOS" */;
 			buildPhases = (
 				28B54EC276BD8293DBB46EC0 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
@@ -346,14 +346,14 @@
 			);
 			dependencies = (
 			);
-			name = "MediBuddy-tvOS";
-			productName = "MediBuddy-tvOS";
-			productReference = 2D02E47B1E0B4A5D006451C7 /* MediBuddy-tvOS.app */;
+			name = "nihongo365-tvOS";
+			productName = "nihongo365-tvOS";
+			productReference = 2D02E47B1E0B4A5D006451C7 /* nihongo365-tvOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E48F1E0B4A5D006451C7 /* MediBuddy-tvOSTests */ = {
+		2D02E48F1E0B4A5D006451C7 /* nihongo365-tvOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "MediBuddy-tvOSTests" */;
+			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "nihongo365-tvOSTests" */;
 			buildPhases = (
 				A831E67EDE58E7D1140F390F /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
@@ -365,9 +365,9 @@
 			dependencies = (
 				2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */,
 			);
-			name = "MediBuddy-tvOSTests";
-			productName = "MediBuddy-tvOSTests";
-			productReference = 2D02E4901E0B4A5D006451C7 /* MediBuddy-tvOSTests.xctest */;
+			name = "nihongo365-tvOSTests";
+			productName = "nihongo365-tvOSTests";
+			productReference = 2D02E4901E0B4A5D006451C7 /* nihongo365-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -396,7 +396,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "MediBuddy" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "nihongo365" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -409,10 +409,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* MediBuddy */,
-				00E356ED1AD99517003FC87E /* MediBuddyTests */,
-				2D02E47A1E0B4A5D006451C7 /* MediBuddy-tvOS */,
-				2D02E48F1E0B4A5D006451C7 /* MediBuddy-tvOSTests */,
+				13B07F861A680F5B00A75B9A /* nihongo365 */,
+				00E356ED1AD99517003FC87E /* nihongo365Tests */,
+				2D02E47A1E0B4A5D006451C7 /* nihongo365-tvOS */,
+				2D02E48F1E0B4A5D006451C7 /* nihongo365-tvOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -508,7 +508,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MediBuddy-tvOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-nihongo365-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -544,7 +544,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MediBuddy-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-nihongo365-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -557,7 +557,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediBuddy/Pods-MediBuddy-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-nihongo365/Pods-nihongo365-resources.sh",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -596,7 +596,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediBuddy/Pods-MediBuddy-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-nihongo365/Pods-nihongo365-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A831E67EDE58E7D1140F390F /* [CP] Check Pods Manifest.lock */ = {
@@ -614,7 +614,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MediBuddy-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-nihongo365-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -636,7 +636,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MediBuddy-MediBuddyTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-nihongo365-nihongo365Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -649,7 +649,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MediBuddy-MediBuddyTests/Pods-MediBuddy-MediBuddyTests-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-nihongo365-nihongo365Tests/Pods-nihongo365-nihongo365Tests-resources.sh",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -688,7 +688,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MediBuddy-MediBuddyTests/Pods-MediBuddy-MediBuddyTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-nihongo365-nihongo365Tests/Pods-nihongo365-nihongo365Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -736,7 +736,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* MediBuddyTests.m in Sources */,
+				00E356F31AD99517003FC87E /* nihongo365Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -762,7 +762,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DCD954D1E0B4F2C00145EB5 /* MediBuddyTests.m in Sources */,
+				2DCD954D1E0B4F2C00145EB5 /* nihongo365Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -771,12 +771,12 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* MediBuddy */;
+			target = 13B07F861A680F5B00A75B9A /* nihongo365 */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 		2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2D02E47A1E0B4A5D006451C7 /* MediBuddy-tvOS */;
+			target = 2D02E47A1E0B4A5D006451C7 /* nihongo365-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -788,7 +788,7 @@
 				13B07FB21A68108700A75B9A /* Base */,
 			);
 			name = LaunchScreen.xib;
-			path = MediBuddy;
+			path = nihongo365;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -796,14 +796,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0E83440654447D5C0AA89C12 /* Pods-MediBuddy-MediBuddyTests.debug.xcconfig */;
+			baseConfigurationReference = 0E83440654447D5C0AA89C12 /* Pods-nihongo365-nihongo365Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = MediBuddyTests/Info.plist;
+				INFOPLIST_FILE = nihongo365Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -813,17 +813,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MediBuddy.app/MediBuddy";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nihongo365.app/nihongo365";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAAB37E9A2595365D928AAEF /* Pods-MediBuddy-MediBuddyTests.release.xcconfig */;
+			baseConfigurationReference = FAAB37E9A2595365D928AAEF /* Pods-nihongo365-nihongo365Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = MediBuddyTests/Info.plist;
+				INFOPLIST_FILE = nihongo365Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -833,13 +833,13 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MediBuddy.app/MediBuddy";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nihongo365.app/nihongo365";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3197F1497A53C7DB7632F4A5 /* Pods-MediBuddy.debug.xcconfig */;
+			baseConfigurationReference = 3197F1497A53C7DB7632F4A5 /* Pods-nihongo365.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -849,7 +849,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = MediBuddy/Info.plist;
+				INFOPLIST_FILE = nihongo365/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -857,7 +857,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = MediBuddy;
+				PRODUCT_NAME = nihongo365;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -867,12 +867,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 45F76A21DFE68E7620F098B7 /* Pods-MediBuddy.release.xcconfig */;
+			baseConfigurationReference = 45F76A21DFE68E7620F098B7 /* Pods-nihongo365.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = MediBuddy/Info.plist;
+				INFOPLIST_FILE = nihongo365/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -880,7 +880,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = MediBuddy;
+				PRODUCT_NAME = nihongo365;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -889,7 +889,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 985C6B8191A8F2511B03DA4B /* Pods-MediBuddy-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 985C6B8191A8F2511B03DA4B /* Pods-nihongo365-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -900,14 +900,14 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "MediBuddy-tvOS/Info.plist";
+				INFOPLIST_FILE = "nihongo365-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.MediBuddy-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.nihongo365-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -917,7 +917,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25E0F2E768279CAFFE3DBF49 /* Pods-MediBuddy-tvOS.release.xcconfig */;
+			baseConfigurationReference = 25E0F2E768279CAFFE3DBF49 /* Pods-nihongo365-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -928,14 +928,14 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "MediBuddy-tvOS/Info.plist";
+				INFOPLIST_FILE = "nihongo365-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.MediBuddy-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.nihongo365-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -945,7 +945,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9397C839DB57AEB7CBB34722 /* Pods-MediBuddy-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = 9397C839DB57AEB7CBB34722 /* Pods-nihongo365-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -955,24 +955,24 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "MediBuddy-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "nihongo365-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.MediBuddy-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.nihongo365-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MediBuddy-tvOS.app/MediBuddy-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nihongo365-tvOS.app/nihongo365-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Debug;
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0A105B94D4163984097927EF /* Pods-MediBuddy-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = 0A105B94D4163984097927EF /* Pods-nihongo365-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -982,17 +982,17 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "MediBuddy-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "nihongo365-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.MediBuddy-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.nihongo365-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MediBuddy-tvOS.app/MediBuddy-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nihongo365-tvOS.app/nihongo365-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Release;
@@ -1113,7 +1113,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "MediBuddyTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "nihongo365Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -1122,7 +1122,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MediBuddy" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "nihongo365" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -1131,7 +1131,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "MediBuddy-tvOS" */ = {
+		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "nihongo365-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4971E0B4A5E006451C7 /* Debug */,
@@ -1140,7 +1140,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "MediBuddy-tvOSTests" */ = {
+		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "nihongo365-tvOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
@@ -1149,7 +1149,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "MediBuddy" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "nihongo365" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

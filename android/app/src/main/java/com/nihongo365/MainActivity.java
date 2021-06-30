@@ -1,4 +1,4 @@
-package com.medibuddy;
+package com.nihongo365;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "MediBuddy";
+    return "nihongo365";
   }
 }

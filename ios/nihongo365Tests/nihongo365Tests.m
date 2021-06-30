@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface MediBuddyTests : XCTestCase
+@interface nihongo365Tests : XCTestCase
 
 @end
 
-@implementation MediBuddyTests
+@implementation nihongo365Tests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {

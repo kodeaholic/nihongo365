@@ -136,7 +136,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.medibuddy"
+        applicationId "com.nihongo365"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

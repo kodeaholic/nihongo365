@@ -3,6 +3,7 @@ import { StyleSheet, BackHandler, Alert, ToastAndroid } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 export const Header = props => {
   const confirmExit = text => {
     Alert.alert('Thông báo', `${text}`, [
@@ -57,19 +58,31 @@ export const Header = props => {
               {
                 text: 'ĐĂNG XUẤT',
                 onPress: () => {
-                  AsyncStorage.removeItem('user');
-                  AsyncStorage.removeItem('tokens');
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'StartScreen' }],
-                  });
-                  ToastAndroid.showWithGravityAndOffset(
-                    'Đăng xuất thành công',
-                    ToastAndroid.LONG,
-                    ToastAndroid.TOP,
-                    0,
-                    100,
-                  );
+                  const logout = async () => {
+                    const isSignedIn = await GoogleSignin.isSignedIn();
+                    if (isSignedIn) {
+                      try {
+                        await GoogleSignin.revokeAccess();
+                        await GoogleSignin.signOut();
+                      } catch (error) {
+                        console.error(error);
+                      }
+                    }
+                    AsyncStorage.removeItem('user');
+                    AsyncStorage.removeItem('tokens');
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'StartScreen' }],
+                    });
+                    ToastAndroid.showWithGravityAndOffset(
+                      'Đăng xuất thành công',
+                      ToastAndroid.LONG,
+                      ToastAndroid.TOP,
+                      0,
+                      100,
+                    );
+                  };
+                  logout();
                 },
               },
             ]);

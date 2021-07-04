@@ -30,3 +30,10 @@ export function listeningLessonSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+
+export function dialogLessonSelected(actionPayload) {
+  return {
+    type: types.DIALOG_LESSON_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

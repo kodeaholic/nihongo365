@@ -53,4 +53,12 @@ export const programReducer = createReducer(initialState, {
       selectedListeningLesson: selectedListeningLesson,
     };
   },
+  [types.DIALOG_LESSON_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { selectedDialogLesson } = payload;
+    return {
+      ...state,
+      selectedDialogLesson: selectedDialogLesson,
+    };
+  },
 });

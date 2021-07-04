@@ -18,6 +18,8 @@ import { VocabLesson } from '../screens/VocabLesson';
 import { ChuHanLesson } from '../screens/ChuHanLesson';
 import { ChuHanView } from '../screens/ChuHanLesson/webview';
 import { ListeningLesson } from '../screens/ListeningLesson';
+import { DialogLessonSelection } from '../screens/DialogLessonSelection';
+import { DialogLesson } from '../screens/DialogLesson';
 import Tabs from './Tabs';
 const Stack = createStackNavigator();
 
@@ -61,6 +63,11 @@ function App() {
           component={ListeningLessonSelection}
         />
         <Stack.Screen name="ListeningLesson" component={ListeningLesson} />
+        <Stack.Screen
+          name="DialogLessonSelection"
+          component={DialogLessonSelection}
+        />
+        <Stack.Screen name="DialogLesson" component={DialogLesson} />
       </Stack.Navigator>
     </NavigationContainer>
   );

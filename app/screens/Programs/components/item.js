@@ -74,6 +74,9 @@ const Item = ({ item }) => {
                 case PROGRAM_IDS.NGHE:
                   navigation.navigate('ListeningLessonSelection');
                   break;
+                case PROGRAM_IDS.HOITHOAI:
+                  navigation.navigate('DialogLessonSelection');
+                  break;
                 default:
                   break;
               }

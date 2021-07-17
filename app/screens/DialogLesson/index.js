@@ -17,7 +17,7 @@ const ActivityIndicatorElement = () => {
 };
 export const DialogLesson = ({ route, navigation }) => {
   const { lessonId } = route.params;
-  let url = `${apiConfig.baseUrl}/#/dialog-boards/mobile/${lessonId}`;
+  let url = `${apiConfig.baseUrl}/#/dialog-boards/mobilev2/${lessonId}`;
   const [visible, setVisible] = useState(false);
   return (
     <SafeAreaView style={{ flex: 1 }}>

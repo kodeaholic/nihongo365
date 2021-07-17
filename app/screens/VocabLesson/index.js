@@ -17,6 +17,7 @@ import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
 import _ from 'lodash';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import { WebView } from 'react-native-webview';
+import AutoHeightWebView from 'react-native-autoheight-webview';
 export const VocabLesson = () => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
@@ -91,9 +92,13 @@ export const VocabLesson = () => {
                   <Divider />
                   <View style={styles.parentView}>
                     <View
-                      style={{ flex: 3, borderRightWidth: 0.5, marginLeft: 5 }}>
+                      style={{
+                        flex: 1.5,
+                        borderRightWidth: 0.5,
+                        marginLeft: 5,
+                      }}>
                       <View style={styles.parentView}>
-                        <View
+                        {/* <View
                           style={{
                             flex: 1,
                             justifyContent: 'center',
@@ -107,7 +112,7 @@ export const VocabLesson = () => {
                             }}>
                             {index + 1}
                           </Badge>
-                        </View>
+                        </View> */}
                         <View
                           style={{
                             flex: 5,
@@ -115,7 +120,19 @@ export const VocabLesson = () => {
                             marginLeft: 0,
                             height: 100,
                           }}>
-                          <WebView
+                          <AutoHeightWebView
+                            style={{ marginTop: 5 }}
+                            source={{
+                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                                vocab.vocab,
+                              )}</div>`,
+                            }}
+                            scalesPageToFit={true}
+                            viewportContent={
+                              'width=device-width, user-scalable=no'
+                            }
+                          />
+                          {/* <WebView
                             source={{
                               html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
                                 vocab.vocab,
@@ -126,15 +143,15 @@ export const VocabLesson = () => {
                               "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
                             }
                             scalesPageToFit={false}
-                          />
+                          /> */}
                           <Text style={{ marginLeft: 5 }}>
                             {vocab.vocabMeaning}
                           </Text>
                         </View>
                       </View>
                     </View>
-                    <View style={{ flex: 5, flexDirection: 'row' }}>
-                      <View
+                    <View style={{ flex: 5, height: 'auto' }}>
+                      {/* <View
                         style={{
                           flex: 1,
                           justifyContent: 'center',
@@ -142,8 +159,26 @@ export const VocabLesson = () => {
                           alignItems: 'center',
                         }}>
                         <HeadlessAudioPlayer src={vocab.audioSrc} size={20} />
-                      </View>
-                      <View style={{ flex: 8, height: 120 }}>
+                      </View> */}
+                      <AutoHeightWebView
+                        style={{
+                          marginTop: 5,
+                          marginLeft: 5,
+                          minHeight: 100,
+                          height: 'auto',
+                        }}
+                        source={{
+                          html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                            vocab.example,
+                          )}</div>`,
+                        }}
+                        scalesPageToFit={true}
+                        viewportContent={'width=device-width, user-scalable=no'}
+                      />
+                      <Text style={{ marginLeft: 5 }}>
+                        {vocab.exampleMeaning}
+                      </Text>
+                      {/* <View style={{ height: 120 }}>
                         <WebView
                           source={{
                             html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
@@ -156,10 +191,7 @@ export const VocabLesson = () => {
                           }
                           scalesPageToFit={false}
                         />
-                        <Text style={{ marginLeft: 5 }}>
-                          {vocab.exampleMeaning}
-                        </Text>
-                      </View>
+                      </View> */}
                     </View>
                   </View>
                   <Divider />
@@ -230,6 +262,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     justifyContent: 'center',
+    height: 'auto',
   },
   childView: {
     flex: 1,

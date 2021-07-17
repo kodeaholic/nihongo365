@@ -24,6 +24,7 @@
     "moment": "^2.24.0",
     "react": "16.11.0",
     "react-native": "0.62.0",
+    "react-native-autoheight-webview": "^1.5.8",
     "react-native-beauty-webview": "^2.0.0",
     "react-native-device-info": "^5.5.4",
     "react-native-gesture-handler": "^1.6.1",

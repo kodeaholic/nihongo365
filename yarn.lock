@@ -5881,6 +5881,13 @@ react-is@^16.12.0, react-is@^16.13.0, react-is@^16.13.1, react-is@^16.7.0, react
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-native-autoheight-webview@^1.5.8:
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/react-native-autoheight-webview/-/react-native-autoheight-webview-1.5.8.tgz#afcbe65dfefcce4e2088c9aff9fee23dcd18aadf"
+  integrity sha512-6+LY0a47AsnfnGgqMP2JzNVgX0/sGnkgq7UV39OKgUf2Im/glFjUOggYm8EiyzmA93gb9tYVB1mRTORElWAiGQ==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-beauty-webview@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-beauty-webview/-/react-native-beauty-webview-2.0.0.tgz#415e9a7be4ad3e8b5f3eac44fa5d40192e244491"

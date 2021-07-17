@@ -123,7 +123,7 @@ export const VocabLesson = () => {
                           <AutoHeightWebView
                             style={{ marginTop: 5 }}
                             source={{
-                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
                                 vocab.vocab,
                               )}</div>`,
                             }}
@@ -168,7 +168,7 @@ export const VocabLesson = () => {
                           height: 'auto',
                         }}
                         source={{
-                          html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
+                          html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
                             vocab.example,
                           )}</div>`,
                         }}

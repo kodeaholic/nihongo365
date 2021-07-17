@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { View, StyleSheet, ToastAndroid, FlatList } from 'react-native';
 import { Button, Text, Chip, Card, Divider, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
@@ -52,6 +52,7 @@ export const VocabLesson = () => {
           );
         } else {
           setVocabs(data.results);
+          console.log(data.results);
           setLoading(false);
           if (!data.results.length) {
             ToastAndroid.showWithGravityAndOffset(
@@ -72,139 +73,86 @@ export const VocabLesson = () => {
     }
     getVocabs();
   }, [selectedVocabLesson.id]);
+  const renderFlatListItem = ({ item }) => {
+    const { id, vocab, vocabMeaning, example, exampleMeaning } = item;
+    return (
+      <Card style={styles.card} key={id}>
+        <Divider />
+        <View style={styles.parentView}>
+          <View
+            style={{
+              flex: 1.5,
+              borderRightWidth: 0.5,
+              marginLeft: 5,
+            }}>
+            <View style={styles.parentView}>
+              <View
+                style={{
+                  flex: 5,
+                  marginRight: 0,
+                  marginLeft: 0,
+                  height: 100,
+                }}>
+                <AutoHeightWebView
+                  style={{ marginTop: 5 }}
+                  source={{
+                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                      vocab,
+                    )}</div>`,
+                  }}
+                  scalesPageToFit={true}
+                  viewportContent={'width=device-width, user-scalable=no'}
+                />
+                <Text style={{ marginLeft: 5 }}>{vocabMeaning}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ flex: 5, height: 'auto' }}>
+            <AutoHeightWebView
+              style={{
+                marginTop: 5,
+                marginLeft: 5,
+                minHeight: 100,
+                height: 'auto',
+              }}
+              source={{
+                html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                  example,
+                )}</div>`,
+              }}
+              scalesPageToFit={true}
+              viewportContent={'width=device-width, user-scalable=no'}
+            />
+            <Text style={{ marginLeft: 5 }}>{exampleMeaning}</Text>
+          </View>
+        </View>
+        <Divider />
+      </Card>
+    );
+  };
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        {/* <View style={{ flex: 0.15 }}> */}
         <Header
           title={`Học từ vựng ${selectedLevel}`}
           subtitle={`${selectedVocabLesson.chapterName} - ${
             selectedVocabLesson.chapterDescription
           } - ${selectedVocabLesson.name}`}
         />
-        {/* </View> */}
-        <ScrollView style={{ flex: 1 }}>
-          {!loading &&
-            vocabs.map((vocab, index) => {
-              return (
-                <Card style={styles.card} key={vocab.id}>
-                  {/* <Card.Content> */}
-                  <Divider />
-                  <View style={styles.parentView}>
-                    <View
-                      style={{
-                        flex: 1.5,
-                        borderRightWidth: 0.5,
-                        marginLeft: 5,
-                      }}>
-                      <View style={styles.parentView}>
-                        {/* <View
-                          style={{
-                            flex: 1,
-                            justifyContent: 'center',
-                          }}>
-                          <Badge
-                            style={{
-                              marginRight: 3.5,
-                              backgroundColor: '#fff',
-                              color: '#000',
-                              borderWidth: 0.5,
-                            }}>
-                            {index + 1}
-                          </Badge>
-                        </View> */}
-                        <View
-                          style={{
-                            flex: 5,
-                            marginRight: 0,
-                            marginLeft: 0,
-                            height: 100,
-                          }}>
-                          <AutoHeightWebView
-                            style={{ marginTop: 5 }}
-                            source={{
-                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                vocab.vocab,
-                              )}</div>`,
-                            }}
-                            scalesPageToFit={true}
-                            viewportContent={
-                              'width=device-width, user-scalable=no'
-                            }
-                          />
-                          {/* <WebView
-                            source={{
-                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
-                                vocab.vocab,
-                              )}</div>`,
-                            }}
-                            style={{ backgroundColor: '#dbd4c8' }}
-                            injectedJavaScript={
-                              "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                            }
-                            scalesPageToFit={false}
-                          /> */}
-                          <Text style={{ marginLeft: 5 }}>
-                            {vocab.vocabMeaning}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                    <View style={{ flex: 5, height: 'auto' }}>
-                      {/* <View
-                        style={{
-                          flex: 1,
-                          justifyContent: 'center',
-                          borderRightWidth: 0.5,
-                          alignItems: 'center',
-                        }}>
-                        <HeadlessAudioPlayer src={vocab.audioSrc} size={20} />
-                      </View> */}
-                      <AutoHeightWebView
-                        style={{
-                          marginTop: 5,
-                          marginLeft: 5,
-                          minHeight: 100,
-                          height: 'auto',
-                        }}
-                        source={{
-                          html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                            vocab.example,
-                          )}</div>`,
-                        }}
-                        scalesPageToFit={true}
-                        viewportContent={'width=device-width, user-scalable=no'}
-                      />
-                      <Text style={{ marginLeft: 5 }}>
-                        {vocab.exampleMeaning}
-                      </Text>
-                      {/* <View style={{ height: 120 }}>
-                        <WebView
-                          source={{
-                            html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px; font-size: 15px;">${htmlEntityDecode(
-                              vocab.example,
-                            )}</div>`,
-                          }}
-                          style={{ backgroundColor: '#dbd4c8' }}
-                          injectedJavaScript={
-                            "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                          }
-                          scalesPageToFit={false}
-                        />
-                      </View> */}
-                    </View>
-                  </View>
-                  <Divider />
-                  {/* </Card.Content> */}
-                </Card>
-              );
-            })}
-          {loading && (
-            <>
-              <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-            </>
-          )}
-        </ScrollView>
+        {/* <ScrollView style={{ flex: 1 }}> */}
+        {!loading && (
+          <FlatList
+            data={vocabs}
+            renderItem={renderFlatListItem}
+            keyExtractor={item => item.id}
+          />
+        )}
+        {loading && (
+          <>
+            <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+          </>
+        )}
+        {/* </ScrollView> */}
         {selectedVocabLesson.audioSrc && (
           <View
             style={{

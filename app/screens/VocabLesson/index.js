@@ -81,7 +81,7 @@ export const VocabLesson = () => {
         <View style={styles.parentView}>
           <View
             style={{
-              flex: 1.5,
+              flex: 2,
               borderRightWidth: 0.5,
               marginLeft: 5,
             }}>
@@ -91,10 +91,10 @@ export const VocabLesson = () => {
                   flex: 5,
                   marginRight: 0,
                   marginLeft: 0,
-                  height: 100,
+                  height: 'auto',
                 }}>
                 <AutoHeightWebView
-                  style={{ marginTop: 5 }}
+                  style={{ marginTop: 5, minHeight: 50, height: 'auto' }}
                   source={{
                     html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
                       vocab,
@@ -107,24 +107,26 @@ export const VocabLesson = () => {
               </View>
             </View>
           </View>
-          <View style={{ flex: 5, height: 'auto' }}>
-            <AutoHeightWebView
-              style={{
-                marginTop: 5,
-                marginLeft: 5,
-                minHeight: 100,
-                height: 'auto',
-              }}
-              source={{
-                html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                  example,
-                )}</div>`,
-              }}
-              scalesPageToFit={true}
-              viewportContent={'width=device-width, user-scalable=no'}
-            />
-            <Text style={{ marginLeft: 5 }}>{exampleMeaning}</Text>
-          </View>
+          {!_.isEmpty(example) && (
+            <View style={{ flex: 5, height: 'auto' }}>
+              <AutoHeightWebView
+                style={{
+                  marginTop: 5,
+                  marginLeft: 5,
+                  minHeight: 100,
+                  height: 'auto',
+                }}
+                source={{
+                  html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                    example,
+                  )}</div>`,
+                }}
+                scalesPageToFit={true}
+                viewportContent={'width=device-width, user-scalable=no'}
+              />
+              <Text style={{ marginLeft: 5 }}>{exampleMeaning}</Text>
+            </View>
+          )}
         </View>
         <Divider />
       </Card>

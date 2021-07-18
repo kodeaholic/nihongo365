@@ -11,6 +11,17 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
+import { BOARD_TYPE } from '../../constants/board';
+import _ from 'lodash';
+const getLetters = board => {
+  let letters = [];
+  if (board.cards && board.cards.length) {
+    letters = board.cards.map(function(card) {
+      return card.letter;
+    });
+  }
+  return letters.join();
+};
 export const ChuHanBoardSelection = () => {
   const [boards, setBoards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +53,7 @@ export const ChuHanBoardSelection = () => {
           );
         } else {
           setBoards(data.results);
-          console.log(data.results);
+          // console.log(data.results);
           setIsLoading(false);
         }
       } catch (error) {
@@ -59,31 +70,42 @@ export const ChuHanBoardSelection = () => {
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             boards.map(board => {
-              {
-                /* const data = {
-                id: board.id,
-                name: board.title,
-                description: board.description,
-              }; */
-              }
-              const navigateToChuHanLesson = () => {
+              const navigateToChuHanLesson = (type = BOARD_TYPE.THEORY) => {
                 dispatch(
                   programActions.chuHanLessonSelected({
                     selectedChuHanLesson: {
                       board,
+                      type,
                     },
                   }),
                 );
                 navigation.navigate('ChuHanLesson');
               };
               return (
-                <List.Item
-                  title={`${board.title}`}
-                  key={board.id}
-                  titleEllipsizeMode="tail"
+                <List.Accordion
+                  key={`${board.id}-board`}
+                  title={`${board.title}: ${getLetters(board)}`}
                   left={props => <List.Icon {...props} icon="folder" />}
-                  onPress={navigateToChuHanLesson}
-                />
+                  titleEllipsizeMode="tail">
+                  <List.Item
+                    title={'Lý thuyết'}
+                    key={`${board.id}-theory`}
+                    titleEllipsizeMode="tail"
+                    onPress={() => {
+                      navigateToChuHanLesson(BOARD_TYPE.THEORY);
+                    }}
+                  />
+                  {!_.isEmpty(board.quiz) && board.quiz.length && (
+                    <List.Item
+                      title={'Bài tập củng cố'}
+                      key={`${board.id}-excercise`}
+                      titleEllipsizeMode="tail"
+                      onPress={() => {
+                        navigateToChuHanLesson(BOARD_TYPE.EXERCISE);
+                      }}
+                    />
+                  )}
+                </List.Accordion>
               );
             })}
           {!isLoading && boards.length === 0 && (

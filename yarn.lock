@@ -1162,6 +1162,11 @@
   resolved "https://registry.yarnpkg.com/@redux-saga/types/-/types-1.1.0.tgz#0e81ce56b4883b4b2a3001ebe1ab298b84237204"
   integrity sha512-afmTuJrylUU/0OtqzaRkbyYFFNgCF73Bvel/sw90pvGrWIZ+vyoIJqA6eMSoA6+nb443kTmulmBtC9NerXboNg==
 
+"@summerkiflain/react-native-scrollable-tabview@^0.10.9":
+  version "0.10.9"
+  resolved "https://registry.yarnpkg.com/@summerkiflain/react-native-scrollable-tabview/-/react-native-scrollable-tabview-0.10.9.tgz#865b26ab5e2630d1fdbf950ad71da1189d808487"
+  integrity sha512-j9VglVIAG7P2u8/BctftpMqp1cr0N08XUzfoi+2261jVOlLweRVO9xrJpmaPeQ6W5xWDAPxgS62eMlDlP6uHEA==
+
 "@types/babel__core@^7.1.0":
   version "7.1.14"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.14.tgz#faaeefc4185ec71c389f4501ee5ec84b170cc402"

@@ -170,22 +170,21 @@ export const ChuHanLesson = ({ navigation }) => {
   };
   const ChuHanWebView = ({ card }) => {
     const [src, setSrc] = useState(card.svgSrc);
+    const [index, setIndex] = useState(0);
     return (
       <>
-        {
-          <AutoHeightWebView
-            style={{
-              marginTop: 5,
-              minHeight: 200,
-              height: 'auto',
-            }}
-            source={{
-              uri: src,
-            }}
-            scalesPageToFit={true}
-            viewportContent={'width=device-width, user-scalable=no'}
-          />
-        }
+        <AutoHeightWebView
+          style={{
+            marginTop: 5,
+            minHeight: 200,
+            height: 'auto',
+          }}
+          source={{
+            uri: src,
+          }}
+          scalesPageToFit={true}
+          viewportContent={'width=device-width, user-scalable=no'}
+        />
         <View
           style={{
             flex: 5,
@@ -196,17 +195,15 @@ export const ChuHanLesson = ({ navigation }) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <IconButton
+          {/* <IconButton
             icon="refresh-circle"
             size={26}
             onPress={() => {
-              setSrc('');
-              setTimeout(() => {
-                setSrc(`${card.svgSrc}`);
-              }, 200);
+              setSrc(`${card.svgSrc}?reload=${index}`);
+              setIndex(index + 1);
             }}
             style={{ textAlign: 'center' }}
-          />
+          /> */}
           <Text
             style={{
               fontSize: 18,
@@ -267,7 +264,7 @@ export const ChuHanLesson = ({ navigation }) => {
                               key={card.id}
                               tabLabel={card.letter}>
                               <Divider />
-                              {/* <ChuHanWebView card={card} /> */}
+                              <ChuHanWebView card={card} />
                               <Divider />
                               {!_.isEmpty(card.note) && (
                                 <View style={styles.parentView}>

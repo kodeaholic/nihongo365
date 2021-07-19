@@ -1,6 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
 import {
   Button,
   Text,
@@ -12,8 +11,15 @@ import {
 } from 'react-native-paper';
 import { Header } from '../../components/commonHeader';
 import { useSelector, useDispatch } from 'react-redux';
-import { SafeAreaView, ScrollView, FlatList } from 'react-native';
-import { ActivityIndicator } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  FlatList,
+  View,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import HTML from 'react-native-render-html';
 import _ from 'lodash';
@@ -64,49 +70,37 @@ export const ChuHanLesson = ({ navigation }) => {
   }, [dispatch]);
   const renderQuizItem = ({ item, index }) => {
     const quiz = item;
+    const screenWidth = Dimensions.get('window').width;
+    const screenHeight = Dimensions.get('window').height;
     return (
       <Card style={styles.card} key={quiz.id}>
         <Divider />
-        <View style={styles.parentView}>
+        <View>
           <View
             style={{
-              paddingTop: 10,
-              flex: 0.6,
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              // alignContent: 'center',
               justifyContent: 'flex-start',
-              borderRightWidth: 0.5,
+              height: 'auto',
+              paddingLeft: 5,
             }}>
             <Badge
               style={{
-                marginRight: 3.5,
                 backgroundColor: '#fff',
                 color: '#000',
                 borderWidth: 0.5,
+                marginRight: 5,
+                marginBottom: 5,
               }}>
               {index + 1}
             </Badge>
-          </View>
-          <View
-            style={{
-              flex: 3,
-              borderRightWidth: 0.5,
-              marginLeft: 5,
-            }}>
-            <View style={styles.parentView}>
-              <View
-                style={{
-                  flex: 5,
-                  marginRight: 5,
-                  marginLeft: 5,
-                }}>
-                <Text style={{ fontSize: 16 }}>{quiz.question}</Text>
-              </View>
-            </View>
+            <Text style={{ fontSize: 16 }}>{quiz.question}</Text>
           </View>
           <View
             style={{
               paddingTop: 0,
-              marginLeft: 5,
-              flex: 5,
+              marginLeft: 0,
               flexDirection: 'column',
             }}>
             <RadioButton.Group
@@ -127,27 +121,92 @@ export const ChuHanLesson = ({ navigation }) => {
                 setAnswered(answered + 1);
               }}
               value={value['' + index]}>
-              <RadioButton.Item
-                label={`A. ${quiz.A}`}
-                value="A"
-                disabled={disabled['' + index]}
-              />
-              <RadioButton.Item
-                label={`B. ${quiz.B}`}
-                value="B"
-                disabled={disabled['' + index]}
-              />
-              <RadioButton.Item
-                label={`C. ${quiz.C}`}
-                value="C"
-                disabled={disabled['' + index]}
-              />
-              <RadioButton.Item
-                label={`D. ${quiz.D}`}
-                value="D"
-                disabled={disabled['' + index]}
-              />
-              {value['' + index] && (
+              <View
+                style={{ flexDirection: 'row', paddingTop: 0, marginLeft: 0 }}>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`A. ${quiz.A}`}
+                    value="A"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'A'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                  />
+                </View>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`B. ${quiz.B}`}
+                    value="B"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'B'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                  />
+                </View>
+              </View>
+              <View
+                style={{ flexDirection: 'row', paddingTop: 0, marginLeft: 0 }}>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`C. ${quiz.C}`}
+                    value="C"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'C'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                    color={
+                      _.isEmpty(value['' + index])
+                        ? ''
+                        : quiz.answer === 'C'
+                        ? trueColor
+                        : falseColor
+                    }
+                  />
+                </View>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`D. ${quiz.D}`}
+                    value="D"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'D'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                  />
+                </View>
+              </View>
+              {/* {value['' + index] && (
                 <Text
                   style={{
                     color:
@@ -157,10 +216,10 @@ export const ChuHanLesson = ({ navigation }) => {
                     textAlign: 'left',
                     fontSize: 16,
                     marginLeft: 17,
-                  }}>{`${value['' + index] === quiz.answer ? 'Ｘ' : 'Ｏ'}. ${
+                  }}>{`${value['' + index] === quiz.answer ? 'Ｏ' : 'Ｘ'}. ${
                   quiz.answer
                 }`}</Text>
-              )}
+              )} */}
             </RadioButton.Group>
           </View>
         </View>
@@ -442,6 +501,7 @@ export const ChuHanLesson = ({ navigation }) => {
                   fontSize: 22,
                   textAlign: 'center',
                   fontFamily: 'SF-Pro-Detail-Regular',
+                  //borderBottomWidth: 0.5,
                   backgroundColor: '#dbd4c8',
                 }}>
                 Bài tập củng cố

@@ -1,14 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
+import 'react-native-get-random-values';
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Text,
-  Card,
-  Divider,
-  Badge,
-  RadioButton,
-  IconButton,
-} from 'react-native-paper';
+import { Text, Card, Divider, Badge, RadioButton } from 'react-native-paper';
 import { Header } from '../../components/commonHeader';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -19,16 +12,14 @@ import {
   StyleSheet,
   Dimensions,
   ActivityIndicator,
+  BackHandler,
 } from 'react-native';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
-import HTML from 'react-native-render-html';
 import _ from 'lodash';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { WebView } from 'react-native-webview';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import {
   ScrollableTabView,
-  DefaultTabBar,
   ScrollableTabBar,
 } from '@summerkiflain/react-native-scrollable-tabview';
 import { BOARD_TYPE } from '../../constants/board';
@@ -228,11 +219,29 @@ export const ChuHanLesson = ({ navigation }) => {
     );
   };
   const ChuHanWebView = ({ card }) => {
-    const [src, setSrc] = useState(card.svgSrc);
-    const [index, setIndex] = useState(0);
+    const [src] = useState(card.svgSrc);
+    const [enabledJavascript, setEnabledJavascript] = useState(true);
+    useEffect(() => {
+      if (!_.isEmpty(src)) {
+        const backAction = () => {
+          setEnabledJavascript(false);
+        };
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction,
+        );
+        navigation.addListener('beforeRemove', e => {
+          setEnabledJavascript(false);
+        });
+        return () => {
+          backHandler.remove();
+          navigation.removeListener('beforeRemove');
+        };
+      }
+    });
     return (
       <>
-        <AutoHeightWebView
+        <WebView
           style={{
             marginTop: 5,
             minHeight: 200,
@@ -243,6 +252,13 @@ export const ChuHanLesson = ({ navigation }) => {
           }}
           scalesPageToFit={true}
           viewportContent={'width=device-width, user-scalable=no'}
+          injectedJavaScript={`
+            (function(){
+              setInterval(function(){document.location.reload(true)}, 16000);
+            })();
+          `}
+          javaScriptEnabled={enabledJavascript}
+          cacheEnabled={false}
         />
         <View
           style={{
@@ -254,15 +270,6 @@ export const ChuHanLesson = ({ navigation }) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          {/* <IconButton
-            icon="refresh-circle"
-            size={26}
-            onPress={() => {
-              setSrc(`${card.svgSrc}?reload=${index}`);
-              setIndex(index + 1);
-            }}
-            style={{ textAlign: 'center' }}
-          /> */}
           <Text
             style={{
               fontSize: 18,

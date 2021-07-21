@@ -5994,6 +5994,16 @@ react-native-screens@^2.4.0:
   resolved "https://registry.npmjs.org/react-native-screens/-/react-native-screens-2.18.1.tgz"
   integrity sha512-r5WZLpmx2hHjC1RgMdPq5YpSU9tEhBpUaZ5M1SUtNIONyiLqQVxabhRCINdebIk4depJiIl7yw2Q85zJyeX6fw==
 
+react-native-scroll-indicator@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-scroll-indicator/-/react-native-scroll-indicator-0.1.0.tgz#1b8281d88f15932338ccb8a4b9792142c796408c"
+  integrity sha512-fErMTBZe/aNZgKW1QYKXvQnsnODqBkQ7j/2K89DkimUqUgJAv+mltsj05JUXTu8sJBJznoFXwmW+3h2/Dcfbog==
+
+react-native-scroll-menu@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-scroll-menu/-/react-native-scroll-menu-1.0.3.tgz#4865fc75593ddfc961bd822b4d225234e9dfbdf0"
+  integrity sha512-oG3Vkw6GdrZDgJ7taXYOa7AjjL6w41ZLgBV1WFQ+C2QFpcyR9h9HpYBKupeZXSLgbGSoUMmad2ZKHV+srkByHg==
+
 react-native-slider@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/react-native-slider/-/react-native-slider-0.11.0.tgz#b68a0bc43c8422b24cd57947cc5ac2bcdb58fadc"

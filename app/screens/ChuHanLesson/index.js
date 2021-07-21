@@ -24,6 +24,7 @@ import {
 } from '@summerkiflain/react-native-scrollable-tabview';
 import { BOARD_TYPE } from '../../constants/board';
 import * as programActions from '../../actions/programActions';
+import ScrollingButtonMenu from 'react-native-scroll-menu';
 export const ChuHanLesson = ({ navigation }) => {
   const selectedChuHanLesson = useSelector(
     state => state.programReducer.selectedChuHanLesson,
@@ -33,15 +34,20 @@ export const ChuHanLesson = ({ navigation }) => {
   );
   const [board] = useState(selectedChuHanLesson.board);
   const [loading, setLoading] = useState(true);
-  const [cards] = useState(_.get(selectedChuHanLesson, 'board.cards'));
   const [quizes] = useState(_.get(selectedChuHanLesson, 'board.quiz'));
   const [value, setValue] = useState({});
   const [disabled, setDisabled] = useState({});
   const [answer, setAnswer] = useState({});
   const [count, setCount] = useState(0);
   const [answered, setAnswered] = useState(0);
+  const [selectedCard, setSelectedCard] = useState(
+    _.get(selectedChuHanLesson, 'board.cards')[0] || {},
+  );
   const trueColor = '#5cdb5e';
   const falseColor = '#f00';
+  const menus = _.get(selectedChuHanLesson, 'board.cards').map(item => {
+    return { ...item, name: item.letter };
+  });
   useEffect(() => {
     if (!_.isEmpty(selectedChuHanLesson)) {
       setLoading(false);
@@ -62,7 +68,6 @@ export const ChuHanLesson = ({ navigation }) => {
   const renderQuizItem = ({ item, index }) => {
     const quiz = item;
     const screenWidth = Dimensions.get('window').width;
-    const screenHeight = Dimensions.get('window').height;
     return (
       <Card style={styles.card} key={quiz.id}>
         <Divider />
@@ -243,7 +248,6 @@ export const ChuHanLesson = ({ navigation }) => {
       <>
         <WebView
           style={{
-            marginTop: 5,
             minHeight: 200,
             height: 'auto',
           }}
@@ -305,174 +309,179 @@ export const ChuHanLesson = ({ navigation }) => {
             </>
           )}
           {!loading && (
-            <ScrollView
-              style={{
-                flex: 1,
-                backgroundColor: '#dbd4c8',
-                paddingBottom: 10,
-                borderBottomWidth: 0.5,
-              }}>
-              {cards.length && (
-                <>
-                  {cards && (
-                    <ScrollableTabView
-                      style={{ borderBottomWidth: 0.5 }}
-                      renderTabBar={() => (
-                        <ScrollableTabBar
-                          style={{ backgroundColor: '#dbd4c8' }}
+            <>
+              <View
+                style={{
+                  marginBottom: 0,
+                  paddingTop: 10,
+                  paddingBottom: 15,
+                  paddingLeft: 0,
+                  paddingRight: 2,
+                  backgroundColor: '#fff',
+                  // borderWidth: 1,
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  //alignItems: 'center',
+                }}>
+                <ScrollingButtonMenu
+                  items={menus}
+                  onPress={e => {
+                    setSelectedCard(e);
+                  }}
+                  selectedOpacity={0.7}
+                  selected={selectedCard.id}
+                  activeBackgroundColor="#5cdb5e"
+                  activeColor="#fff"
+                />
+              </View>
+
+              <ScrollView
+                style={{
+                  flex: 1,
+                  backgroundColor: '#dbd4c8',
+                  paddingBottom: 10,
+                  borderBottomWidth: 0.5,
+                }}>
+                {!_.isEmpty(selectedCard) && (
+                  <Card style={styles.card} key={selectedCard.id}>
+                    <ChuHanWebView card={selectedCard} />
+                    {!_.isEmpty(selectedCard.note) && (
+                      <View style={styles.parentView}>
+                        <View
+                          style={{
+                            flex: 1.5,
+                            marginRight: 0,
+                            marginLeft: 0,
+                            height: 'auto',
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              marginRight: 5,
+                              marginLeft: 5,
+                              textAlign: 'center',
+                            }}>
+                            Mẹo nhớ
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flex: 5,
+                            marginRight: 0,
+                            marginLeft: 0,
+                            height: 'auto',
+                            borderLeftWidth: 0.5,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              marginRight: 5,
+                              marginLeft: 10,
+                              // textAlign: 'center',
+                            }}>
+                            {selectedCard.note}
+                          </Text>
+                        </View>
+                      </View>
+                    )}
+                    <Divider />
+                    <View style={styles.parentView}>
+                      <View
+                        style={{
+                          flex: 1.5,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            marginRight: 5,
+                            marginLeft: 5,
+                            textAlign: 'center',
+                          }}>
+                          On
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flex: 5,
+                          borderLeftWidth: 0.5,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            margin: 5,
+                          }}>
+                          {selectedCard.onText}
+                        </Text>
+                        <AutoHeightWebView
+                          style={{
+                            minHeight: 150,
+                            height: 'auto',
+                            margin: 5,
+                          }}
+                          source={{
+                            html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                              selectedCard.onTextExample,
+                            )}</div>`,
+                          }}
+                          scalesPageToFit={true}
+                          viewportContent={
+                            'width=device-width, user-scalable=no'
+                          }
                         />
-                      )}>
-                      {cards &&
-                        cards.map(function(card, index) {
-                          return (
-                            <Card
-                              style={styles.card}
-                              key={card.id}
-                              tabLabel={card.letter}>
-                              <Divider />
-                              <ChuHanWebView card={card} />
-                              <Divider />
-                              {!_.isEmpty(card.note) && (
-                                <View style={styles.parentView}>
-                                  <View
-                                    style={{
-                                      flex: 1.5,
-                                      marginRight: 0,
-                                      marginLeft: 0,
-                                      height: 'auto',
-                                    }}>
-                                    <Text
-                                      style={{
-                                        fontSize: 18,
-                                        marginRight: 5,
-                                        marginLeft: 5,
-                                        textAlign: 'center',
-                                      }}>
-                                      Mẹo nhớ
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      flex: 5,
-                                      marginRight: 0,
-                                      marginLeft: 0,
-                                      height: 'auto',
-                                      borderLeftWidth: 0.5,
-                                    }}>
-                                    <Text
-                                      style={{
-                                        fontSize: 18,
-                                        marginRight: 5,
-                                        marginLeft: 10,
-                                        // textAlign: 'center',
-                                      }}>
-                                      {card.note}
-                                    </Text>
-                                  </View>
-                                </View>
-                              )}
-                              <Divider />
-                              <View style={styles.parentView}>
-                                <View
-                                  style={{
-                                    flex: 1.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      marginRight: 5,
-                                      marginLeft: 5,
-                                      textAlign: 'center',
-                                    }}>
-                                    On
-                                  </Text>
-                                </View>
-                                <View
-                                  style={{
-                                    flex: 5,
-                                    borderLeftWidth: 0.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      margin: 5,
-                                    }}>
-                                    {card.onText}
-                                  </Text>
-                                  <AutoHeightWebView
-                                    style={{
-                                      minHeight: 150,
-                                      height: 'auto',
-                                      margin: 5,
-                                    }}
-                                    source={{
-                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                        card.onTextExample,
-                                      )}</div>`,
-                                    }}
-                                    scalesPageToFit={true}
-                                    viewportContent={
-                                      'width=device-width, user-scalable=no'
-                                    }
-                                  />
-                                </View>
-                              </View>
-                              <Divider />
-                              <View style={styles.parentView}>
-                                <View
-                                  style={{
-                                    flex: 1.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      marginRight: 5,
-                                      marginLeft: 5,
-                                      textAlign: 'center',
-                                    }}>
-                                    Kun
-                                  </Text>
-                                </View>
-                                <View
-                                  style={{
-                                    flex: 5,
-                                    borderLeftWidth: 0.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      margin: 5,
-                                    }}>
-                                    {card.kunText}
-                                  </Text>
-                                  <AutoHeightWebView
-                                    style={{
-                                      minHeight: 150,
-                                      height: 'auto',
-                                      margin: 5,
-                                    }}
-                                    source={{
-                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                        card.kunTextExample,
-                                      )}</div>`,
-                                    }}
-                                    scalesPageToFit={true}
-                                    viewportContent={
-                                      'width=device-width, user-scalable=no'
-                                    }
-                                  />
-                                </View>
-                                <Divider />
-                              </View>
-                              <Divider />
-                            </Card>
-                          );
-                        })}
-                    </ScrollableTabView>
-                  )}
-                </>
-              )}
-            </ScrollView>
+                      </View>
+                    </View>
+                    <Divider />
+                    <View style={styles.parentView}>
+                      <View
+                        style={{
+                          flex: 1.5,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            marginRight: 5,
+                            marginLeft: 5,
+                            textAlign: 'center',
+                          }}>
+                          Kun
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flex: 5,
+                          borderLeftWidth: 0.5,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            margin: 5,
+                          }}>
+                          {selectedCard.kunText}
+                        </Text>
+                        <AutoHeightWebView
+                          style={{
+                            minHeight: 150,
+                            height: 'auto',
+                            margin: 5,
+                          }}
+                          source={{
+                            html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                              selectedCard.kunTextExample,
+                            )}</div>`,
+                          }}
+                          scalesPageToFit={true}
+                          viewportContent={
+                            'width=device-width, user-scalable=no'
+                          }
+                        />
+                      </View>
+                      <Divider />
+                    </View>
+                    <Divider />
+                  </Card>
+                )}
+              </ScrollView>
+            </>
           )}
         </SafeAreaView>
       </>

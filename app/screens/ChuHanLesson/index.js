@@ -1,32 +1,31 @@
 /* eslint-disable react-native/no-inline-styles */
+import 'react-native-get-random-values';
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import {
-  Button,
-  Text,
-  Card,
-  Divider,
-  Badge,
-  RadioButton,
-  IconButton,
-} from 'react-native-paper';
+import { Text, Card, Divider, Badge, RadioButton } from 'react-native-paper';
 import { Header } from '../../components/commonHeader';
 import { useSelector, useDispatch } from 'react-redux';
-import { SafeAreaView, ScrollView, FlatList } from 'react-native';
-import { ActivityIndicator } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  FlatList,
+  View,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  BackHandler,
+} from 'react-native';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
-import HTML from 'react-native-render-html';
 import _ from 'lodash';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { WebView } from 'react-native-webview';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import {
   ScrollableTabView,
-  DefaultTabBar,
   ScrollableTabBar,
 } from '@summerkiflain/react-native-scrollable-tabview';
 import { BOARD_TYPE } from '../../constants/board';
 import * as programActions from '../../actions/programActions';
+import ScrollingButtonMenu from 'react-native-scroll-menu';
+import GestureRecognizer from 'react-native-swipe-gestures';
 export const ChuHanLesson = ({ navigation }) => {
   const selectedChuHanLesson = useSelector(
     state => state.programReducer.selectedChuHanLesson,
@@ -36,15 +35,33 @@ export const ChuHanLesson = ({ navigation }) => {
   );
   const [board] = useState(selectedChuHanLesson.board);
   const [loading, setLoading] = useState(true);
-  const [cards] = useState(_.get(selectedChuHanLesson, 'board.cards'));
   const [quizes] = useState(_.get(selectedChuHanLesson, 'board.quiz'));
   const [value, setValue] = useState({});
   const [disabled, setDisabled] = useState({});
   const [answer, setAnswer] = useState({});
   const [count, setCount] = useState(0);
   const [answered, setAnswered] = useState(0);
+  const [selectedCard, setSelectedCard] = useState(
+    _.get(selectedChuHanLesson, 'board.cards')[0] || {},
+  );
+  const [cards] = useState(_.get(selectedChuHanLesson, 'board.cards'));
+  const [selectedCardIndex, setSelectedCardIndex] = useState(0);
+  const moveCard = (step = 0) => {
+    let index = selectedCardIndex + step;
+    if (index < 0) {
+      index = cards.length - 1;
+    } // move from first to last
+    if (index >= cards.length) {
+      index = 0;
+    } // move from last to first
+    setSelectedCardIndex(index);
+    setSelectedCard(cards[index]);
+  };
   const trueColor = '#5cdb5e';
   const falseColor = '#f00';
+  const menus = _.get(selectedChuHanLesson, 'board.cards').map(item => {
+    return { ...item, name: item.letter };
+  });
   useEffect(() => {
     if (!_.isEmpty(selectedChuHanLesson)) {
       setLoading(false);
@@ -64,49 +81,36 @@ export const ChuHanLesson = ({ navigation }) => {
   }, [dispatch]);
   const renderQuizItem = ({ item, index }) => {
     const quiz = item;
+    const screenWidth = Dimensions.get('window').width;
     return (
       <Card style={styles.card} key={quiz.id}>
         <Divider />
-        <View style={styles.parentView}>
+        <View>
           <View
             style={{
-              paddingTop: 10,
-              flex: 0.6,
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              // alignContent: 'center',
               justifyContent: 'flex-start',
-              borderRightWidth: 0.5,
+              height: 'auto',
+              paddingLeft: 5,
             }}>
             <Badge
               style={{
-                marginRight: 3.5,
                 backgroundColor: '#fff',
                 color: '#000',
                 borderWidth: 0.5,
+                marginRight: 5,
+                marginBottom: 5,
               }}>
               {index + 1}
             </Badge>
-          </View>
-          <View
-            style={{
-              flex: 3,
-              borderRightWidth: 0.5,
-              marginLeft: 5,
-            }}>
-            <View style={styles.parentView}>
-              <View
-                style={{
-                  flex: 5,
-                  marginRight: 5,
-                  marginLeft: 5,
-                }}>
-                <Text style={{ fontSize: 16 }}>{quiz.question}</Text>
-              </View>
-            </View>
+            <Text style={{ fontSize: 16 }}>{quiz.question}</Text>
           </View>
           <View
             style={{
               paddingTop: 0,
-              marginLeft: 5,
-              flex: 5,
+              marginLeft: 0,
               flexDirection: 'column',
             }}>
             <RadioButton.Group
@@ -127,27 +131,92 @@ export const ChuHanLesson = ({ navigation }) => {
                 setAnswered(answered + 1);
               }}
               value={value['' + index]}>
-              <RadioButton.Item
-                label={`A. ${quiz.A}`}
-                value="A"
-                disabled={disabled['' + index]}
-              />
-              <RadioButton.Item
-                label={`B. ${quiz.B}`}
-                value="B"
-                disabled={disabled['' + index]}
-              />
-              <RadioButton.Item
-                label={`C. ${quiz.C}`}
-                value="C"
-                disabled={disabled['' + index]}
-              />
-              <RadioButton.Item
-                label={`D. ${quiz.D}`}
-                value="D"
-                disabled={disabled['' + index]}
-              />
-              {value['' + index] && (
+              <View
+                style={{ flexDirection: 'row', paddingTop: 0, marginLeft: 0 }}>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`A. ${quiz.A}`}
+                    value="A"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'A'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                  />
+                </View>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`B. ${quiz.B}`}
+                    value="B"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'B'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                  />
+                </View>
+              </View>
+              <View
+                style={{ flexDirection: 'row', paddingTop: 0, marginLeft: 0 }}>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`C. ${quiz.C}`}
+                    value="C"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'C'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                    color={
+                      _.isEmpty(value['' + index])
+                        ? ''
+                        : quiz.answer === 'C'
+                        ? trueColor
+                        : falseColor
+                    }
+                  />
+                </View>
+                <View style={{ flex: 1, paddingTop: 0, marginLeft: 0 }}>
+                  <RadioButton.Item
+                    label={`D. ${quiz.D}`}
+                    value="D"
+                    disabled={disabled['' + index]}
+                    style={{
+                      wordWrap: 'break-word',
+                      maxWidth: screenWidth / 2.6,
+                    }}
+                    labelStyle={
+                      _.isEmpty(value['' + index])
+                        ? {}
+                        : quiz.answer === 'D'
+                        ? { color: trueColor }
+                        : { color: falseColor }
+                    }
+                  />
+                </View>
+              </View>
+              {/* {value['' + index] && (
                 <Text
                   style={{
                     color:
@@ -157,10 +226,10 @@ export const ChuHanLesson = ({ navigation }) => {
                     textAlign: 'left',
                     fontSize: 16,
                     marginLeft: 17,
-                  }}>{`${value['' + index] === quiz.answer ? 'Ｘ' : 'Ｏ'}. ${
+                  }}>{`${value['' + index] === quiz.answer ? 'Ｏ' : 'Ｘ'}. ${
                   quiz.answer
                 }`}</Text>
-              )}
+              )} */}
             </RadioButton.Group>
           </View>
         </View>
@@ -169,13 +238,30 @@ export const ChuHanLesson = ({ navigation }) => {
     );
   };
   const ChuHanWebView = ({ card }) => {
-    const [src, setSrc] = useState(card.svgSrc);
-    const [index, setIndex] = useState(0);
+    const [src] = useState(card.svgSrc);
+    const [enabledJavascript, setEnabledJavascript] = useState(true);
+    useEffect(() => {
+      if (!_.isEmpty(src)) {
+        const backAction = () => {
+          setEnabledJavascript(false);
+        };
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction,
+        );
+        navigation.addListener('beforeRemove', e => {
+          setEnabledJavascript(false);
+        });
+        return () => {
+          backHandler.remove();
+          navigation.removeListener('beforeRemove');
+        };
+      }
+    });
     return (
       <>
-        <AutoHeightWebView
+        <WebView
           style={{
-            marginTop: 5,
             minHeight: 200,
             height: 'auto',
           }}
@@ -184,6 +270,13 @@ export const ChuHanLesson = ({ navigation }) => {
           }}
           scalesPageToFit={true}
           viewportContent={'width=device-width, user-scalable=no'}
+          injectedJavaScript={`
+            (function(){
+              setInterval(function(){document.location.reload(true)}, 16000);
+            })();
+          `}
+          javaScriptEnabled={enabledJavascript}
+          cacheEnabled={false}
         />
         <View
           style={{
@@ -195,15 +288,6 @@ export const ChuHanLesson = ({ navigation }) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          {/* <IconButton
-            icon="refresh-circle"
-            size={26}
-            onPress={() => {
-              setSrc(`${card.svgSrc}?reload=${index}`);
-              setIndex(index + 1);
-            }}
-            style={{ textAlign: 'center' }}
-          /> */}
           <Text
             style={{
               fontSize: 18,
@@ -239,174 +323,201 @@ export const ChuHanLesson = ({ navigation }) => {
             </>
           )}
           {!loading && (
-            <ScrollView
-              style={{
-                flex: 1,
-                backgroundColor: '#dbd4c8',
-                paddingBottom: 10,
-                borderBottomWidth: 0.5,
-              }}>
-              {cards.length && (
-                <>
-                  {cards && (
-                    <ScrollableTabView
-                      style={{ borderBottomWidth: 0.5 }}
-                      renderTabBar={() => (
-                        <ScrollableTabBar
-                          style={{ backgroundColor: '#dbd4c8' }}
-                        />
-                      )}>
-                      {cards &&
-                        cards.map(function(card, index) {
-                          return (
-                            <Card
-                              style={styles.card}
-                              key={card.id}
-                              tabLabel={card.letter}>
-                              <Divider />
-                              <ChuHanWebView card={card} />
-                              <Divider />
-                              {!_.isEmpty(card.note) && (
-                                <View style={styles.parentView}>
-                                  <View
-                                    style={{
-                                      flex: 1.5,
-                                      marginRight: 0,
-                                      marginLeft: 0,
-                                      height: 'auto',
-                                    }}>
-                                    <Text
-                                      style={{
-                                        fontSize: 18,
-                                        marginRight: 5,
-                                        marginLeft: 5,
-                                        textAlign: 'center',
-                                      }}>
-                                      Mẹo nhớ
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      flex: 5,
-                                      marginRight: 0,
-                                      marginLeft: 0,
-                                      height: 'auto',
-                                      borderLeftWidth: 0.5,
-                                    }}>
-                                    <Text
-                                      style={{
-                                        fontSize: 18,
-                                        marginRight: 5,
-                                        marginLeft: 10,
-                                        // textAlign: 'center',
-                                      }}>
-                                      {card.note}
-                                    </Text>
-                                  </View>
-                                </View>
-                              )}
-                              <Divider />
-                              <View style={styles.parentView}>
-                                <View
-                                  style={{
-                                    flex: 1.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      marginRight: 5,
-                                      marginLeft: 5,
-                                      textAlign: 'center',
-                                    }}>
-                                    On
-                                  </Text>
-                                </View>
-                                <View
-                                  style={{
-                                    flex: 5,
-                                    borderLeftWidth: 0.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      margin: 5,
-                                    }}>
-                                    {card.onText}
-                                  </Text>
-                                  <AutoHeightWebView
-                                    style={{
-                                      minHeight: 150,
-                                      height: 'auto',
-                                      margin: 5,
-                                    }}
-                                    source={{
-                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                        card.onTextExample,
-                                      )}</div>`,
-                                    }}
-                                    scalesPageToFit={true}
-                                    viewportContent={
-                                      'width=device-width, user-scalable=no'
-                                    }
-                                  />
-                                </View>
-                              </View>
-                              <Divider />
-                              <View style={styles.parentView}>
-                                <View
-                                  style={{
-                                    flex: 1.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      marginRight: 5,
-                                      marginLeft: 5,
-                                      textAlign: 'center',
-                                    }}>
-                                    Kun
-                                  </Text>
-                                </View>
-                                <View
-                                  style={{
-                                    flex: 5,
-                                    borderLeftWidth: 0.5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      margin: 5,
-                                    }}>
-                                    {card.kunText}
-                                  </Text>
-                                  <AutoHeightWebView
-                                    style={{
-                                      minHeight: 150,
-                                      height: 'auto',
-                                      margin: 5,
-                                    }}
-                                    source={{
-                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                        card.kunTextExample,
-                                      )}</div>`,
-                                    }}
-                                    scalesPageToFit={true}
-                                    viewportContent={
-                                      'width=device-width, user-scalable=no'
-                                    }
-                                  />
-                                </View>
-                                <Divider />
-                              </View>
-                              <Divider />
-                            </Card>
-                          );
-                        })}
-                    </ScrollableTabView>
-                  )}
-                </>
-              )}
-            </ScrollView>
+            <>
+              <View
+                style={{
+                  marginBottom: 0,
+                  paddingTop: 10,
+                  paddingBottom: 15,
+                  paddingLeft: 0,
+                  paddingRight: 2,
+                  backgroundColor: '#fff',
+                  // borderWidth: 1,
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  //alignItems: 'center',
+                }}>
+                <ScrollingButtonMenu
+                  items={menus}
+                  onPress={e => {
+                    setSelectedCard(e);
+                    let index = _.findIndex(
+                      cards,
+                      card => {
+                        return card.id === e.id;
+                      },
+                      0,
+                    );
+                    setSelectedCardIndex(index);
+                  }}
+                  selectedOpacity={0.7}
+                  selected={selectedCard.id}
+                  activeBackgroundColor="#5cdb5e"
+                  activeColor="#fff"
+                />
+              </View>
+
+              <ScrollView
+                style={{
+                  flex: 1,
+                  backgroundColor: '#dbd4c8',
+                  paddingBottom: 10,
+                  borderBottomWidth: 0.5,
+                }}>
+                {!_.isEmpty(selectedCard) && (
+                  <GestureRecognizer
+                    onSwipeUp={() => {
+                      moveCard(+1);
+                    }}
+                    onSwipeDown={() => {
+                      moveCard(-1);
+                    }}
+                    onSwipeLeft={() => {
+                      moveCard(+1);
+                    }}
+                    onSwipeRight={() => {
+                      moveCard(-1);
+                    }}>
+                    <Card style={styles.card} key={selectedCard.id}>
+                      <ChuHanWebView card={selectedCard} />
+                      {!_.isEmpty(selectedCard.note) && (
+                        <View style={styles.parentView}>
+                          <View
+                            style={{
+                              flex: 1.5,
+                              marginRight: 0,
+                              marginLeft: 0,
+                              height: 'auto',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                marginRight: 5,
+                                marginLeft: 5,
+                                textAlign: 'center',
+                              }}>
+                              Mẹo nhớ
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flex: 5,
+                              marginRight: 0,
+                              marginLeft: 0,
+                              height: 'auto',
+                              borderLeftWidth: 0.5,
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                marginRight: 5,
+                                marginLeft: 10,
+                                // textAlign: 'center',
+                              }}>
+                              {selectedCard.note}
+                            </Text>
+                          </View>
+                        </View>
+                      )}
+                      <Divider />
+                      <View style={styles.parentView}>
+                        <View
+                          style={{
+                            flex: 1.5,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              marginRight: 5,
+                              marginLeft: 5,
+                              textAlign: 'center',
+                            }}>
+                            On
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flex: 5,
+                            borderLeftWidth: 0.5,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              margin: 5,
+                            }}>
+                            {selectedCard.onText}
+                          </Text>
+                          <AutoHeightWebView
+                            style={{
+                              minHeight: 150,
+                              height: 'auto',
+                              margin: 5,
+                            }}
+                            source={{
+                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                                selectedCard.onTextExample,
+                              )}</div>`,
+                            }}
+                            scalesPageToFit={true}
+                            viewportContent={
+                              'width=device-width, user-scalable=no'
+                            }
+                          />
+                        </View>
+                      </View>
+                      <Divider />
+                      <View style={styles.parentView}>
+                        <View
+                          style={{
+                            flex: 1.5,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              marginRight: 5,
+                              marginLeft: 5,
+                              textAlign: 'center',
+                            }}>
+                            Kun
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flex: 5,
+                            borderLeftWidth: 0.5,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              margin: 5,
+                            }}>
+                            {selectedCard.kunText}
+                          </Text>
+                          <AutoHeightWebView
+                            style={{
+                              minHeight: 150,
+                              height: 'auto',
+                              margin: 5,
+                            }}
+                            source={{
+                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                                selectedCard.kunTextExample,
+                              )}</div>`,
+                            }}
+                            scalesPageToFit={true}
+                            viewportContent={
+                              'width=device-width, user-scalable=no'
+                            }
+                          />
+                        </View>
+                        <Divider />
+                      </View>
+                      <Divider />
+                    </Card>
+                  </GestureRecognizer>
+                )}
+              </ScrollView>
+            </>
           )}
         </SafeAreaView>
       </>
@@ -442,6 +553,7 @@ export const ChuHanLesson = ({ navigation }) => {
                   fontSize: 22,
                   textAlign: 'center',
                   fontFamily: 'SF-Pro-Detail-Regular',
+                  //borderBottomWidth: 0.5,
                   backgroundColor: '#dbd4c8',
                 }}>
                 Bài tập củng cố

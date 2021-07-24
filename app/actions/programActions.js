@@ -37,3 +37,9 @@ export function dialogLessonSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+export function readingLessonSelected(actionPayload) {
+  return {
+    type: types.READING_LESSON_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

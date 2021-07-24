@@ -20,6 +20,8 @@ import { ChuHanView } from '../screens/ChuHanLesson/webview';
 import { ListeningLesson } from '../screens/ListeningLesson';
 import { DialogLessonSelection } from '../screens/DialogLessonSelection';
 import { DialogLesson } from '../screens/DialogLesson';
+import { ReadingLessonSelection } from '../screens/ReadingLessonSelection';
+import { ReadingLesson } from '../screens/ReadingLesson/index';
 import Tabs from './Tabs';
 const Stack = createStackNavigator();
 
@@ -68,6 +70,11 @@ function App() {
           component={DialogLessonSelection}
         />
         <Stack.Screen name="DialogLesson" component={DialogLesson} />
+        <Stack.Screen
+          name="ReadingLessonSelection"
+          component={ReadingLessonSelection}
+        />
+        <Stack.Screen name="ReadingLesson" component={ReadingLesson} />
       </Stack.Navigator>
     </NavigationContainer>
   );

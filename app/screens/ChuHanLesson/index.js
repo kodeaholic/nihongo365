@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import 'react-native-get-random-values';
+import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { Text, Card, Divider, Badge, RadioButton } from 'react-native-paper';
 import { Header } from '../../components/commonHeader';

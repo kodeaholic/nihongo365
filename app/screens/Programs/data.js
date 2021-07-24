@@ -3,7 +3,7 @@ export const PROGRAM_IDS = {
   CHUHAN: 2,
   NGHE: 3,
   HOITHOAI: 4,
-  // THI: 6,
+  READING: 5,
 };
 
 export const DATA = [
@@ -72,17 +72,17 @@ export const DATA = [
     description: 'Học theo cấp độ',
     available: true,
   },
-  // {
-  //   id: PROGRAM_IDS.THI,
-  //   name: 'Văn Đức sensei',
-  //   sex: 'M',
-  //   date: '05/03/2020',
-  //   startTime: '11:00 AM',
-  //   endTime: '12:00 AM',
-  //   tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
-  //   avatar: 'https://nihong0.herokuapp.com/avatars/logo.jpg',
-  //   program: 'Luyện thi',
-  //   description: 'Học theo cấp độ',
-  //   available: false,
-  // },
+  {
+    id: PROGRAM_IDS.READING,
+    name: 'Văn Đức sensei',
+    sex: 'M',
+    date: '05/03/2020',
+    startTime: '9:00 AM',
+    endTime: '10:00 AM',
+    tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
+    avatar: 'https://nihong0.herokuapp.com/avatars/logo.jpg',
+    program: 'Luyện đọc',
+    description: 'Học theo cấp độ',
+    available: true,
+  },
 ];

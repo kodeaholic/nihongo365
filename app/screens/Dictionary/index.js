@@ -3,22 +3,27 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
+import Skeleton from '@thevsstech/react-native-skeleton';
 export default function Dictionary() {
   const navigation = useNavigation();
   useEffect(() => {
     navigation.setOptions({ headerProps: { title: 'Từ điển' } });
   }, [navigation]);
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text
-        style={{ textAlignVertical: 'center', textAlign: 'center', margin: 5 }}>
-        Từ điển Nihongo - Tính năng đang được phát triển
-      </Text>
-      <Text
-        style={{ textAlignVertical: 'center', margin: 5, textAlign: 'center' }}>
-        Cho phép bạn tra cứu chi tiết cách viết, giải nghĩa, ví dụ từng chữ
-      </Text>
-    </View>
+    <Skeleton>
+      <Skeleton.Item flexDirection="row" alignItems="center">
+        <Skeleton.Item width={60} height={60} borderRadius={50} />
+        <Skeleton.Item marginLeft={20}>
+          <Skeleton.Item width={120} height={20} borderRadius={4} />
+          <Skeleton.Item
+            marginTop={6}
+            width={80}
+            height={20}
+            borderRadius={4}
+          />
+        </Skeleton.Item>
+      </Skeleton.Item>
+    </Skeleton>
   );
 }
 

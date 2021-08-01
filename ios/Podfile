@@ -61,6 +61,8 @@ target 'Nihongo365' do
 
   pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
 
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
   target 'Nihongo365Tests' do
     inherit! :complete
     # Pods for testing

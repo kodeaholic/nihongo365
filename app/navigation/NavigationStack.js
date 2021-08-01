@@ -23,16 +23,25 @@ import { DialogLesson } from '../screens/DialogLesson';
 import { ReadingLessonSelection } from '../screens/ReadingLessonSelection';
 import { ReadingLesson } from '../screens/ReadingLesson/index';
 import Tabs from './Tabs';
+import { Header } from '../components/navigatorHeader';
+import _, { head } from 'lodash';
 const Stack = createStackNavigator();
 
 function App() {
   const stackProps = DeviceInfo.isTablet()
     ? { headerMode: 'none' }
-    : { headerMode: 'none' };
+    : { headerMode: 'float' };
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator {...stackProps}>
+      <Stack.Navigator
+        {...stackProps}
+        screenOptions={{
+          header: ({ scene }) => {
+            let { headerProps } = scene.descriptor.options;
+            return <Header {...headerProps} />;
+          },
+        }}>
         <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
         {/* <Stack.Screen name="Login" component={Login} /> */}
         <Stack.Screen name="StartScreen" component={StartScreen} />

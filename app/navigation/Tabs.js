@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { StyleSheet, Image } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
@@ -8,10 +9,8 @@ import { useSafeArea } from 'react-native-safe-area-context';
 import { Portal, FAB } from 'react-native-paper';
 import DeviceInfo from 'react-native-device-info';
 
-import Programs from 'app/screens/Programs';
-import Departments from 'app/screens/Departments';
-import Patients from 'app/screens/Patients';
-import Reports from 'app/screens/Reports';
+import Programs from '../screens/Programs';
+import Dictionary from '../screens/Dictionary';
 
 import TabBar from 'app/components/tab-bar';
 
@@ -20,7 +19,7 @@ const Tab = isTablet
   ? createMaterialTopTabNavigator()
   : createMaterialBottomTabNavigator();
 
-function Tabs() {
+function Tabs({ navigation }) {
   const isFocused = useIsFocused();
   const safeArea = useSafeArea();
   let tabBarProps = {};
@@ -30,7 +29,15 @@ function Tabs() {
       tabBar: props => <TabBar {...props} />,
     };
   }
-
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerProps: {
+        title: 'Nihongo365',
+        enableLogoutButton: true,
+        center: true,
+      },
+    });
+  });
   return (
     <React.Fragment>
       <Tab.Navigator
@@ -60,7 +67,7 @@ function Tabs() {
 
         <Tab.Screen
           name="Từ điển"
-          component={Patients}
+          component={Dictionary}
           options={{
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="magnify" color={color} size={26} />

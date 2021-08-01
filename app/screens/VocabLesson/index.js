@@ -9,16 +9,15 @@ import { SafeAreaView, ScrollView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
-import * as programActions from '../../actions/programActions';
-import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
-import HTML from 'react-native-render-html';
+// import * as programActions from '../../actions/programActions';
+// import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
+// import HTML from 'react-native-render-html';
 import { AudioPlayer } from '../../components/audio-player';
-import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
+// import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
 import _ from 'lodash';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
-import { WebView } from 'react-native-webview';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-export const VocabLesson = () => {
+export const VocabLesson = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +51,6 @@ export const VocabLesson = () => {
           );
         } else {
           setVocabs(data.results);
-          console.log(data.results);
           setLoading(false);
           if (!data.results.length) {
             ToastAndroid.showWithGravityAndOffset(
@@ -132,15 +130,24 @@ export const VocabLesson = () => {
       </Card>
     );
   };
+
+  /* Update headerProps onMounted */
+  useEffect(() => {
+    const title = `Học từ vựng ${selectedLevel}`;
+    const subtitle = `${selectedVocabLesson.chapterName} - ${
+      selectedVocabLesson.chapterDescription
+    } - ${selectedVocabLesson.name}`;
+    navigation.setOptions({ headerProps: { title, subtitle } });
+  }, [navigation, selectedLevel, selectedVocabLesson]);
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        <Header
+        {/* <Header
           title={`Học từ vựng ${selectedLevel}`}
           subtitle={`${selectedVocabLesson.chapterName} - ${
             selectedVocabLesson.chapterDescription
           } - ${selectedVocabLesson.name}`}
-        />
+        /> */}
         {/* <ScrollView style={{ flex: 1 }}> */}
         {!loading && (
           <FlatList

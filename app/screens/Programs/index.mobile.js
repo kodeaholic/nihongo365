@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { Headline, Title } from 'react-native-paper';
@@ -19,12 +20,12 @@ export default function Programs() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
+      {/* <Header
         // disableBackButton={true}
         title={'Chương trình học Nihongo365'}
         customStyles={{ textAlign: 'center' }}
         enableLogoutButton={true}
-      />
+      /> */}
       <FlatList
         style={styles.list}
         data={localData}

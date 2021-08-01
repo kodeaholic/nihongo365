@@ -43,7 +43,6 @@ export const ReadingLessonSelection = () => {
         } else {
           //   console.log(data.results);
           setBoards(data.results);
-          console.log(data.results);
           setIsLoading(false);
         }
       } catch (error) {

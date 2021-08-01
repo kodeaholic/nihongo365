@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { Button, Text, Chip } from 'react-native-paper';
@@ -10,7 +11,7 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
-export const VocabTopicSelection = () => {
+export const VocabTopicSelection = ({ navigation }) => {
   const [topics, setTopics] = useState([]);
   const [chapters, setChapters] = useState([]);
   const [lessons, setLessons] = useState([]);
@@ -18,7 +19,6 @@ export const VocabTopicSelection = () => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const navigation = useNavigation();
   useEffect(() => {
     async function getTopics() {
       const headers = await authHeader();
@@ -52,7 +52,11 @@ export const VocabTopicSelection = () => {
       }
     }
     getTopics();
-  }, [selectedLevel]);
+
+    /** Update header */
+    const title = `Học từ vựng ${selectedLevel}`;
+    navigation.setOptions({ headerProps: { title } });
+  }, [navigation, selectedLevel]);
 
   const Chapter = props => {
     const { data, listOfLessons } = props;
@@ -124,7 +128,7 @@ export const VocabTopicSelection = () => {
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        <Header title={`Học từ vựng ${selectedLevel}`} />
+        {/* <Header title={`Học từ vựng ${selectedLevel}`} /> */}
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             topics.map(topic => {

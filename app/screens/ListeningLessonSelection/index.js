@@ -11,13 +11,12 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
-export const ListeningLessonSelection = () => {
+export const ListeningLessonSelection = ({ navigation }) => {
   const [boards, setBoards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const navigation = useNavigation();
   useEffect(() => {
     async function getBoards() {
       const headers = await authHeader();
@@ -51,22 +50,18 @@ export const ListeningLessonSelection = () => {
       }
     }
     getBoards();
-  }, [selectedLevel]);
+    /** Update header */
+    const title = `Luyện nghe ${selectedLevel}`;
+    navigation.setOptions({ headerProps: { title } });
+  }, [navigation, selectedLevel]);
   const dispatch = useDispatch();
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        <Header title={`Luyện nghe ${selectedLevel}`} />
+        {/* <Header title={`Luyện nghe ${selectedLevel}`} /> */}
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             boards.map(board => {
-              {
-                /* const data = {
-                id: board.id,
-                name: board.title,
-                description: board.description,
-              }; */
-              }
               const navigateToListeningLesson = () => {
                 dispatch(
                   programActions.listeningLessonSelected({

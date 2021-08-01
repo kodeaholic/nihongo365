@@ -70,10 +70,9 @@ export const ReadingLessonSelection = ({ navigation }) => {
                     },
                   }),
                 );
-                navigation.setOptions({ headerProps: { hidden: true } });
-                {/* navigation.navigate('ReadingLesson', {
+                navigation.navigate('ReadingLesson', {
                   lessonId: board.id,
-                }); */}
+                });
               };
               return (
                 <List.Item

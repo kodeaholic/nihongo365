@@ -16,7 +16,7 @@ export const Header = props => {
     ]);
   };
   const {
-    title,
+    title = 'Nihongo365',
     subtitle,
     disableBackButton = false,
     customStyles,

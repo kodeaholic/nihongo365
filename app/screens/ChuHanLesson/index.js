@@ -66,8 +66,17 @@ export const ChuHanLesson = ({ navigation }) => {
   useEffect(() => {
     if (!_.isEmpty(selectedChuHanLesson)) {
       setLoading(false);
+
+      /* Update header title */
+      const title = `Học chữ Hán ${selectedLevel}`;
+      let subtitle = _.get(selectedChuHanLesson, 'board.title');
+      subtitle +=
+        selectedChuHanLesson.type === BOARD_TYPE.THEORY
+          ? ' - Lý thuyết'
+          : ' - Bài tập củng cố';
+      navigation.setOptions({ headerProps: { title, subtitle } });
     }
-  }, [selectedChuHanLesson]);
+  }, [navigation, selectedChuHanLesson, selectedLevel]);
   const dispatch = useDispatch();
   useEffect(() => {
     // component will unmount
@@ -304,20 +313,6 @@ export const ChuHanLesson = ({ navigation }) => {
     return (
       <>
         <SafeAreaView style={{ flex: 1 }}>
-          {selectedChuHanLesson.board.title !== undefined && selectedLevel && (
-            <Header
-              title={`Học chữ Hán ${selectedLevel}`}
-              subtitle={
-                selectedChuHanLesson.type === BOARD_TYPE.THEORY
-                  ? `${board.title} - Lý thuyết`
-                  : `${board.title} - Bài tập củng cố `
-              }
-            />
-          )}
-          {!selectedLevel ||
-            (!selectedChuHanLesson.board.title && (
-              <Header title={'Học chữ Hán'} />
-            ))}
           {loading && (
             <>
               <ActivityIndicator size="large" style={{ marginTop: 20 }} />
@@ -527,21 +522,6 @@ export const ChuHanLesson = ({ navigation }) => {
     return (
       <>
         <SafeAreaView style={{ flex: 1 }}>
-          {_.get(selectedChuHanLesson, 'board.title') !== undefined &&
-            selectedLevel && (
-              <Header
-                title={`Học chữ Hán ${selectedLevel}`}
-                subtitle={
-                  selectedChuHanLesson.type === BOARD_TYPE.THEORY
-                    ? `${board.title} - Lý thuyết`
-                    : `${board.title} - Bài tập củng cố `
-                }
-              />
-            )}
-          {!selectedLevel ||
-            (!_.get(selectedChuHanLesson, 'board.title') && (
-              <Header title={'Học chữ Hán'} />
-            ))}
           {loading && (
             <>
               <ActivityIndicator size="large" style={{ marginTop: 20 }} />

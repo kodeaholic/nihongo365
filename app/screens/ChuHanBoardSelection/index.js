@@ -22,13 +22,12 @@ const getLetters = board => {
   }
   return letters.join();
 };
-export const ChuHanBoardSelection = () => {
+export const ChuHanBoardSelection = ({ navigation }) => {
   const [boards, setBoards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const navigation = useNavigation();
   useEffect(() => {
     async function getBoards() {
       const headers = await authHeader();
@@ -61,12 +60,15 @@ export const ChuHanBoardSelection = () => {
       }
     }
     getBoards();
-  }, [selectedLevel]);
+    /** Update header */
+    const title = `Học chữ Hán ${selectedLevel}`;
+    navigation.setOptions({ headerProps: { title } });
+  }, [navigation, selectedLevel]);
   const dispatch = useDispatch();
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        <Header title={`Học chữ Hán ${selectedLevel}`} />
+        {/* <Header title={`Học chữ Hán ${selectedLevel}`} /> */}
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             boards.map(board => {

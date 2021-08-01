@@ -122,7 +122,10 @@ export const ListeningLesson = ({ navigation }) => {
       }
     }
     getBoard();
-  }, [selectedListeningLesson]);
+    const title = `Luyện nghe ${selectedLevel}`;
+    const headerSubtitle = `${selectedListeningLesson.board.title}`;
+    navigation.setOptions({ headerProps: { title, subtitle: headerSubtitle } });
+  }, [navigation, selectedLevel, selectedListeningLesson]);
   useEffect(() => {
     if (displayScript) {
       const whoosh = new Sound(
@@ -178,7 +181,7 @@ export const ListeningLesson = ({ navigation }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        {selectedListeningLesson.board.title !== undefined && selectedLevel && (
+        {/* {selectedListeningLesson.board.title !== undefined && selectedLevel && (
           <Header
             title={`Luyện nghe ${selectedLevel}`}
             subtitle={`${selectedListeningLesson.board.title}`}
@@ -187,7 +190,7 @@ export const ListeningLesson = ({ navigation }) => {
         {!selectedLevel ||
           (!selectedListeningLesson.board.title && (
             <Header title={'Luyện nghe'} />
-          ))}
+          ))} */}
         {loading && (
           <>
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />

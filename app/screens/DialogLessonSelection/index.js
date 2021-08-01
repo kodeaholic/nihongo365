@@ -11,13 +11,12 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
-export const DialogLessonSelection = () => {
+export const DialogLessonSelection = ({ navigation }) => {
   const [boards, setBoards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const navigation = useNavigation();
   useEffect(() => {
     async function getBoards() {
       const headers = await authHeader();
@@ -43,7 +42,7 @@ export const DialogLessonSelection = () => {
         } else {
           //   console.log(data.results);
           setBoards(data.results);
-          console.log(data.results);
+          // console.log(data.results);
           setIsLoading(false);
         }
       } catch (error) {
@@ -51,12 +50,15 @@ export const DialogLessonSelection = () => {
       }
     }
     getBoards();
-  }, [selectedLevel]);
+    /** Update header */
+    const title = `Luyện hội thoại ${selectedLevel}`;
+    navigation.setOptions({ headerProps: { title } });
+  }, [navigation, selectedLevel]);
   const dispatch = useDispatch();
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        <Header title={`Luyện hội thoại ${selectedLevel}`} />
+        {/* <Header title={`Luyện hội thoại ${selectedLevel}`} /> */}
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             boards.map(board => {

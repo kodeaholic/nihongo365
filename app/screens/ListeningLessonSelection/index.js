@@ -42,7 +42,7 @@ export const ListeningLessonSelection = ({ navigation }) => {
         } else {
           //   console.log(data.results);
           setBoards(data.results);
-          console.log(data.results);
+          // console.log(data.results);
           setIsLoading(false);
         }
       } catch (error) {

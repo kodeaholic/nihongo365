@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { WebView } from 'react-native-webview';
 import { apiConfig } from '../../api/config/apiConfig';
+import { useSelector } from 'react-redux';
 import {
   ActivityIndicator,
   View,
@@ -16,15 +17,25 @@ const ActivityIndicatorElement = () => {
   );
 };
 export const ReadingLesson = ({ route, navigation }) => {
+  const selectedLevel = useSelector(
+    state => state.programReducer.selectedLevel,
+  );
+  const selectedReadingLesson = useSelector(
+    state => state.programReducer.selectedReadingLesson,
+  );
   const { lessonId } = route.params;
   let url = `${
     apiConfig.baseUrl
   }/#/reading-boards/getBoard/webview/${lessonId}`;
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    console.log('Mounted');
-    navigation.setOptions({ title: 'Luyện đọc' });
-  }, [navigation]);
+    navigation.setOptions({
+      headerProps: {
+        title: 'Luyện đọc ' + selectedLevel,
+        subtitle: selectedReadingLesson.board.title,
+      },
+    });
+  }, [navigation, selectedLevel, selectedReadingLesson.board.title]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>

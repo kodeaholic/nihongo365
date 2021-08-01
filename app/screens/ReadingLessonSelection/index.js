@@ -52,7 +52,9 @@ export const ReadingLessonSelection = ({ navigation }) => {
 
     /** Update header */
     const title = `Luyện đọc ${selectedLevel}`;
-    navigation.setOptions({ headerProps: { title } });
+    navigation.setOptions({
+      headerProps: { title },
+    });
   }, [navigation, selectedLevel]);
   const dispatch = useDispatch();
   return (

@@ -6,8 +6,7 @@ import { useNavigation } from '@react-navigation/core';
 export default function Dictionary() {
   const navigation = useNavigation();
   useEffect(() => {
-    console.log('Mounted');
-    navigation.setOptions({ title: 'Từ điển' });
+    navigation.setOptions({ headerProps: { title: 'Từ điển' } });
   }, [navigation]);
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

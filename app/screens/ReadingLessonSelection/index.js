@@ -11,13 +11,12 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
-export const ReadingLessonSelection = () => {
+export const ReadingLessonSelection = ({ navigation }) => {
   const [boards, setBoards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const navigation = useNavigation();
   useEffect(() => {
     async function getBoards() {
       const headers = await authHeader();
@@ -50,12 +49,16 @@ export const ReadingLessonSelection = () => {
       }
     }
     getBoards();
-  }, [selectedLevel]);
+
+    /** Update header */
+    const title = `Luyện đọc ${selectedLevel}`;
+    navigation.setOptions({ headerProps: { title } });
+  }, [navigation, selectedLevel]);
   const dispatch = useDispatch();
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        <Header title={`Luyện đọc ${selectedLevel}`} />
+        {/* <Header title={`Luyện đọc ${selectedLevel}`} /> */}
         <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
           {!isLoading &&
             boards.map(board => {
@@ -67,9 +70,10 @@ export const ReadingLessonSelection = () => {
                     },
                   }),
                 );
-                navigation.navigate('ReadingLesson', {
+                navigation.setOptions({ headerProps: { hidden: true } });
+                {/* navigation.navigate('ReadingLesson', {
                   lessonId: board.id,
-                });
+                }); */}
               };
               return (
                 <List.Item

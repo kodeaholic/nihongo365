@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Background from '../../../components/Background';
 import Logo from '../../../components/Logo';
 import Header from '../../../components/Header';
-import Button from '../../../components/Button';
+// import Button from '../../../components/Button';
+// import { CommonActions } from '@react-navigation/native';
 import Paragraph from '../../../components/Paragraph';
 import { ToastAndroid, ActivityIndicator } from 'react-native';
 import {
@@ -28,8 +29,14 @@ export default function StartScreen({ navigation }) {
         })();
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: 'Main' }],
         });
+        // navigation.dispatch({
+        //   ...CommonActions.reset({
+        //     index: 0,
+        //     routes: [{ name: 'AnotherStackNavigator' }],
+        //   }),
+        // });
       } catch (error) {
         // Error saving data
         ToastAndroid.showWithGravityAndOffset(

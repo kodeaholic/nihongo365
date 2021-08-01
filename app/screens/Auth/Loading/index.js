@@ -52,7 +52,7 @@ class AuthLoadingScreen extends React.Component {
     // screen will be unmounted and thrown away.
     const navigateHome = {
       index: 0,
-      routes: [{ name: 'Learn' }],
+      routes: [{ name: 'Main' }],
     };
     const navigateStartScreen = {
       index: 0,

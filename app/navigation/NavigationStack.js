@@ -1,10 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+// import { StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import DeviceInfo from 'react-native-device-info';
-import { IconButton } from 'react-native-paper';
+// import { IconButton } from 'react-native-paper';
 import { navigationRef } from './NavigationService';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import LoginScreen from 'app/screens/Auth/Login';
 import RegisterScreen from 'app/screens/Auth/Register';
 import AuthLoadingScreen from 'app/screens/Auth/Loading';
@@ -22,69 +25,137 @@ import { DialogLessonSelection } from '../screens/DialogLessonSelection';
 import { DialogLesson } from '../screens/DialogLesson';
 import { ReadingLessonSelection } from '../screens/ReadingLessonSelection';
 import { ReadingLesson } from '../screens/ReadingLesson/index';
-import Tabs from './Tabs';
+// import Tabs from './Tabs';
 import { Header } from '../components/navigatorHeader';
-import _, { head } from 'lodash';
-const Stack = createStackNavigator();
-
-function App() {
+// import _ from 'lodash';
+import Dictionary from '../screens/Dictionary';
+import Programs from '../screens/Programs';
+import TabBar from 'app/components/tab-bar';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+const LearnStack = createStackNavigator();
+function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
     ? { headerMode: 'none' }
     : { headerMode: 'float' };
+  return (
+    <LearnStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <LearnStack.Screen name="AuthLoading" component={AuthLoadingScreen} />
+      {/* <Stack.Screen name="Login" component={Login} /> */}
+      <LearnStack.Screen name="StartScreen" component={StartScreen} />
+      <LearnStack.Screen name="LoginScreen" component={LoginScreen} />
+      <LearnStack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <LearnStack.Screen name="Home" component={Programs} />
+      <LearnStack.Screen
+        name="VocabProgramGuideline"
+        component={VocabProgramGuideline}
+        options={{ title: 'Thông tin chương trình học' }}
+      />
+      <LearnStack.Screen
+        name="ChuHanProgramGuideline"
+        component={ChuHanProgramGuideline}
+        options={{ title: 'Thông tin chương trình học' }}
+      />
+      <LearnStack.Screen
+        name="VocabTopicSelection"
+        component={VocabTopicSelection}
+      />
+      <LearnStack.Screen name="VocabLesson" component={VocabLesson} />
+      <LearnStack.Screen
+        name="ChuHanBoardSelection"
+        component={ChuHanBoardSelection}
+      />
+      <LearnStack.Screen name="ChuHanLesson" component={ChuHanLesson} />
+      <LearnStack.Screen name="ChuHanView" component={ChuHanView} />
+      <LearnStack.Screen
+        name="ListeningLessonSelection"
+        component={ListeningLessonSelection}
+      />
+      <LearnStack.Screen name="ListeningLesson" component={ListeningLesson} />
+      <LearnStack.Screen
+        name="DialogLessonSelection"
+        component={DialogLessonSelection}
+      />
+      <LearnStack.Screen name="DialogLesson" component={DialogLesson} />
+      <LearnStack.Screen
+        name="ReadingLessonSelection"
+        component={ReadingLessonSelection}
+      />
+      <LearnStack.Screen name="ReadingLesson" component={ReadingLesson} />
+    </LearnStack.Navigator>
+  );
+}
 
+const DictionaryStack = createStackNavigator();
+function DictionaryStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'float' };
+  return (
+    <DictionaryStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <DictionaryStack.Screen name="Dictionary" component={Dictionary} />
+    </DictionaryStack.Navigator>
+  );
+}
+const Tab = DeviceInfo.isTablet()
+  ? createMaterialTopTabNavigator()
+  : createMaterialBottomTabNavigator();
+let tabBarProps;
+if (DeviceInfo.isTablet()) {
+  tabBarProps = {
+    tabBar: props => <TabBar {...props} />,
+  };
+}
+function App() {
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-        {...stackProps}
-        screenOptions={{
-          header: ({ scene }) => {
-            let { headerProps } = scene.descriptor.options;
-            return <Header {...headerProps} />;
-          },
-        }}>
-        <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
-        {/* <Stack.Screen name="Login" component={Login} /> */}
-        <Stack.Screen name="StartScreen" component={StartScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-        <Stack.Screen name="Home" component={Tabs} />
-        <Stack.Screen
-          name="VocabProgramGuideline"
-          component={VocabProgramGuideline}
-          options={{ title: 'Thông tin chương trình học' }}
+      <Tab.Navigator
+        // initialRouteName="Feed"
+        shifting={true}
+        labeled={true}
+        sceneAnimationEnabled={false}
+        activeColor="#00aea2"
+        inactiveColor="#95a5a6"
+        barStyle={{ backgroundColor: '#ffff' }}
+        {...tabBarProps}
+        tabBarOptions={{ showLabel: true, labelPosition: 'below-icon' }}>
+        <Tab.Screen
+          component={LearnStackScreen}
+          name="Học"
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="clipboard-list-outline"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
         />
-        <Stack.Screen
-          name="ChuHanProgramGuideline"
-          component={ChuHanProgramGuideline}
-          options={{ title: 'Thông tin chương trình học' }}
+        <Tab.Screen
+          name="Từ điển"
+          component={DictionaryStackScreen}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="magnify" color={color} size={26} />
+            ),
+          }}
         />
-        <Stack.Screen
-          name="VocabTopicSelection"
-          component={VocabTopicSelection}
-        />
-        <Stack.Screen name="VocabLesson" component={VocabLesson} />
-        <Stack.Screen
-          name="ChuHanBoardSelection"
-          component={ChuHanBoardSelection}
-        />
-        <Stack.Screen name="ChuHanLesson" component={ChuHanLesson} />
-        <Stack.Screen name="ChuHanView" component={ChuHanView} />
-        <Stack.Screen
-          name="ListeningLessonSelection"
-          component={ListeningLessonSelection}
-        />
-        <Stack.Screen name="ListeningLesson" component={ListeningLesson} />
-        <Stack.Screen
-          name="DialogLessonSelection"
-          component={DialogLessonSelection}
-        />
-        <Stack.Screen name="DialogLesson" component={DialogLesson} />
-        <Stack.Screen
-          name="ReadingLessonSelection"
-          component={ReadingLessonSelection}
-        />
-        <Stack.Screen name="ReadingLesson" component={ReadingLesson} />
-      </Stack.Navigator>
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }

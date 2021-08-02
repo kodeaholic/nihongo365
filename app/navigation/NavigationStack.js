@@ -8,8 +8,8 @@ import DeviceInfo from 'react-native-device-info';
 import { navigationRef } from './NavigationService';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import LoginScreen from 'app/screens/Auth/Login';
-import RegisterScreen from 'app/screens/Auth/Register';
+// import LoginScreen from 'app/screens/Auth/Login';
+// import RegisterScreen from 'app/screens/Auth/Register';
 import AuthLoadingScreen from '../screens/Auth/Loading';
 import StartScreen from '../screens/Auth/Start';
 import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
@@ -146,7 +146,11 @@ function MainStackScreen() {
           component={DictionaryStackScreen}
           options={{
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="magnify" color={color} size={26} />
+              <MaterialCommunityIcons
+                name="google-translate"
+                color={color}
+                size={26}
+              />
             ),
           }}
         />

@@ -1,8 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ToastAndroid } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ToastAndroid,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import { Badge } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
+import { Dimensions } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import DebounceInput from '../../components/DebounceInput';
@@ -13,13 +22,13 @@ export default function Dictionary({ navigation }) {
   const [keyWord, setKeyWord] = useState('');
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState([]);
+  const [selected, setSelected] = useState('dictionary');
   useEffect(() => {
     function clean(object) {
       const obj = Object.assign({}, object);
       const result = {};
       for (var propName in obj) {
         if (obj[propName].length > 0) {
-          console.log(propName);
           result[propName] = obj[propName];
         }
       }
@@ -52,6 +61,7 @@ export default function Dictionary({ navigation }) {
           /* Filter for empty */
           console.log(res);
           if (_.isEmpty(res)) {
+            setSearching(false);
             ToastAndroid.showWithGravityAndOffset(
               'Không tìm thấy kết quả tương tự',
               ToastAndroid.LONG,
@@ -60,10 +70,16 @@ export default function Dictionary({ navigation }) {
               100,
             );
           } else {
-            res = res.filter(item => _.isArray(item) && !_.isEmpty(item));
+            setResults(res);
+            setSearching(false);
+            if (res.dictionary) {
+              setSelected('dictionary');
+            } else if (res.vocabs) {
+              setSelected('vocabs');
+            } else {
+              setSelected('cards');
+            }
           }
-          setResults(res);
-          setSearching(false);
         }
       } catch (error) {
         setSearching(false);
@@ -73,8 +89,12 @@ export default function Dictionary({ navigation }) {
     if (keyWord.length) {
       // console.log(keyWord);
       search(keyWord);
+    } else {
+      setSearching(false);
+      setResults({});
     }
   }, [keyWord]);
+  const windowWidth = Dimensions.get('window').width;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <View styles={styles.container}>
@@ -84,35 +104,141 @@ export default function Dictionary({ navigation }) {
             <View
               style={[
                 styles.skeletonRow,
-                { flexDirection: 'row', alignItems: 'center' },
+                {
+                  marginLeft: 8,
+                  marginRight: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 36,
+                },
               ]}>
               <View
                 style={[
-                  styles.skeletonRow,
-                  { width: 60, height: 60, borderRadius: 50 },
+                  {
+                    width: (windowWidth - 32) / 3,
+                    height: 36,
+                    borderRadius: 50,
+                    marginRight: 10,
+                  },
                 ]}
               />
-              <View style={[styles.skeletonRow, {}]}>
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    { width: 120, height: 20, borderRadius: 4 },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    {
-                      marginTop: 6,
-                      width: 80,
-                      height: 20,
-                      borderRadius: 4,
-                    },
-                  ]}
-                />
-              </View>
+              <View
+                style={[
+                  {
+                    width: (windowWidth - 32) / 3,
+                    height: 36,
+                    borderRadius: 50,
+                    marginRight: 10,
+                  },
+                ]}
+              />
+              <View
+                style={[
+                  {
+                    width: (windowWidth - 32) / 3,
+                    height: 36,
+                    borderRadius: 50,
+                    marginRight: 0,
+                  },
+                ]}
+              />
             </View>
           </Skeleton>
+        )}
+        {!searching && !_.isEmpty(results) && (
+          <View style={styles.buttonGroup}>
+            {true && (
+              <TouchableOpacity
+                disabled={
+                  selected === 'dictionary' ||
+                  !_.get(results, 'dictionary.length')
+                }
+                onPress={() => setSelected('dictionary')}
+                style={[
+                  styles.buttonGroupItem,
+                  selected === 'dictionary' ? styles.buttonActive : {},
+                ]}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    selected === 'dictionary'
+                      ? styles.textActivie
+                      : styles.textNormal,
+                  ]}>
+                  Từ điển
+                </Text>
+                {_.get(results, 'dictionary.length') && (
+                  <Badge
+                    style={[
+                      selected === 'dictionary'
+                        ? styles.badgeActive
+                        : styles.badge,
+                    ]}>
+                    {_.get(results, 'dictionary.length')}
+                  </Badge>
+                )}
+              </TouchableOpacity>
+            )}
+            {true && (
+              <TouchableOpacity
+                onPress={() => setSelected('vocabs')}
+                disabled={
+                  selected === 'vocabs' || !_.get(results, 'vocabs.length')
+                }
+                style={[
+                  styles.buttonGroupItem,
+                  selected === 'vocabs' ? styles.buttonActive : {},
+                ]}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    selected === 'vocabs'
+                      ? styles.textActivie
+                      : styles.textNormal,
+                  ]}>
+                  Từ vựng
+                </Text>
+                {_.get(results, 'vocabs.length') && (
+                  <Badge
+                    style={[
+                      selected === 'vocabs' ? styles.badgeActive : styles.badge,
+                    ]}>
+                    {_.get(results, 'vocabs.length')}
+                  </Badge>
+                )}
+              </TouchableOpacity>
+            )}
+            {true && (
+              <TouchableOpacity
+                onPress={() => setSelected('cards')}
+                disabled={
+                  selected === 'cards' || !_.get(results, 'cards.length')
+                }
+                style={[
+                  styles.buttonGroupItem,
+                  styles.buttonGroupItem_lastChild,
+                  selected === 'cards' ? styles.buttonActive : {},
+                ]}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    selected === 'cards'
+                      ? styles.textActivie
+                      : styles.textNormal,
+                  ]}>
+                  Chữ Hán
+                </Text>
+                {_.get(results, 'cards.length') && (
+                  <Badge
+                    style={[
+                      selected === 'cards' ? styles.badgeActive : styles.badge,
+                    ]}>
+                    {_.get(results, 'cards.length')}
+                  </Badge>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -124,7 +250,74 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   skeletonRow: {
-    marginLeft: 8,
-    marginRight: 8,
+    // marginLeft: 8,
+    // marginRight: 8,
+    // // paddingLeft: 8,
+    // // paddingRight: 8,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    alignContent: 'stretch',
+    margin: 8,
+    height: 36,
+  },
+  buttonGroupItem: {
+    flex: 1,
+    height: 36,
+    marginRight: 10,
+    borderRadius: 20,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'baseline',
+    backgroundColor: '#f0f2f5',
+    flexDirection: 'row',
+    paddingTop: 7,
+  },
+  buttonGroupItem_lastChild: {
+    marginRight: 0,
+  },
+  buttonText: {
+    backgroundColor: '#f0f2f5',
+    fontSize: 16,
+    marginRight: 5,
+  },
+  buttonActive: {
+    backgroundColor: '#5cdb5e',
+    color: '#ffffff',
+  },
+  textActivie: {
+    backgroundColor: 'transparent',
+    color: '#ffffff',
+  },
+  textNormal: {
+    backgroundColor: 'transparent',
+    color: '#000000',
+  },
+  badgeActive: {
+    backgroundColor: '#ffffff',
+    color: '#5cdb5e',
+  },
+  badge: {
+    backgroundColor: '#f0f2f5',
+    color: '#000000',
+    borderWidth: 1,
+    borderColor: '#000000',
+  },
+  buttonGroupSkeleton: {
+    flexDirection: 'row',
+    alignContent: 'stretch',
+    margin: 8,
+    height: 36,
+  },
+  buttonGroupItemSkeleton: {
+    flex: 1,
+    height: 36,
+    marginRight: 10,
+    borderRadius: 20,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'baseline',
+    flexDirection: 'row',
+    paddingTop: 7,
   },
 });

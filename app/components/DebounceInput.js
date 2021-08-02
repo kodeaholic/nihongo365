@@ -8,7 +8,7 @@ const DebounceInput = props => {
     defaultValue = '',
     handleInputChange,
     label = 'Input',
-    placeholder = 'Bạn có thể nhập "私", "わたし", hoặc "Tôi"',
+    placeholder = 'Bạn có thể nhập 私, わたし, hoặc tôi',
   } = props;
   const debounceFunc = React.useCallback(
     _.debounce(e => handleInputChange(e), 1000),

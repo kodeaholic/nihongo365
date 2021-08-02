@@ -143,6 +143,51 @@ export default function Dictionary({ navigation }) {
                 ]}
               />
             </View>
+            <View
+              style={[
+                styles.skeletonRow,
+                {
+                  marginTop: 10,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 80,
+                  width: windowWidth - 16,
+                  borderRadius: 10,
+                },
+              ]}
+            />
+            <View
+              style={[
+                styles.skeletonRow,
+                {
+                  marginTop: 10,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 80,
+                  width: windowWidth - 16,
+                  borderRadius: 10,
+                },
+              ]}
+            />
+            <View
+              style={[
+                styles.skeletonRow,
+                {
+                  marginTop: 10,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 80,
+                  width: windowWidth - 16,
+                  borderRadius: 10,
+                },
+              ]}
+            />
           </Skeleton>
         )}
         {!searching && !_.isEmpty(results) && (

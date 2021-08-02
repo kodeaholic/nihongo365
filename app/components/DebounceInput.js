@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
-TextInput.defaultProps.selectionColor = '#5cdb5e';
+// TextInput.defaultProps.selectionColor = '#5cdb5e';
 import _ from 'lodash';
 const DebounceInput = props => {
   const {

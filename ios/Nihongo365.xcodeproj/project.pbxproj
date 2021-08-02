@@ -47,6 +47,20 @@
 		5A2F292BA48F4FC28DD51C6D /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 88656CECCBB342D4BBC59E94 /* SF-Pro-Display-Medium.otf */; };
 		7AFA1D2BC9C244F29BBD84AA /* SF-Pro-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = C1BC594C834744088E96084C /* SF-Pro-Display-Regular.otf */; };
 		9374D0B29E9E48BA9327BAFA /* SF-Pro-Display-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8F778DEBB22A4CE9BBDBEEB2 /* SF-Pro-Display-Thin.otf */; };
+		41307F3701B04E30BB9854FD /* NotoSansJP-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 90D754BC0D2A48BDB62083A5 /* NotoSansJP-Black.otf */; };
+		1FD07B0504724F3EB506CB19 /* NotoSansJP-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 526A8A6A2FA84DE2B57B0FD7 /* NotoSansJP-Bold.otf */; };
+		3D8E6B211D224910BBB2D271 /* NotoSansJP-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 50633A49BDA24B9F8D9A17BB /* NotoSansJP-Light.otf */; };
+		58A69CBE03A24EBB9B6256CA /* NotoSansJP-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 462C365872FE44AD81FC6684 /* NotoSansJP-Medium.otf */; };
+		E3394A937EBB40808A7366C6 /* NotoSansJP-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4CA6BE6ABC394A19A8F8663C /* NotoSansJP-Regular.otf */; };
+		4B311A2EF95143E7B1A3AAE4 /* NotoSansJP-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3EEB4DD14E194BB5A93E7044 /* NotoSansJP-Thin.otf */; };
+		6AEDACB1ACE94A4AB6BC6BAF /* MPLUS1p-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52FBF4FF8F474663AD1CA860 /* MPLUS1p-Black.ttf */; };
+		C4A90CE49A154CBEA8508F41 /* MPLUS1p-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98AC7610A97C47108486E5A1 /* MPLUS1p-Bold.ttf */; };
+		1CFE411DC7DE417199DD0B64 /* MPLUS1p-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EFFD2896D48542D98278DEA7 /* MPLUS1p-ExtraBold.ttf */; };
+		F294B25DD70B4EBAB944BF6E /* MPLUS1p-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8C3A4E5EC5441328B54BDF6 /* MPLUS1p-Light.ttf */; };
+		69D4A7DC1ABF40BCBD63EB62 /* MPLUS1p-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3FDF20E751744894B728DD16 /* MPLUS1p-Medium.ttf */; };
+		774C538DF6A24D03B4F421AB /* MPLUS1p-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7A168DAC02C8411188349241 /* MPLUS1p-Regular.ttf */; };
+		CB4662A238F249B38BD952FE /* MPLUS1p-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A538A8B8352A47278477E9E5 /* MPLUS1p-Thin.ttf */; };
+		0EB7A83F726F42719B650B9F /* KosugiMaru-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FBE3DDE63598477DB7AB2B2B /* KosugiMaru-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +135,20 @@
 		88656CECCBB342D4BBC59E94 /* SF-Pro-Display-Medium.otf */ = {isa = PBXFileReference; name = "SF-Pro-Display-Medium.otf"; path = "../assets/fonts/SF-Pro-Display-Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		C1BC594C834744088E96084C /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; name = "SF-Pro-Display-Regular.otf"; path = "../assets/fonts/SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		8F778DEBB22A4CE9BBDBEEB2 /* SF-Pro-Display-Thin.otf */ = {isa = PBXFileReference; name = "SF-Pro-Display-Thin.otf"; path = "../assets/fonts/SF-Pro-Display-Thin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		90D754BC0D2A48BDB62083A5 /* NotoSansJP-Black.otf */ = {isa = PBXFileReference; name = "NotoSansJP-Black.otf"; path = "../assets/fonts/NotoSansJP-Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		526A8A6A2FA84DE2B57B0FD7 /* NotoSansJP-Bold.otf */ = {isa = PBXFileReference; name = "NotoSansJP-Bold.otf"; path = "../assets/fonts/NotoSansJP-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		50633A49BDA24B9F8D9A17BB /* NotoSansJP-Light.otf */ = {isa = PBXFileReference; name = "NotoSansJP-Light.otf"; path = "../assets/fonts/NotoSansJP-Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		462C365872FE44AD81FC6684 /* NotoSansJP-Medium.otf */ = {isa = PBXFileReference; name = "NotoSansJP-Medium.otf"; path = "../assets/fonts/NotoSansJP-Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4CA6BE6ABC394A19A8F8663C /* NotoSansJP-Regular.otf */ = {isa = PBXFileReference; name = "NotoSansJP-Regular.otf"; path = "../assets/fonts/NotoSansJP-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3EEB4DD14E194BB5A93E7044 /* NotoSansJP-Thin.otf */ = {isa = PBXFileReference; name = "NotoSansJP-Thin.otf"; path = "../assets/fonts/NotoSansJP-Thin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		52FBF4FF8F474663AD1CA860 /* MPLUS1p-Black.ttf */ = {isa = PBXFileReference; name = "MPLUS1p-Black.ttf"; path = "../assets/fonts/MPLUS1p-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		98AC7610A97C47108486E5A1 /* MPLUS1p-Bold.ttf */ = {isa = PBXFileReference; name = "MPLUS1p-Bold.ttf"; path = "../assets/fonts/MPLUS1p-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EFFD2896D48542D98278DEA7 /* MPLUS1p-ExtraBold.ttf */ = {isa = PBXFileReference; name = "MPLUS1p-ExtraBold.ttf"; path = "../assets/fonts/MPLUS1p-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D8C3A4E5EC5441328B54BDF6 /* MPLUS1p-Light.ttf */ = {isa = PBXFileReference; name = "MPLUS1p-Light.ttf"; path = "../assets/fonts/MPLUS1p-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3FDF20E751744894B728DD16 /* MPLUS1p-Medium.ttf */ = {isa = PBXFileReference; name = "MPLUS1p-Medium.ttf"; path = "../assets/fonts/MPLUS1p-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7A168DAC02C8411188349241 /* MPLUS1p-Regular.ttf */ = {isa = PBXFileReference; name = "MPLUS1p-Regular.ttf"; path = "../assets/fonts/MPLUS1p-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A538A8B8352A47278477E9E5 /* MPLUS1p-Thin.ttf */ = {isa = PBXFileReference; name = "MPLUS1p-Thin.ttf"; path = "../assets/fonts/MPLUS1p-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FBE3DDE63598477DB7AB2B2B /* KosugiMaru-Regular.ttf */ = {isa = PBXFileReference; name = "KosugiMaru-Regular.ttf"; path = "../assets/fonts/KosugiMaru-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +310,20 @@
 				88656CECCBB342D4BBC59E94 /* SF-Pro-Display-Medium.otf */,
 				C1BC594C834744088E96084C /* SF-Pro-Display-Regular.otf */,
 				8F778DEBB22A4CE9BBDBEEB2 /* SF-Pro-Display-Thin.otf */,
+				90D754BC0D2A48BDB62083A5 /* NotoSansJP-Black.otf */,
+				526A8A6A2FA84DE2B57B0FD7 /* NotoSansJP-Bold.otf */,
+				50633A49BDA24B9F8D9A17BB /* NotoSansJP-Light.otf */,
+				462C365872FE44AD81FC6684 /* NotoSansJP-Medium.otf */,
+				4CA6BE6ABC394A19A8F8663C /* NotoSansJP-Regular.otf */,
+				3EEB4DD14E194BB5A93E7044 /* NotoSansJP-Thin.otf */,
+				52FBF4FF8F474663AD1CA860 /* MPLUS1p-Black.ttf */,
+				98AC7610A97C47108486E5A1 /* MPLUS1p-Bold.ttf */,
+				EFFD2896D48542D98278DEA7 /* MPLUS1p-ExtraBold.ttf */,
+				D8C3A4E5EC5441328B54BDF6 /* MPLUS1p-Light.ttf */,
+				3FDF20E751744894B728DD16 /* MPLUS1p-Medium.ttf */,
+				7A168DAC02C8411188349241 /* MPLUS1p-Regular.ttf */,
+				A538A8B8352A47278477E9E5 /* MPLUS1p-Thin.ttf */,
+				FBE3DDE63598477DB7AB2B2B /* KosugiMaru-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -458,6 +500,20 @@
 				5A2F292BA48F4FC28DD51C6D /* SF-Pro-Display-Medium.otf in Resources */,
 				7AFA1D2BC9C244F29BBD84AA /* SF-Pro-Display-Regular.otf in Resources */,
 				9374D0B29E9E48BA9327BAFA /* SF-Pro-Display-Thin.otf in Resources */,
+				41307F3701B04E30BB9854FD /* NotoSansJP-Black.otf in Resources */,
+				1FD07B0504724F3EB506CB19 /* NotoSansJP-Bold.otf in Resources */,
+				3D8E6B211D224910BBB2D271 /* NotoSansJP-Light.otf in Resources */,
+				58A69CBE03A24EBB9B6256CA /* NotoSansJP-Medium.otf in Resources */,
+				E3394A937EBB40808A7366C6 /* NotoSansJP-Regular.otf in Resources */,
+				4B311A2EF95143E7B1A3AAE4 /* NotoSansJP-Thin.otf in Resources */,
+				6AEDACB1ACE94A4AB6BC6BAF /* MPLUS1p-Black.ttf in Resources */,
+				C4A90CE49A154CBEA8508F41 /* MPLUS1p-Bold.ttf in Resources */,
+				1CFE411DC7DE417199DD0B64 /* MPLUS1p-ExtraBold.ttf in Resources */,
+				F294B25DD70B4EBAB944BF6E /* MPLUS1p-Light.ttf in Resources */,
+				69D4A7DC1ABF40BCBD63EB62 /* MPLUS1p-Medium.ttf in Resources */,
+				774C538DF6A24D03B4F421AB /* MPLUS1p-Regular.ttf in Resources */,
+				CB4662A238F249B38BD952FE /* MPLUS1p-Thin.ttf in Resources */,
+				0EB7A83F726F42719B650B9F /* KosugiMaru-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

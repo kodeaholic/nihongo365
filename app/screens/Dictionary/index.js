@@ -7,6 +7,8 @@ import {
   ToastAndroid,
   Text,
   TouchableOpacity,
+  FlatList,
+  ScrollView,
 } from 'react-native';
 import { Badge } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
@@ -95,8 +97,40 @@ export default function Dictionary({ navigation }) {
     }
   }, [keyWord]);
   const windowWidth = Dimensions.get('window').width;
+  const getItemLabel = item => {
+    switch (selected) {
+      case 'dictionary':
+        return item.phrase;
+      case 'vocabs':
+        return item.extractedVocab;
+      case 'cards':
+        return item.letter;
+      default:
+        return '';
+    }
+  };
+  const getItemMeaning = item => {
+    switch (selected) {
+      case 'dictionary':
+        return item.meaning;
+      case 'vocabs':
+        return item.vocabMeaning;
+      case 'cards':
+        return item.meaning;
+      default:
+        return '';
+    }
+  };
+  const renderListItem = (item, index) => {
+    return (
+      <View style={styles.listItem} key={item.id}>
+        <Text>{getItemLabel(item)}</Text>
+      </View>
+    );
+  };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: '#FFFFFF', paddingBottom: 15 }}>
       <View styles={styles.container}>
         <DebounceInput handleInputChange={setKeyWord} />
         {searching && (
@@ -143,6 +177,21 @@ export default function Dictionary({ navigation }) {
                 ]}
               />
             </View>
+            <View
+              style={[
+                styles.skeletonRow,
+                {
+                  marginTop: 10,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 80,
+                  width: windowWidth - 16,
+                  borderRadius: 10,
+                },
+              ]}
+            />
             <View
               style={[
                 styles.skeletonRow,
@@ -285,6 +334,26 @@ export default function Dictionary({ navigation }) {
             )}
           </View>
         )}
+        {!searching && !_.isEmpty(results[selected]) && (
+          <FlatList
+            data={results[selected]}
+            renderItem={({ item, index }) => {
+              return (
+                <View style={styles.listItem}>
+                  <Text style={[styles.japaneseText]}>
+                    {getItemLabel(item)}
+                  </Text>
+                  <Text style={[styles.japaneseText]}>
+                    {getItemMeaning(item)}
+                  </Text>
+                </View>
+              );
+            }}
+            keyExtractor={(item, index) => {
+              return item.id;
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -316,7 +385,7 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     backgroundColor: '#f0f2f5',
     flexDirection: 'row',
-    paddingTop: 7,
+    paddingTop: 6,
   },
   buttonGroupItem_lastChild: {
     marginRight: 0,
@@ -364,5 +433,19 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     flexDirection: 'row',
     paddingTop: 7,
+  },
+  listItem: {
+    // borderWidth: 1,
+    minHeight: 68,
+    margin: 8,
+    borderRadius: 10,
+    padding: 10,
+    fontFamily: 'KosugiMaru-Regular',
+    backgroundColor: '#f0f2f5',
+  },
+  japaneseText: {
+    margin: 10,
+    fontFamily: 'KosugiMaru-Regular',
+    fontSize: 16,
   },
 });

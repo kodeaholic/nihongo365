@@ -8,10 +8,10 @@ import DeviceInfo from 'react-native-device-info';
 import { navigationRef } from './NavigationService';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import LoginScreen from 'app/screens/Auth/Login';
-import RegisterScreen from 'app/screens/Auth/Register';
-import AuthLoadingScreen from 'app/screens/Auth/Loading';
-import StartScreen from 'app/screens/Auth/Start';
+// import LoginScreen from 'app/screens/Auth/Login';
+// import RegisterScreen from 'app/screens/Auth/Register';
+import AuthLoadingScreen from '../screens/Auth/Loading';
+import StartScreen from '../screens/Auth/Start';
 import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
 import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
 import { VocabTopicSelection } from '../screens/VocabTopicSelection';
@@ -46,12 +46,7 @@ function LearnStackScreen() {
           return <Header {...headerProps} />;
         },
       }}>
-      <LearnStack.Screen name="AuthLoading" component={AuthLoadingScreen} />
-      {/* <Stack.Screen name="Login" component={Login} /> */}
-      <LearnStack.Screen name="StartScreen" component={StartScreen} />
-      <LearnStack.Screen name="LoginScreen" component={LoginScreen} />
-      <LearnStack.Screen name="RegisterScreen" component={RegisterScreen} />
-      <LearnStack.Screen name="Home" component={Programs} />
+      <LearnStack.Screen name="Learn" component={Programs} />
       <LearnStack.Screen
         name="VocabProgramGuideline"
         component={VocabProgramGuideline}
@@ -119,11 +114,11 @@ if (DeviceInfo.isTablet()) {
     tabBar: props => <TabBar {...props} />,
   };
 }
-function App() {
+
+function MainStackScreen() {
   return (
-    <NavigationContainer ref={navigationRef}>
+    <React.Fragment>
       <Tab.Navigator
-        // initialRouteName="Feed"
         shifting={true}
         labeled={true}
         sceneAnimationEnabled={false}
@@ -151,11 +146,38 @@ function App() {
           component={DictionaryStackScreen}
           options={{
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="magnify" color={color} size={26} />
+              <MaterialCommunityIcons
+                name="google-translate"
+                color={color}
+                size={26}
+              />
             ),
           }}
         />
       </Tab.Navigator>
+    </React.Fragment>
+  );
+}
+
+const AppStack = createStackNavigator();
+
+function App() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'none' };
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <AppStack.Navigator
+        {...stackProps}
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <AppStack.Screen name="AuthLoading" component={AuthLoadingScreen} />
+        <AppStack.Screen name="StartScreen" component={StartScreen} />
+        {/* <AppStack.Screen name="LoginScreen" component={LoginScreen} />
+        <AppStack.Screen name="RegisterScreen" component={RegisterScreen} /> */}
+        <AppStack.Screen name="Main" component={MainStackScreen} />
+      </AppStack.Navigator>
     </NavigationContainer>
   );
 }

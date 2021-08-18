@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   opacityButtonText: {
     fontFamily: 'SF-Pro-Display-Regular',
     fontWeight: 'normal',
-    fontSize: 20,
+    fontSize: 19,
     textTransform: 'capitalize',
   },
   frolyBackground: {

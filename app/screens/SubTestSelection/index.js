@@ -363,6 +363,66 @@ export const SubTestSelection = ({ navigation }) => {
                       },
                     ]}
                   />
+                  <View
+                    style={[
+                      styles.skeletonRow,
+                      {
+                        marginTop: 10,
+                        marginLeft: 8,
+                        marginRight: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        height: 40,
+                        width: windowWidth - 16,
+                        borderRadius: 3,
+                      },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.skeletonRow,
+                      {
+                        marginTop: 10,
+                        marginLeft: 8,
+                        marginRight: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        height: 40,
+                        width: windowWidth - 16,
+                        borderRadius: 3,
+                      },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.skeletonRow,
+                      {
+                        marginTop: 10,
+                        marginLeft: 8,
+                        marginRight: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        height: 40,
+                        width: windowWidth - 16,
+                        borderRadius: 3,
+                      },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.skeletonRow,
+                      {
+                        marginTop: 10,
+                        marginLeft: 8,
+                        marginRight: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        height: 40,
+                        width: windowWidth - 16,
+                        borderRadius: 3,
+                      },
+                    ]}
+                  />
                 </Skeleton>
               )}
             </ScrollView>

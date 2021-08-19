@@ -22,17 +22,17 @@ export const SubTest = ({ route, navigation }) => {
     state => state.programReducer.selectedLevel,
   );
   const subTest = useSelector(state => state.programReducer.subTest);
-  const { itemId } = route.params;
+  const { itemId, itemType } = route.params;
   let url = `${apiConfig.baseUrl}/#/sub-tests/getSubTest/webview/${itemId}`;
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     navigation.setOptions({
       headerProps: {
         title: 'Luyện thi ' + selectedLevel,
-        subtitle: getTestTypeName(subTest.type),
+        subtitle: getTestTypeName(itemType),
       },
     });
-  }, [navigation, selectedLevel, subTest.type]);
+  }, [navigation, selectedLevel, itemType]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>

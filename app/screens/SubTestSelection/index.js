@@ -146,8 +146,9 @@ export const SubTestSelection = ({ navigation }) => {
                           },
                         }),
                       );
-                      navigation.navigate('ReadingLesson', {
+                      navigation.navigate('SubTest', {
                         itemId: item.id,
+                        itemType: item.type,
                       });
                     };
                     return (

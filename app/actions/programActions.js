@@ -43,3 +43,9 @@ export function readingLessonSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+export function subTestSelected(actionPayload) {
+  return {
+    type: types.SUB_TEST_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

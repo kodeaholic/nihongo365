@@ -33,6 +33,7 @@ import Programs from '../screens/Programs';
 import TabBar from 'app/components/tab-bar';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SubTestSelection } from '../screens/SubTestSelection';
+import { SubTest } from '../screens/SubTest';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -85,6 +86,7 @@ function LearnStackScreen() {
       />
       <LearnStack.Screen name="ReadingLesson" component={ReadingLesson} />
       <LearnStack.Screen name="SubTestSelection" component={SubTestSelection} />
+      <LearnStack.Screen name="SubTest" component={SubTest} />
     </LearnStack.Navigator>
   );
 }

@@ -69,4 +69,12 @@ export const programReducer = createReducer(initialState, {
       selectedReadingLesson: selectedReadingLesson,
     };
   },
+  [types.SUB_TEST_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { subTest } = payload;
+    return {
+      ...state,
+      subTest: subTest,
+    };
+  },
 });

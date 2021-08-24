@@ -77,4 +77,12 @@ export const programReducer = createReducer(initialState, {
       subTest: subTest,
     };
   },
+  [types.TRIAL_TEST_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { trialTest } = payload;
+    return {
+      ...state,
+      trialTest: trialTest,
+    };
+  },
 });

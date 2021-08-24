@@ -49,3 +49,9 @@ export function subTestSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+export function trialTestSelected(actionPayload) {
+  return {
+    type: types.TRIAL_TEST_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

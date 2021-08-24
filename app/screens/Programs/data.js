@@ -7,6 +7,7 @@ export const PROGRAM_IDS = {
   HOITHOAI: 4,
   READING: 5,
   LUYENTHI: 6,
+  THITHU: 7,
 };
 
 export const DATA = [
@@ -85,6 +86,19 @@ export const DATA = [
     tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
     avatar: `${apiConfig.baseUrl}/avatars/logo.jpg`,
     program: 'Luyện thi',
+    description: 'Chọn từng cấp độ',
+    available: true,
+  },
+  {
+    id: PROGRAM_IDS.THITHU,
+    name: 'Văn Đức sensei',
+    sex: 'M',
+    date: '05/03/2020',
+    startTime: '9:00 AM',
+    endTime: '10:00 AM',
+    tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
+    avatar: `${apiConfig.baseUrl}/avatars/logo.jpg`,
+    program: 'Thi thử',
     description: 'Chọn từng cấp độ',
     available: true,
   },

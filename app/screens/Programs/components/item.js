@@ -80,6 +80,12 @@ const Item = ({ item }) => {
                 case PROGRAM_IDS.READING:
                   navigation.navigate('ReadingLessonSelection');
                   break;
+                case PROGRAM_IDS.LUYENTHI:
+                  navigation.navigate('SubTestSelection');
+                  break;
+                case PROGRAM_IDS.THITHU:
+                  navigation.navigate('TrialTestSelection');
+                  break;
                 default:
                   break;
               }

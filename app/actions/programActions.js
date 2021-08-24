@@ -43,3 +43,15 @@ export function readingLessonSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+export function subTestSelected(actionPayload) {
+  return {
+    type: types.SUB_TEST_SELECTED,
+    actionPayload: actionPayload,
+  };
+}
+export function trialTestSelected(actionPayload) {
+  return {
+    type: types.TRIAL_TEST_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

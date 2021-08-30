@@ -36,6 +36,8 @@ import { SubTestSelection } from '../screens/SubTestSelection';
 import { SubTest } from '../screens/SubTest';
 import { TrialTestSelection } from '../screens/TrialTestSelection';
 import { TrialTest } from '../screens/TrialTest';
+import { GrammarSelection } from '../screens/GrammarSelection';
+import { Grammar } from '../screens/Grammar';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -94,6 +96,8 @@ function LearnStackScreen() {
         component={TrialTestSelection}
       />
       <LearnStack.Screen name="TrialTest" component={TrialTest} />
+      <LearnStack.Screen name="GrammarSelection" component={GrammarSelection} />
+      <LearnStack.Screen name="Grammar" component={Grammar} />
     </LearnStack.Navigator>
   );
 }

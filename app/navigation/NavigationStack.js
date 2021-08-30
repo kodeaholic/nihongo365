@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 // import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import DeviceInfo from 'react-native-device-info';
@@ -38,6 +39,7 @@ import { TrialTestSelection } from '../screens/TrialTestSelection';
 import { TrialTest } from '../screens/TrialTest';
 import { GrammarSelection } from '../screens/GrammarSelection';
 import { Grammar } from '../screens/Grammar';
+import Alphabet from '../screens/Alphabet';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -120,6 +122,26 @@ function DictionaryStackScreen() {
     </DictionaryStack.Navigator>
   );
 }
+
+const AlphabetStack = createStackNavigator();
+function AlphabetStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'float' };
+  return (
+    <AlphabetStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <AlphabetStack.Screen name="Alphabet" component={Alphabet} />
+    </AlphabetStack.Navigator>
+  );
+}
+
 const Tab = DeviceInfo.isTablet()
   ? createMaterialTopTabNavigator()
   : createMaterialBottomTabNavigator();
@@ -134,9 +156,9 @@ function MainStackScreen() {
   return (
     <React.Fragment>
       <Tab.Navigator
-        shifting={true}
+        shifting={false}
         labeled={true}
-        sceneAnimationEnabled={false}
+        sceneAnimationEnabled={true}
         activeColor="#00aea2"
         inactiveColor="#95a5a6"
         barStyle={{ backgroundColor: '#ffff' }}
@@ -160,12 +182,38 @@ function MainStackScreen() {
           name="Từ điển"
           component={DictionaryStackScreen}
           options={{
+            showIcon: true,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="google-translate"
                 color={color}
                 size={26}
               />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Bảng chữ"
+          component={AlphabetStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <>
+                <View style={{ flexDirection: 'row' }}>
+                  <MaterialCommunityIcons
+                    name="syllabary-hiragana"
+                    color={color}
+                    size={24}
+                    style={{ paddingRight: 0 }}
+                  />
+                  <MaterialCommunityIcons
+                    name="syllabary-katakana"
+                    color={color}
+                    size={24}
+                    style={{ paddingLeft: 0 }}
+                  />
+                </View>
+              </>
             ),
           }}
         />

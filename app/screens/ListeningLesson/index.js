@@ -72,7 +72,6 @@ export const ListeningLesson = ({ navigation }) => {
     alignItems: 'center',
   };
   const onAnswerOptionSelected = (val, index, correctAnswer) => {
-    console.log(val, index, correctAnswer);
     let copy = { ...value };
     copy['' + index] = val;
     setValue(copy);
@@ -112,8 +111,16 @@ export const ListeningLesson = ({ navigation }) => {
           );
         } else {
           //   console.log(htmlEntityDecode(data.quiz[0].question));
-          setScript(htmlEntityDecode(data.script));
-          setSubtitle(htmlEntityDecode(data.subtitle));
+          let scr = htmlEntityDecode(data.script);
+          scr = scr.replace(/style="background: white;"/g, '');
+          scr = scr.replace(/style="background: white"/g, '');
+          scr = scr.replace(/style="background:white"/g, '');
+          setScript(scr);
+          let sub = htmlEntityDecode(data.subtitle);
+          sub = sub.replace(/style="background: white;"/g, '');
+          sub = sub.replace(/style="background: white"/g, '');
+          sub = sub.replace(/style="background:white"/g, '');
+          setSubtitle(sub);
           setQuizes(data.quiz);
           setLoading(false);
         }
@@ -212,275 +219,300 @@ export const ListeningLesson = ({ navigation }) => {
                     <AudioPlayer src={selectedListeningLesson.board.audioSrc} />
                   </View>
                   {quizes.length &&
-                    quizes.map((quiz, index) => (
-                      <>
-                        <View
-                          style={{
-                            margin: 5,
-                            padding: 5,
-                            borderRadius: 5,
-                            borderColor: '#964B00',
-                            borderWidth: 0.5,
-                            height: 300,
-                          }}>
-                          <WebView
-                            source={{
-                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                quiz.question,
-                              )}</div>`,
-                            }}
-                            style={{ backgroundColor: '#dbd4c8' }}
-                            injectedJavaScript={
-                              "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                            }
-                            scalesPageToFit={false}
-                          />
-                        </View>
-                        <View
-                          style={{
-                            paddingTop: 0,
-                            flex: 5,
-                            flexDirection: 'column',
-                          }}>
-                          <View style={answerOptionContainer}>
-                            <View style={answerOptionStyle}>
-                              <Text
-                                style={[
-                                  answerOptionLabel,
-                                  {
-                                    color: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'A'
-                                      ? trueColor
-                                      : value['' + index] === 'A'
-                                      ? falseColor
-                                      : normalColor,
-                                    borderColor: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'A'
-                                      ? trueColor
-                                      : value['' + index] === 'A'
-                                      ? falseColor
-                                      : normalColor,
-                                  },
-                                ]}
-                                onPress={() =>
-                                  onAnswerOptionSelected(
-                                    'A',
-                                    index,
-                                    quiz.answer,
-                                  )
-                                }
-                                disabled={
-                                  disabled['' + index]
-                                    ? disabled[index + '']
-                                    : false
-                                }>
-                                A
-                              </Text>
-                              <WebView
-                                source={{
-                                  html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                    !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'A'
-                                      ? trueColor
-                                      : value['' + index] === 'A'
-                                      ? falseColor
-                                      : normalColor
-                                  };">${htmlEntityDecode(quiz.A)}</div>`,
-                                }}
-                                style={{ backgroundColor: '#dbd4c8' }}
-                                injectedJavaScript={
-                                  "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                }
-                                scalesPageToFit={false}
-                              />
-                            </View>
-                            <View style={answerOptionStyle}>
-                              <Text
-                                style={[
-                                  answerOptionLabel,
-                                  {
-                                    color: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'B'
-                                      ? trueColor
-                                      : value['' + index] === 'B'
-                                      ? falseColor
-                                      : normalColor,
-                                    borderColor: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'B'
-                                      ? trueColor
-                                      : value['' + index] === 'B'
-                                      ? falseColor
-                                      : normalColor,
-                                  },
-                                ]}
-                                onPress={() =>
-                                  onAnswerOptionSelected(
-                                    'B',
-                                    index,
-                                    quiz.answer,
-                                  )
-                                }
-                                disabled={
-                                  disabled['' + index]
-                                    ? disabled[index + '']
-                                    : false
-                                }>
-                                B
-                              </Text>
-                              <WebView
-                                source={{
-                                  html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                    !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'B'
-                                      ? trueColor
-                                      : value['' + index] === 'B'
-                                      ? falseColor
-                                      : normalColor
-                                  };">${htmlEntityDecode(quiz.B)}</div>`,
-                                }}
-                                style={{ backgroundColor: '#dbd4c8' }}
-                                injectedJavaScript={
-                                  "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                }
-                                scalesPageToFit={false}
-                              />
-                            </View>
-                          </View>
-                          <View style={answerOptionContainer}>
-                            <View style={answerOptionStyle}>
-                              <Text
-                                style={[
-                                  answerOptionLabel,
-                                  {
-                                    color: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'C'
-                                      ? trueColor
-                                      : value['' + index] === 'C'
-                                      ? falseColor
-                                      : normalColor,
-                                    borderColor: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'C'
-                                      ? trueColor
-                                      : value['' + index] === 'C'
-                                      ? falseColor
-                                      : normalColor,
-                                  },
-                                ]}
-                                onPress={() =>
-                                  onAnswerOptionSelected(
-                                    'C',
-                                    index,
-                                    quiz.answer,
-                                  )
-                                }
-                                disabled={
-                                  disabled['' + index]
-                                    ? disabled[index + '']
-                                    : false
-                                }>
-                                C
-                              </Text>
-                              <WebView
-                                source={{
-                                  html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                    !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'C'
-                                      ? trueColor
-                                      : value['' + index] === 'C'
-                                      ? falseColor
-                                      : normalColor
-                                  };">${htmlEntityDecode(quiz.C)}</div>`,
-                                }}
-                                style={{ backgroundColor: '#dbd4c8' }}
-                                injectedJavaScript={
-                                  "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                }
-                                scalesPageToFit={false}
-                              />
-                            </View>
-                            <View style={answerOptionStyle}>
-                              <Text
-                                style={[
-                                  answerOptionLabel,
-                                  {
-                                    color: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'D'
-                                      ? trueColor
-                                      : value['' + index] === 'D'
-                                      ? falseColor
-                                      : normalColor,
-                                    borderColor: !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'D'
-                                      ? trueColor
-                                      : value['' + index] === 'D'
-                                      ? falseColor
-                                      : normalColor,
-                                  },
-                                ]}
-                                onPress={() =>
-                                  onAnswerOptionSelected(
-                                    'D',
-                                    index,
-                                    quiz.answer,
-                                  )
-                                }
-                                disabled={
-                                  disabled['' + index]
-                                    ? disabled[index + '']
-                                    : false
-                                }>
-                                D
-                              </Text>
-                              <WebView
-                                source={{
-                                  html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                    !value['' + index]
-                                      ? normalColor
-                                      : quiz.answer === 'D'
-                                      ? trueColor
-                                      : value['' + index] === 'D'
-                                      ? falseColor
-                                      : normalColor
-                                  };">${htmlEntityDecode(quiz.D)}</div>`,
-                                }}
-                                style={{ backgroundColor: '#dbd4c8' }}
-                                injectedJavaScript={
-                                  "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                }
-                                scalesPageToFit={false}
-                              />
-                            </View>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            textAlign: 'center',
-                            paddingHorizontal: 120,
-                            paddingVertical: 5,
-                          }}>
-                          <Button
-                            mode="contained"
-                            onPress={() => setDisplayScript(true)}
+                    quizes.map((quiz, index) => {
+                      let quizA = quiz.A;
+                      let quizB = quiz.B;
+                      let quizC = quiz.C;
+                      let quizD = quiz.D;
+                      quizA = htmlEntityDecode(quizA);
+                      quizB = htmlEntityDecode(quizB);
+                      quizC = htmlEntityDecode(quizC);
+                      quizD = htmlEntityDecode(quizD);
+                      quizA = quizA.replace(/style="background: white;"/g, '');
+                      quizA = quizA.replace(/style="background: white"/g, '');
+                      quizA = quizA.replace(/style="background:white"/g, '');
+
+                      quizB = quizB.replace(/style="background: white;"/g, '');
+                      quizB = quizB.replace(/style="background: white"/g, '');
+                      quizB = quizB.replace(/style="background:white"/g, '');
+
+                      quizC = quizC.replace(/style="background: white;"/g, '');
+                      quizC = quizC.replace(/style="background: white"/g, '');
+                      quizC = quizC.replace(/style="background:white"/g, '');
+
+                      quizD = quizD.replace(/style="background: white;"/g, '');
+                      quizD = quizD.replace(/style="background: white"/g, '');
+                      quizD = quizD.replace(/style="background:white"/g, '');
+                      return (
+                        <>
+                          <View
                             style={{
-                              backgroundColor: '#5cdb5e',
+                              margin: 5,
+                              padding: 5,
                               borderRadius: 5,
+                              borderColor: '#964B00',
+                              borderWidth: 0.5,
+                              height: 300,
                             }}>
-                            Lời giải
-                          </Button>
-                        </View>
-                      </>
-                    ))}
+                            <WebView
+                              source={{
+                                html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                                  quiz.question,
+                                )}</div>`,
+                              }}
+                              style={{ backgroundColor: '#dbd4c8' }}
+                              injectedJavaScript={
+                                "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                              }
+                              scalesPageToFit={false}
+                            />
+                          </View>
+                          <View
+                            style={{
+                              paddingTop: 0,
+                              flex: 5,
+                              flexDirection: 'column',
+                            }}>
+                            <View style={answerOptionContainer}>
+                              <View style={answerOptionStyle}>
+                                <Text
+                                  style={[
+                                    answerOptionLabel,
+                                    {
+                                      color: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'A'
+                                        ? trueColor
+                                        : value['' + index] === 'A'
+                                        ? falseColor
+                                        : normalColor,
+                                      borderColor: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'A'
+                                        ? trueColor
+                                        : value['' + index] === 'A'
+                                        ? falseColor
+                                        : normalColor,
+                                    },
+                                  ]}
+                                  onPress={() =>
+                                    onAnswerOptionSelected(
+                                      'A',
+                                      index,
+                                      quiz.answer,
+                                    )
+                                  }
+                                  disabled={
+                                    disabled['' + index]
+                                      ? disabled[index + '']
+                                      : false
+                                  }>
+                                  A
+                                </Text>
+                                <WebView
+                                  source={{
+                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                      !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'A'
+                                        ? trueColor
+                                        : value['' + index] === 'A'
+                                        ? falseColor
+                                        : normalColor
+                                    };">${quizA}</div>`,
+                                  }}
+                                  style={{ backgroundColor: '#dbd4c8' }}
+                                  injectedJavaScript={
+                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                  }
+                                  scalesPageToFit={false}
+                                />
+                              </View>
+                              <View style={answerOptionStyle}>
+                                <Text
+                                  style={[
+                                    answerOptionLabel,
+                                    {
+                                      color: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'B'
+                                        ? trueColor
+                                        : value['' + index] === 'B'
+                                        ? falseColor
+                                        : normalColor,
+                                      borderColor: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'B'
+                                        ? trueColor
+                                        : value['' + index] === 'B'
+                                        ? falseColor
+                                        : normalColor,
+                                    },
+                                  ]}
+                                  onPress={() =>
+                                    onAnswerOptionSelected(
+                                      'B',
+                                      index,
+                                      quiz.answer,
+                                    )
+                                  }
+                                  disabled={
+                                    disabled['' + index]
+                                      ? disabled[index + '']
+                                      : false
+                                  }>
+                                  B
+                                </Text>
+                                <WebView
+                                  source={{
+                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                      !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'B'
+                                        ? trueColor
+                                        : value['' + index] === 'B'
+                                        ? falseColor
+                                        : normalColor
+                                    };">${quizB}</div>`,
+                                  }}
+                                  style={{ backgroundColor: '#dbd4c8' }}
+                                  injectedJavaScript={
+                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                  }
+                                  scalesPageToFit={false}
+                                />
+                              </View>
+                            </View>
+                            <View style={answerOptionContainer}>
+                              <View style={answerOptionStyle}>
+                                <Text
+                                  style={[
+                                    answerOptionLabel,
+                                    {
+                                      color: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'C'
+                                        ? trueColor
+                                        : value['' + index] === 'C'
+                                        ? falseColor
+                                        : normalColor,
+                                      borderColor: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'C'
+                                        ? trueColor
+                                        : value['' + index] === 'C'
+                                        ? falseColor
+                                        : normalColor,
+                                    },
+                                  ]}
+                                  onPress={() =>
+                                    onAnswerOptionSelected(
+                                      'C',
+                                      index,
+                                      quiz.answer,
+                                    )
+                                  }
+                                  disabled={
+                                    disabled['' + index]
+                                      ? disabled[index + '']
+                                      : false
+                                  }>
+                                  C
+                                </Text>
+                                <WebView
+                                  source={{
+                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                      !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'C'
+                                        ? trueColor
+                                        : value['' + index] === 'C'
+                                        ? falseColor
+                                        : normalColor
+                                    };">${quizC}</div>`,
+                                  }}
+                                  style={{ backgroundColor: '#dbd4c8' }}
+                                  injectedJavaScript={
+                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                  }
+                                  scalesPageToFit={false}
+                                />
+                              </View>
+                              <View style={answerOptionStyle}>
+                                <Text
+                                  style={[
+                                    answerOptionLabel,
+                                    {
+                                      color: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'D'
+                                        ? trueColor
+                                        : value['' + index] === 'D'
+                                        ? falseColor
+                                        : normalColor,
+                                      borderColor: !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'D'
+                                        ? trueColor
+                                        : value['' + index] === 'D'
+                                        ? falseColor
+                                        : normalColor,
+                                    },
+                                  ]}
+                                  onPress={() =>
+                                    onAnswerOptionSelected(
+                                      'D',
+                                      index,
+                                      quiz.answer,
+                                    )
+                                  }
+                                  disabled={
+                                    disabled['' + index]
+                                      ? disabled[index + '']
+                                      : false
+                                  }>
+                                  D
+                                </Text>
+                                <WebView
+                                  source={{
+                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                      !value['' + index]
+                                        ? normalColor
+                                        : quiz.answer === 'D'
+                                        ? trueColor
+                                        : value['' + index] === 'D'
+                                        ? falseColor
+                                        : normalColor
+                                    };">${quizD}</div>`,
+                                  }}
+                                  style={{ backgroundColor: '#dbd4c8' }}
+                                  injectedJavaScript={
+                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                  }
+                                  scalesPageToFit={false}
+                                />
+                              </View>
+                            </View>
+                          </View>
+                          <View
+                            style={{
+                              textAlign: 'center',
+                              paddingHorizontal: 120,
+                              paddingVertical: 5,
+                            }}>
+                            <Button
+                              mode="contained"
+                              onPress={() => setDisplayScript(true)}
+                              style={{
+                                backgroundColor: '#5cdb5e',
+                                borderRadius: 5,
+                              }}>
+                              Lời giải
+                            </Button>
+                          </View>
+                        </>
+                      );
+                    })}
                 </>
               )}
               {displayScript && (

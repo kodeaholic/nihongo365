@@ -954,3 +954,17 @@ export const CONTRACTED_KATAKANA = [
     romaji: 'pyo',
   },
 ];
+
+export const TYPES = {
+  HIRAGANA: 'HIRAGANA',
+  KATAKANA: 'KATAKANA',
+  CONTRACTED_HIRAGANA: 'CONTRACTED_HIRAGANA',
+  CONTRACTED_KATAKANA: 'CONTRACTED_KATAKANA',
+};
+
+export const TYPE_NAMES = {
+  HIRAGANA: 'Hiragana',
+  KATAKANA: 'Katakana',
+  CONTRACTED_HIRAGANA: 'Hiragana ghép âm',
+  CONTRACTED_KATAKANA: 'Katakana ghép âm',
+};

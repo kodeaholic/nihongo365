@@ -5,6 +5,7 @@ import { Text } from 'react-native-paper';
 import { FAB } from 'react-native-paper';
 import { SafeAreaView, ScrollView } from 'react-native';
 import _ from 'lodash';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TYPES, TYPE_NAMES } from './data';
 const SCREEN = {
   MASTER: 'MASTER',
@@ -83,7 +84,13 @@ const Alphabet = ({ navigation }) => {
               setFabVisible(false);
               setScreen(SCREEN.MASTER);
             }}
-            label="Bảng chữ"
+            icon={({ size, color }) => (
+              <MaterialCommunityIcons
+                name="keyboard-variant"
+                color="#fff"
+                size={24}
+              />
+            )}
           />
         )}
       </SafeAreaView>
@@ -147,12 +154,10 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   fab: {
-    width: 120,
     position: 'absolute',
     margin: 5,
     right: 0,
-    bottom: 5,
-    padding: 0,
+    bottom: 0,
     backgroundColor: 'rgba(219, 10, 91, 1)',
     shadowColor: '#000',
     shadowOffset: {
@@ -163,6 +168,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6.65,
 
     elevation: 8,
+    textAlign: 'center',
+    alignContent: 'center',
   },
 });
 

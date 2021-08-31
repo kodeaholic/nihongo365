@@ -10,17 +10,16 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import { FlatGrid } from 'react-native-super-grid';
 import { Badge } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
 import { Dimensions } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
-// import DebounceInput from '../../components/DebounceInput';
-export default function Alphabet({ navigation }) {
+import DebounceInput from '../../components/DebounceInput';
+export default function More({ navigation }) {
   useEffect(() => {
-    navigation.setOptions({ headerProps: { title: 'Bảng chữ cái' } });
+    navigation.setOptions({ headerProps: { title: 'Menu mở rộng' } });
   }, [navigation]);
   const [keyWord, setKeyWord] = useState('');
   const [searching, setSearching] = useState(false);

@@ -86,7 +86,7 @@ export const DATA = [
     endTime: '10:00 AM',
     tags: ['N5', 'N4', 'N3', 'N2', 'N1'],
     avatar: `${apiConfig.baseUrl}/avatars/logo.jpg`,
-    program: 'Luyện ngữ pháp',
+    program: 'Ngữ pháp',
     description: 'Học theo cấp độ',
     available: true,
   },

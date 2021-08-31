@@ -1,12 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Text } from 'react-native-paper';
 import { FAB } from 'react-native-paper';
 import { SafeAreaView, ScrollView } from 'react-native';
 import _ from 'lodash';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TYPES, TYPE_NAMES } from './data';
+import {
+  CONTRACTED_HIRAGANA,
+  CONTRACTED_KATAKANA,
+  TYPES,
+  TYPE_NAMES,
+} from './data';
+import { FlatGrid } from 'react-native-super-grid';
+import Tts from 'react-native-tts';
+Tts.setDefaultLanguage('ja-JP');
+Tts.setDefaultRate(0.6);
 const SCREEN = {
   MASTER: 'MASTER',
   DETAIL: 'DETAIL',
@@ -15,6 +24,7 @@ const Alphabet = ({ navigation }) => {
   const [screen, setScreen] = useState(SCREEN.MASTER);
   const [type, setType] = useState('');
   const [fabVisible, setFabVisible] = useState(false);
+  const [items, setItems] = useState([]);
   useEffect(() => {
     navigation.setOptions({
       headerProps: {
@@ -28,6 +38,32 @@ const Alphabet = ({ navigation }) => {
       setFabVisible(true);
     }
   }, [screen]);
+  useEffect(() => {
+    let data = [];
+    if (type === TYPES.CONTRACTED_HIRAGANA) {
+      data = CONTRACTED_HIRAGANA.map(item => {
+        return {
+          name: item.contracted,
+          code: '#fff',
+          romaji: item.romaji,
+        };
+      });
+    }
+
+    if (type === TYPES.CONTRACTED_KATAKANA) {
+      data = CONTRACTED_KATAKANA.map(item => {
+        return {
+          name: item.contracted,
+          code: '#fff',
+          romaji: item.romaji,
+        };
+      });
+    }
+
+    setItems(data);
+  }, [type]);
+  const windowWidth = Dimensions.get('window').width;
+  const itemWidth = (windowWidth - 60) / 3;
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
@@ -77,10 +113,47 @@ const Alphabet = ({ navigation }) => {
             </View>
           </>
         )}
+        {screen === SCREEN.DETAIL && type === TYPES.CONTRACTED_HIRAGANA && (
+          <FlatGrid
+            itemDimension={itemWidth}
+            data={items}
+            style={styles.gridView}
+            spacing={10}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  Tts.speak(item.name);
+                }}
+                style={[styles.itemContainer, { backgroundColor: item.code }]}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemCode}>{item.romaji}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
+        {screen === SCREEN.DETAIL && type === TYPES.CONTRACTED_KATAKANA && (
+          <FlatGrid
+            itemDimension={itemWidth}
+            data={items}
+            style={styles.gridView}
+            spacing={10}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  Tts.speak(item.name);
+                }}
+                style={[styles.itemContainer, { backgroundColor: item.code }]}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemCode}>{item.romaji}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
         {fabVisible && (
           <FAB
             style={styles.fab}
             onPress={() => {
+              setType('');
               setFabVisible(false);
               setScreen(SCREEN.MASTER);
             }}
@@ -170,6 +243,26 @@ const styles = StyleSheet.create({
     elevation: 8,
     textAlign: 'center',
     alignContent: 'center',
+  },
+  gridView: {
+    marginTop: 10,
+    flex: 1,
+  },
+  itemContainer: {
+    justifyContent: 'flex-end',
+    borderRadius: 5,
+    padding: 10,
+    height: 65,
+  },
+  itemName: {
+    fontSize: 16,
+    color: '#000',
+    fontWeight: '600',
+  },
+  itemCode: {
+    fontWeight: '600',
+    fontSize: 12,
+    color: '#000',
   },
 });
 

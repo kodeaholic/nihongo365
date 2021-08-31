@@ -1,6 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ToastAndroid,
+} from 'react-native';
 import { Text } from 'react-native-paper';
 import { FAB } from 'react-native-paper';
 import { SafeAreaView, ScrollView } from 'react-native';
@@ -16,6 +22,23 @@ import { FlatGrid } from 'react-native-super-grid';
 import Tts from 'react-native-tts';
 Tts.setDefaultLanguage('ja-JP');
 Tts.setDefaultRate(0.6);
+Tts.getInitStatus().then(
+  () => {
+    console.log('TTS engine started');
+  },
+  err => {
+    if (err.code === 'no_engine') {
+      ToastAndroid.showWithGravityAndOffset(
+        'Vui lòng xác nhận cài đặt gói ngôn ngữ tiếng Nhật cho Nihongo365',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+      Tts.requestInstallEngine();
+    }
+  },
+);
 const SCREEN = {
   MASTER: 'MASTER',
   DETAIL: 'DETAIL',

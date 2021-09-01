@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import { FAB } from 'react-native-paper';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView, ScrollView, Platform } from 'react-native';
 import _ from 'lodash';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -20,8 +20,16 @@ import {
 } from './data';
 import { FlatGrid } from 'react-native-super-grid';
 import Tts from 'react-native-tts';
+const text2SpeechOption = {
+  androidParams: {
+    KEY_PARAM_PAN: +1,
+    KEY_PARAM_VOLUME: 1,
+    KEY_PARAM_STREAM: 'STREAM_MUSIC',
+  },
+};
 Tts.setDefaultLanguage('ja-JP');
 Tts.setDefaultRate(0.6);
+Tts.setDucking(true);
 Tts.getInitStatus().then(
   () => {
     console.log('TTS engine started');
@@ -145,7 +153,7 @@ const Alphabet = ({ navigation }) => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
-                  Tts.speak(item.name);
+                  Tts.speak(item.name, text2SpeechOption);
                 }}
                 style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 <Text style={styles.itemName}>{item.name}</Text>
@@ -163,7 +171,7 @@ const Alphabet = ({ navigation }) => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
-                  Tts.speak(item.name);
+                  Tts.speak(item.name, text2SpeechOption);
                 }}
                 style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 <Text style={styles.itemName}>{item.name}</Text>

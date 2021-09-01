@@ -21,7 +21,7 @@ import {
   TYPE_NAMES,
 } from './data';
 import { FlatGrid } from 'react-native-super-grid';
-import Tts from 'react-native-tts';
+// import Tts from 'react-native-tts';
 const text2SpeechOption = {
   androidParams: {
     KEY_PARAM_PAN: +1,
@@ -29,26 +29,26 @@ const text2SpeechOption = {
     KEY_PARAM_STREAM: 'STREAM_MUSIC',
   },
 };
-Tts.setDefaultLanguage('ja-JP');
-Tts.setDefaultRate(0.6);
-Tts.setDucking(true);
-Tts.getInitStatus().then(
-  () => {
-    console.log('TTS engine started');
-  },
-  err => {
-    if (err.code === 'no_engine') {
-      ToastAndroid.showWithGravityAndOffset(
-        'Vui lòng xác nhận cài đặt gói ngôn ngữ tiếng Nhật cho Nihongo365',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-        0,
-        100,
-      );
-      Tts.requestInstallEngine();
-    }
-  },
-);
+// Tts.setDefaultLanguage('ja-JP');
+// Tts.setDefaultRate(0.6);
+// Tts.setDucking(true);
+// Tts.getInitStatus().then(
+//   () => {
+//     console.log('TTS engine started');
+//   },
+//   err => {
+//     if (err.code === 'no_engine') {
+//       ToastAndroid.showWithGravityAndOffset(
+//         'Vui lòng xác nhận cài đặt gói ngôn ngữ tiếng Nhật cho Nihongo365',
+//         ToastAndroid.LONG,
+//         ToastAndroid.TOP,
+//         0,
+//         100,
+//       );
+//       Tts.requestInstallEngine();
+//     }
+//   },
+// );
 const SCREEN = {
   MASTER: 'MASTER',
   DETAIL: 'DETAIL',
@@ -175,7 +175,7 @@ const Alphabet = ({ navigation }) => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
-                  Tts.speak(item.name, text2SpeechOption);
+                  // Tts.speak(item.name, text2SpeechOption);
                 }}
                 style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 <Text style={styles.itemName}>{item.name}</Text>
@@ -193,7 +193,7 @@ const Alphabet = ({ navigation }) => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
-                  Tts.speak(item.name, text2SpeechOption);
+                  // Tts.speak(item.name, text2SpeechOption);
                 }}
                 style={[styles.itemContainer, { backgroundColor: item.code }]}>
                 <Text style={styles.itemName}>{item.name}</Text>
@@ -206,23 +206,24 @@ const Alphabet = ({ navigation }) => {
           (type === TYPES.HIRAGANA || type === TYPES.KATAKANA) && (
             <>
               <View style={{ height: '100%', flex: 1 }}>
-                <View style={{ height: '40%', flexDirection: 'row' }}>
-                  <View
+                <View style={{ height: '50%', flexDirection: 'row' }}>
+                  {/* <View
                     style={{
-                      flex: 1,
+                      width: windowWidth / 4,
                       alignItems: 'center',
                       alignContent: 'center',
                       justifyContent: 'center',
                     }}>
                     <Text style={styles.kanaText}>{kana.hiragana}</Text>
                     <Text style={styles.kanaText}>{kana.katakana}</Text>
-                  </View>
-                  <View style={{ flex: 3, padding: 5 }}>
+                  </View> */}
+                  <View style={{ width: (windowWidth / 4) * 4, padding: 5 }}>
                     <Text
                       style={{
                         textAlign: 'center',
                         color: '#000',
                         fontFamily: 'KosugiMaru-Regular',
+                        height: 20,
                       }}>
                       Hiragana: {kana.hiragana} - Katakana: {kana.katakana} -
                       Romaji: {kana.romaji}
@@ -230,16 +231,33 @@ const Alphabet = ({ navigation }) => {
                     <View
                       style={{ flexDirection: 'row', flex: 1, marginTop: 10 }}>
                       <View style={{ flex: 1 }}>
-                        <Image style={{ flex: 1 }} source={kana.hiragana_src} />
+                        <Image
+                          style={{
+                            flex: 1,
+                            resizeMode: 'cover',
+                            width: (windowWidth - 10) / 2,
+                            height: 'auto',
+                          }}
+                          source={kana.hiragana_src}
+                          resizeMode="cover"
+                        />
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Image style={{ flex: 1, borderWidth: 1 }} />
+                        <Image
+                          style={{
+                            flex: 1,
+                            resizeMode: 'cover',
+                            width: (windowWidth - 10) / 2,
+                            height: 'auto',
+                          }}
+                          source={kana.katakana_src}
+                          resizeMode="cover"
+                        />
                       </View>
-                      <Image style={{ flex: 1 }} source={kana.katakana_src} />
                     </View>
                   </View>
                 </View>
-                <View style={{ height: '60%' }}>
+                <View style={{ height: '50%' }}>
                   <FlatGrid
                     itemDimension={40}
                     data={items}
@@ -249,10 +267,9 @@ const Alphabet = ({ navigation }) => {
                       <TouchableOpacity
                         onPress={async () => {
                           setKana(item);
-                          Tts.speak(item.name, {
-                            ...text2SpeechOption,
-                            rate: 0.1,
-                          });
+                          // Tts.speak(item.name, {
+                          //   ...text2SpeechOption,
+                          // });
                         }}
                         style={[
                           styles.itemContainer,

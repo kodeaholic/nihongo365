@@ -206,81 +206,28 @@ const Alphabet = ({ navigation }) => {
           (type === TYPES.HIRAGANA || type === TYPES.KATAKANA) && (
             <>
               <View style={{ height: '100%', flex: 1 }}>
-                <View style={{ height: '50%', flexDirection: 'row' }}>
-                  {/* <View
-                    style={{
-                      width: windowWidth / 4,
-                      alignItems: 'center',
-                      alignContent: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <Text style={styles.kanaText}>{kana.hiragana}</Text>
-                    <Text style={styles.kanaText}>{kana.katakana}</Text>
-                  </View> */}
-                  <View style={{ width: (windowWidth / 4) * 4, padding: 5 }}>
-                    <Text
-                      style={{
-                        textAlign: 'center',
-                        color: '#000',
-                        fontFamily: 'KosugiMaru-Regular',
-                        height: 20,
-                      }}>
-                      Hiragana: {kana.hiragana} - Katakana: {kana.katakana} -
-                      Romaji: {kana.romaji}
-                    </Text>
-                    <View
-                      style={{ flexDirection: 'row', flex: 1, marginTop: 10 }}>
-                      <View style={{ flex: 1 }}>
-                        <Image
-                          style={{
-                            flex: 1,
-                            resizeMode: 'cover',
-                            width: (windowWidth - 10) / 2,
-                            height: 'auto',
-                          }}
-                          source={kana.hiragana_src}
-                          resizeMode="cover"
-                        />
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Image
-                          style={{
-                            flex: 1,
-                            resizeMode: 'cover',
-                            width: (windowWidth - 10) / 2,
-                            height: 'auto',
-                          }}
-                          source={kana.katakana_src}
-                          resizeMode="cover"
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-                <View style={{ height: '50%' }}>
-                  <FlatGrid
-                    itemDimension={40}
-                    data={items}
-                    style={styles.gridView}
-                    spacing={10}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        onPress={async () => {
-                          setKana(item);
-                          // Tts.speak(item.name, {
-                          //   ...text2SpeechOption,
-                          // });
-                        }}
-                        style={[
-                          styles.itemContainer,
-                          { backgroundColor: item.code },
-                        ]}>
-                        <Text style={styles.itemName}>{item.name}</Text>
-                        <Text style={styles.itemCode}>{item.romaji}</Text>
-                      </TouchableOpacity>
-                    )}
-                  />
-                </View>
+                <FlatGrid
+                  itemDimension={50}
+                  data={items}
+                  style={styles.gridView}
+                  spacing={10}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      onPress={async () => {
+                        // setKana(item);
+                        // Tts.speak(item.name, {
+                        //   ...text2SpeechOption,
+                        // });
+                      }}
+                      style={[
+                        styles.itemContainer,
+                        { backgroundColor: item.code },
+                      ]}>
+                      <Text style={styles.itemName}>{item.name}</Text>
+                      <Text style={styles.itemCode}>{item.romaji}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
               </View>
             </>
           )}

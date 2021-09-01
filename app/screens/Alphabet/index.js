@@ -6,15 +6,17 @@ import {
   TouchableOpacity,
   Dimensions,
   ToastAndroid,
+  Image,
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import { FAB } from 'react-native-paper';
-import { SafeAreaView, ScrollView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import _ from 'lodash';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   CONTRACTED_HIRAGANA,
   CONTRACTED_KATAKANA,
+  KANA,
   TYPES,
   TYPE_NAMES,
 } from './data';
@@ -56,6 +58,16 @@ const Alphabet = ({ navigation }) => {
   const [type, setType] = useState('');
   const [fabVisible, setFabVisible] = useState(false);
   const [items, setItems] = useState([]);
+  const [kana, setKana] = useState({
+    en: 'a',
+    hiragana: 'あ',
+    hiragana_info: 'apple',
+    hiragana_src: require('./mnemonics/h_a.png'),
+    katakana: 'ア',
+    katakana_info: 'axe',
+    katakana_src: require('./mnemonics/k_a.png'),
+    original_kana_eng: '',
+  });
   useEffect(() => {
     navigation.setOptions({
       headerProps: {
@@ -91,10 +103,20 @@ const Alphabet = ({ navigation }) => {
       });
     }
 
+    if (type === TYPES.HIRAGANA || type === TYPES.KATAKANA) {
+      data = KANA.map(item => {
+        return {
+          ...item,
+          name: type === TYPES.HIRAGANA ? item.hiragana : item.katakana,
+          romaji: item.en,
+          code: '#fff',
+        };
+      });
+    }
     setItems(data);
   }, [type]);
   const windowWidth = Dimensions.get('window').width;
-  const itemWidth = (windowWidth - 60) / 3;
+  const oneThirdWidth = (windowWidth - 60) / 3;
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
@@ -146,7 +168,7 @@ const Alphabet = ({ navigation }) => {
         )}
         {screen === SCREEN.DETAIL && type === TYPES.CONTRACTED_HIRAGANA && (
           <FlatGrid
-            itemDimension={itemWidth}
+            itemDimension={oneThirdWidth}
             data={items}
             style={styles.gridView}
             spacing={10}
@@ -164,7 +186,7 @@ const Alphabet = ({ navigation }) => {
         )}
         {screen === SCREEN.DETAIL && type === TYPES.CONTRACTED_KATAKANA && (
           <FlatGrid
-            itemDimension={itemWidth}
+            itemDimension={oneThirdWidth}
             data={items}
             style={styles.gridView}
             spacing={10}
@@ -180,6 +202,71 @@ const Alphabet = ({ navigation }) => {
             )}
           />
         )}
+        {screen === SCREEN.DETAIL &&
+          (type === TYPES.HIRAGANA || type === TYPES.KATAKANA) && (
+            <>
+              <View style={{ height: '100%', flex: 1 }}>
+                <View style={{ height: '40%', flexDirection: 'row' }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text style={styles.kanaText}>{kana.hiragana}</Text>
+                    <Text style={styles.kanaText}>{kana.katakana}</Text>
+                  </View>
+                  <View style={{ flex: 3, padding: 5 }}>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        color: '#000',
+                        fontFamily: 'KosugiMaru-Regular',
+                      }}>
+                      Hiragana: {kana.hiragana} - Katakana: {kana.katakana} -
+                      Romaji: {kana.romaji}
+                    </Text>
+                    <View
+                      style={{ flexDirection: 'row', flex: 1, marginTop: 10 }}>
+                      <View style={{ flex: 1 }}>
+                        <Image style={{ flex: 1 }} source={kana.hiragana_src} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Image style={{ flex: 1, borderWidth: 1 }} />
+                      </View>
+                      <Image style={{ flex: 1 }} source={kana.katakana_src} />
+                    </View>
+                  </View>
+                </View>
+                <View style={{ height: '60%' }}>
+                  <FlatGrid
+                    itemDimension={40}
+                    data={items}
+                    style={styles.gridView}
+                    spacing={10}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        onPress={async () => {
+                          setKana(item);
+                          Tts.speak(item.name, {
+                            ...text2SpeechOption,
+                            rate: 0.1,
+                          });
+                        }}
+                        style={[
+                          styles.itemContainer,
+                          { backgroundColor: item.code },
+                        ]}>
+                        <Text style={styles.itemName}>{item.name}</Text>
+                        <Text style={styles.itemCode}>{item.romaji}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              </View>
+            </>
+          )}
         {fabVisible && (
           <FAB
             style={styles.fab}
@@ -294,6 +381,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 12,
     color: '#000',
+  },
+  kanaText: {
+    color: '#000',
+    flex: 1,
+    fontFamily: 'KosugiMaru-Regular',
+    fontSize: 85,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
   },
 });
 

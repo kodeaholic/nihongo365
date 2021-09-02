@@ -40,6 +40,8 @@ import { TrialTest } from '../screens/TrialTest';
 import { GrammarSelection } from '../screens/GrammarSelection';
 import { Grammar } from '../screens/Grammar';
 import Alphabet from '../screens/Alphabet';
+import News from '../screens/News';
+import More from '../screens/More';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -123,6 +125,44 @@ function DictionaryStackScreen() {
   );
 }
 
+const NewsStack = createStackNavigator();
+function NewsStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'float' };
+  return (
+    <NewsStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <NewsStack.Screen name="News" component={News} />
+    </NewsStack.Navigator>
+  );
+}
+
+const MoreStack = createStackNavigator();
+function MoreStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'float' };
+  return (
+    <MoreStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <MoreStack.Screen name="More" component={More} />
+    </MoreStack.Navigator>
+  );
+}
+
 const AlphabetStack = createStackNavigator();
 function AlphabetStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -164,6 +204,20 @@ function MainStackScreen() {
         barStyle={{ backgroundColor: '#ffff' }}
         {...tabBarProps}
         tabBarOptions={{ showLabel: true, labelPosition: 'below-icon' }}>
+        <Tab.Screen
+          name="Trang chủ"
+          component={NewsStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="newspaper-variant-outline"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
         <Tab.Screen
           component={LearnStackScreen}
           name="Học"
@@ -214,6 +268,20 @@ function MainStackScreen() {
                   />
                 </View>
               </>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Khác"
+          component={MoreStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="reorder-horizontal"
+                color={color}
+                size={26}
+              />
             ),
           }}
         />

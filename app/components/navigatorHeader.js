@@ -16,12 +16,11 @@ export const Header = props => {
     ]);
   };
   const {
-    title = 'Nihongo365',
+    title = '',
     subtitle,
     disableBackButton = false,
     customStyles,
     enableLogoutButton = true,
-    center = false,
   } = props;
   const navigation = useNavigation();
   const _goBack = () => {

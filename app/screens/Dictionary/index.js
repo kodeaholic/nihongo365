@@ -61,7 +61,6 @@ export default function Dictionary({ navigation }) {
           //   console.log(htmlEntityDecode(data.quiz[0].question));
           let res = clean(data.results);
           /* Filter for empty */
-          console.log(res);
           if (_.isEmpty(res)) {
             setSearching(false);
             ToastAndroid.showWithGravityAndOffset(

@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 // import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import DeviceInfo from 'react-native-device-info';
@@ -36,6 +37,11 @@ import { SubTestSelection } from '../screens/SubTestSelection';
 import { SubTest } from '../screens/SubTest';
 import { TrialTestSelection } from '../screens/TrialTestSelection';
 import { TrialTest } from '../screens/TrialTest';
+import { GrammarSelection } from '../screens/GrammarSelection';
+import { Grammar } from '../screens/Grammar';
+import Alphabet from '../screens/Alphabet';
+import News from '../screens/News';
+import More from '../screens/More';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -94,6 +100,8 @@ function LearnStackScreen() {
         component={TrialTestSelection}
       />
       <LearnStack.Screen name="TrialTest" component={TrialTest} />
+      <LearnStack.Screen name="GrammarSelection" component={GrammarSelection} />
+      <LearnStack.Screen name="Grammar" component={Grammar} />
     </LearnStack.Navigator>
   );
 }
@@ -116,6 +124,64 @@ function DictionaryStackScreen() {
     </DictionaryStack.Navigator>
   );
 }
+
+const NewsStack = createStackNavigator();
+function NewsStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'float' };
+  return (
+    <NewsStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <NewsStack.Screen name="News" component={News} />
+    </NewsStack.Navigator>
+  );
+}
+
+const MoreStack = createStackNavigator();
+function MoreStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'float' };
+  return (
+    <MoreStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <MoreStack.Screen name="More" component={More} />
+    </MoreStack.Navigator>
+  );
+}
+
+const AlphabetStack = createStackNavigator();
+function AlphabetStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'float' };
+  return (
+    <AlphabetStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          return <Header {...headerProps} />;
+        },
+      }}>
+      <AlphabetStack.Screen name="Alphabet" component={Alphabet} />
+    </AlphabetStack.Navigator>
+  );
+}
+
 const Tab = DeviceInfo.isTablet()
   ? createMaterialTopTabNavigator()
   : createMaterialBottomTabNavigator();
@@ -130,14 +196,28 @@ function MainStackScreen() {
   return (
     <React.Fragment>
       <Tab.Navigator
-        shifting={true}
+        shifting={false}
         labeled={true}
-        sceneAnimationEnabled={false}
+        sceneAnimationEnabled={true}
         activeColor="#00aea2"
         inactiveColor="#95a5a6"
         barStyle={{ backgroundColor: '#ffff' }}
         {...tabBarProps}
         tabBarOptions={{ showLabel: true, labelPosition: 'below-icon' }}>
+        <Tab.Screen
+          name="Trang chủ"
+          component={NewsStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="newspaper-variant-outline"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
         <Tab.Screen
           component={LearnStackScreen}
           name="Học"
@@ -156,9 +236,49 @@ function MainStackScreen() {
           name="Từ điển"
           component={DictionaryStackScreen}
           options={{
+            showIcon: true,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="google-translate"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Bảng chữ"
+          component={AlphabetStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <>
+                <View style={{ flexDirection: 'row' }}>
+                  <MaterialCommunityIcons
+                    name="syllabary-hiragana"
+                    color={color}
+                    size={24}
+                    style={{ paddingRight: 0 }}
+                  />
+                  <MaterialCommunityIcons
+                    name="syllabary-katakana"
+                    color={color}
+                    size={24}
+                    style={{ paddingLeft: 0 }}
+                  />
+                </View>
+              </>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Khác"
+          component={MoreStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="reorder-horizontal"
                 color={color}
                 size={26}
               />

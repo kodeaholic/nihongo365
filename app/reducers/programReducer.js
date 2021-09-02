@@ -85,4 +85,12 @@ export const programReducer = createReducer(initialState, {
       trialTest: trialTest,
     };
   },
+  [types.GRAMMAR_LESSON_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { selectedGrammarLesson } = payload;
+    return {
+      ...state,
+      selectedGrammarLesson: selectedGrammarLesson,
+    };
+  },
 });

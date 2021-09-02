@@ -55,3 +55,9 @@ export function trialTestSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+export function grammarLessonSelected(actionPayload) {
+  return {
+    type: types.GRAMMAR_LESSON_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

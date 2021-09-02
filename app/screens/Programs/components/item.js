@@ -86,6 +86,9 @@ const Item = ({ item }) => {
                 case PROGRAM_IDS.THITHU:
                   navigation.navigate('TrialTestSelection');
                   break;
+                case PROGRAM_IDS.GRAMMAR:
+                  navigation.navigate('GrammarSelection');
+                  break;
                 default:
                   break;
               }

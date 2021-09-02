@@ -10,7 +10,9 @@ import { useNavigation } from '@react-navigation/native';
 export default function Programs() {
   const [navigation] = useState(useNavigation());
   useEffect(() => {
-    navigation.setOptions({ headerProps: { title: 'Học' } });
+    navigation.setOptions({
+      headerProps: { title: 'Học', disableBackButton: true },
+    });
   }, [navigation]);
   const programs = useSelector(state => state.programReducer.programs);
   return (

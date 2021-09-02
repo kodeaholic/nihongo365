@@ -19,7 +19,7 @@ import { authHeader } from '../../api/authHeader';
 // import DebounceInput from '../../components/DebounceInput';
 export default function News({ navigation }) {
   useEffect(() => {
-    navigation.setOptions({ headerProps: { title: 'Trang chủ' } });
+    navigation.setOptions({ headerProps: { title: 'Bảng tin' } });
   }, [navigation]);
   const [keyWord, setKeyWord] = useState('');
   const [searching, setSearching] = useState(false);

@@ -20,6 +20,7 @@ import _ from 'lodash';
 import { Dimensions } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
+import { getPostTimeFromCreatedAt } from '../../helpers/time';
 // import DebounceInput from '../../components/DebounceInput';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -260,6 +261,7 @@ const News = ({ navigation }) => {
     }
   }, [selectedCategory, navigation, headerProps]);
   const fetchItems = async filter => {
+    console.log('filter: ', filter);
     let list = [];
     const headers = await authHeader();
     const requestOptions = {
@@ -268,7 +270,7 @@ const News = ({ navigation }) => {
     };
     let url = `${apiConfig.baseUrl}${
       apiConfig.apiEndpoint
-    }/news?sortBy=createdAt:desc`;
+    }/news?sortBy=createdAt:desc&populate=parent`;
     if (_.get(filter, 'parent')) {
       url += `&parent=${_.get(filter, 'parent')}`;
     }
@@ -296,7 +298,7 @@ const News = ({ navigation }) => {
         list = data.results;
         if (_.isEmpty(list)) {
           ToastAndroid.showWithGravityAndOffset(
-            'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+            'Chưa có bài viết trong chuyên mục này. Vui lòng quay lại sau',
             ToastAndroid.LONG,
             ToastAndroid.TOP,
             0,
@@ -318,17 +320,23 @@ const News = ({ navigation }) => {
   };
   useEffect(() => {
     const loadData = async () => {
-      const results = await fetchItems({
-        selectedCategory,
-        limit,
-        title,
-      });
+      let filter = { limit, title };
+      if (selectedCategory.id) {
+        filter.parent = selectedCategory.id;
+      }
+      const results = await fetchItems(filter);
       setItems(results);
       setLoading(false);
     };
     setLoading(true);
     loadData();
   }, [selectedCategory, limit, title]);
+  useEffect(() => {
+    console.log('page: ', page);
+    if (page > 1) {
+      // load more
+    }
+  }, [page]);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       {treeModalVisible && (
@@ -352,7 +360,7 @@ const News = ({ navigation }) => {
                     marginRight: 8,
                     flexDirection: 'row',
                     alignItems: 'center',
-                    height: 50,
+                    height: 115,
                     width: '95%',
                     borderRadius: 10,
                   },
@@ -365,7 +373,6 @@ const News = ({ navigation }) => {
           <FlatList
             data={items}
             renderItem={({ item, index }) => {
-              console.log(item.createdAt);
               return (
                 <View
                   style={{
@@ -419,6 +426,32 @@ const News = ({ navigation }) => {
                       numberOfLines={4}
                       ellipsizeMode="tail">
                       {item.description}
+                    </Text>
+                    {_.isEmpty(selectedCategory.id) && (
+                      <Text
+                        style={{
+                          fontFamily: 'SF-Pro-Display-Regular',
+                          textAlign: 'left',
+                          color: '#000',
+                          fontWeight: '400',
+                          fontSize: 12,
+                        }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail">
+                        {_.get(item, 'parent.title')}
+                      </Text>
+                    )}
+                    <Text
+                      style={{
+                        fontFamily: 'SF-Pro-Display-Regular',
+                        textAlign: 'left',
+                        color: '#000',
+                        fontWeight: '400',
+                        fontSize: 12,
+                      }}
+                      numberOfLines={1}
+                      ellipsizeMode="tail">
+                      {getPostTimeFromCreatedAt(item.createdAt)}
                     </Text>
                   </View>
                 </View>

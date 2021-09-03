@@ -10,6 +10,8 @@ import {
   FlatList,
   ScrollView,
   Button,
+  ActivityIndicator,
+  Image,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { List } from 'react-native-paper';
@@ -139,7 +141,7 @@ const CategoriesTreeModal = props => {
             }}>
             {loading && (
               <Skeleton speed={1500}>
-                {[...Array(6).keys()].map(item => (
+                {[...Array(10).keys()].map(item => (
                   <View
                     key={item}
                     style={[
@@ -234,6 +236,7 @@ const News = ({ navigation }) => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [title, setTitle] = useState('');
+  const [loadingMore, setLoadingMore] = useState(false);
   const headerProps = {
     title: 'Bảng tin',
     disableBackButton: true,
@@ -320,7 +323,6 @@ const News = ({ navigation }) => {
         limit,
         title,
       });
-      console.log(results);
       setItems(results);
       setLoading(false);
     };
@@ -339,7 +341,7 @@ const News = ({ navigation }) => {
       <View style={styles.container}>
         {loading && (
           <Skeleton speed={1500}>
-            {[...Array(10).keys()].map(item => (
+            {[...Array(15).keys()].map(item => (
               <View
                 key={item}
                 style={[
@@ -359,6 +361,86 @@ const News = ({ navigation }) => {
             ))}
           </Skeleton>
         )}
+        {!loading && !_.isEmpty(items) && (
+          <FlatList
+            data={items}
+            renderItem={({ item, index }) => {
+              console.log(item.createdAt);
+              return (
+                <View
+                  style={{
+                    minHeight: 100,
+                    backgroundColor: '#fff',
+                    margin: 5,
+                    borderRadius: 5,
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                    flexDirection: 'row',
+                  }}>
+                  <View style={{ width: 115, height: 115, padding: 5 }}>
+                    <Image
+                      source={
+                        item.thumbnail
+                          ? { uri: item.thumbnail }
+                          : require('../../assets/logo.png')
+                      }
+                      style={{ width: 95, height: 95 }}
+                      resizeMethod="auto"
+                    />
+                  </View>
+                  <View style={{ width: windowWidth - 125, padding: 5 }}>
+                    <Text
+                      style={{
+                        fontFamily: 'SF-Pro-Display-Regular',
+                        textAlign: 'left',
+                        color: '#000',
+                        fontWeight: 'bold',
+                        fontSize: 16,
+                        textTransform: 'uppercase',
+                      }}
+                      numberOfLines={1}
+                      ellipsizeMode="tail">
+                      {item.title}
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: 'SF-Pro-Display-Regular',
+                        textAlign: 'left',
+                        color: '#000',
+                        fontWeight: '400',
+                        fontSize: 14,
+                      }}
+                      numberOfLines={4}
+                      ellipsizeMode="tail">
+                      {item.description}
+                    </Text>
+                  </View>
+                </View>
+              );
+            }}
+            keyExtractor={(item, index) => {
+              return item.id;
+            }}
+            ListFooterComponent={() =>
+              loadingMore ? (
+                <ActivityIndicator color="white" style={{ marginLeft: 8 }} />
+              ) : (
+                <></>
+              )
+            }
+            onEndReachedThreshold={0.01}
+            scrollEventThrottle={250}
+            onEndReached={info => {
+              setPage(page + 1);
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -366,9 +448,10 @@ const News = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#EAF8D2',
     paddingTop: 5,
     flex: 1,
-    paddingBottom: 7,
+    // paddingBottom: 7,
   },
   skeletonRow: {},
   buttonGroup: {

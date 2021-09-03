@@ -321,7 +321,7 @@ const News = ({ navigation }) => {
   useEffect(() => {
     const loadData = async () => {
       let filter = { limit, title };
-      if (selectedCategory.id) {
+      if (selectedCategory && selectedCategory.id) {
         filter.parent = selectedCategory.id;
       }
       const results = await fetchItems(filter);
@@ -427,7 +427,7 @@ const News = ({ navigation }) => {
                       ellipsizeMode="tail">
                       {item.description}
                     </Text>
-                    {_.isEmpty(selectedCategory.id) && (
+                    {_.isEmpty(_.get(selectedCategory, 'id')) && (
                       <Text
                         style={{
                           fontFamily: 'SF-Pro-Display-Regular',

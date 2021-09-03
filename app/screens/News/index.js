@@ -560,7 +560,7 @@ const News = ({ navigation }) => {
                       ellipsizeMode="tail">
                       {item.description}
                     </Text>
-                    {_.isEmpty(_.get(selectedCategory, 'id')) && (
+                    {/* {_.isEmpty(_.get(selectedCategory, 'id')) && (
                       <Text
                         style={{
                           fontFamily: 'SF-Pro-Display-Regular',
@@ -573,7 +573,7 @@ const News = ({ navigation }) => {
                         ellipsizeMode="tail">
                         {_.get(item, 'parent.title')}
                       </Text>
-                    )}
+                    )} */}
                     <Text
                       style={{
                         fontFamily: 'SF-Pro-Display-Regular',

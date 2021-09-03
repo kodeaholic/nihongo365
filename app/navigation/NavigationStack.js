@@ -252,7 +252,7 @@ function MainStackScreen() {
           }}
         />
         <Tab.Screen
-          name="Bảng tin"
+          name="Bài viết"
           component={NewsStackScreen}
           options={{
             showIcon: true,

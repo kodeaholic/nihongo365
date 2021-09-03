@@ -35,7 +35,7 @@ export const NewsDetail = ({ route, navigation }) => {
     if (!_.isEmpty(selectedNewsArticle)) {
       navigation.setOptions({
         headerProps: {
-          title: 'Bảng tin',
+          title: 'Bài viết',
           disableBackButton: false,
           leftAction: undefined,
           subtitle: selectedNewsArticle.parent

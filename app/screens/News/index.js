@@ -380,7 +380,7 @@ const News = ({ navigation }) => {
 
       navigation.setOptions({
         headerProps: {
-          title: 'Bảng tin',
+          title: 'Bài viết',
           disableBackButton: true,
           leftAction: {
             color: '#fff',

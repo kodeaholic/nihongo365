@@ -41,7 +41,7 @@ export const Header = props => {
         <Appbar.Action
           icon={leftAction.icon ? leftAction.icon : 'table-of-contents'}
           color={leftAction.color ? leftAction.color : '#fff'}
-          onPress={() => leftAction.action && leftAction.action()}
+          onPress={() => leftAction.action && leftAction.action(true)}
         />
       )}
       {subtitle && (

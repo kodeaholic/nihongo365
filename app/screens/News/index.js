@@ -230,38 +230,26 @@ const CategoriesTreeModal = props => {
 };
 
 const News = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState(undefined);
+  const [selectedCategory, setSelectedCategory] = useState({
+    title: 'Tổng hợp',
+  });
   const [treeModalVisible, setTreeModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
   const [title, setTitle] = useState('');
   const [loadingMore, setLoadingMore] = useState(false);
-  const headerProps = {
-    title: 'Bảng tin',
-    disableBackButton: true,
-    leftAction: {
-      color: '#fff',
-      icon: 'table-of-contents',
-      action: visible => setTreeModalVisible(visible),
-    },
-  };
-  useEffect(() => {
-    navigation.setOptions({
-      headerProps: headerProps,
-    });
-  }, [navigation, headerProps]);
-  useEffect(() => {
-    if (selectedCategory) {
-      navigation.setOptions({
-        headerProps: { ...headerProps, subtitle: selectedCategory?.title },
-      });
-      setPage(prev => 1);
-    }
-  }, [selectedCategory, navigation, headerProps]);
-  const fetchItems = async filter => {
-    console.log('filter: ', filter);
+  // const headerProps = {
+  //   title: 'Bảng tin',
+  //   disableBackButton: true,
+  //   leftAction: {
+  //     color: '#fff',
+  //     icon: 'table-of-contents',
+  //     action: visible => setTreeModalVisible(visible),
+  //   },
+  // };
+
+  const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
     const requestOptions = {
@@ -297,8 +285,11 @@ const News = ({ navigation }) => {
       } else {
         list = data.results;
         if (_.isEmpty(list)) {
+          const msg = more
+            ? 'Không còn thêm bài viết'
+            : 'Chưa có bài viết trong chuyên mục này. Vui lòng quay lại sau';
           ToastAndroid.showWithGravityAndOffset(
-            'Chưa có bài viết trong chuyên mục này. Vui lòng quay lại sau',
+            msg,
             ToastAndroid.LONG,
             ToastAndroid.TOP,
             0,
@@ -318,25 +309,61 @@ const News = ({ navigation }) => {
     }
     return list;
   };
+
+  // load data for the first time of selectedCategory
   useEffect(() => {
-    const loadData = async () => {
-      let filter = { limit, title };
+    if (selectedCategory) {
+      setPage(prev => 1);
+
+      navigation.setOptions({
+        headerProps: {
+          title: 'Bảng tin',
+          disableBackButton: true,
+          leftAction: {
+            color: '#fff',
+            icon: 'table-of-contents',
+            action: visible => setTreeModalVisible(visible),
+          },
+          subtitle:
+            selectedCategory && selectedCategory.title
+              ? selectedCategory.title
+              : undefined,
+        },
+      });
+      const loadData = async () => {
+        setLoading(true);
+        let filter = { limit: 10, title };
+        if (selectedCategory && selectedCategory.id) {
+          filter.parent = selectedCategory.id;
+        }
+        const results = await fetchItems(filter);
+        setItems(results);
+        setLoading(false);
+      };
+      loadData();
+    }
+  }, [selectedCategory, title, navigation]);
+
+  // loadmore
+  const loadMore = () => {
+    const load = async () => {
+      setLoadingMore(true);
+      let filter = { limit: 10, title, page: page + 1 };
+      let more = true;
       if (selectedCategory && selectedCategory.id) {
         filter.parent = selectedCategory.id;
       }
-      const results = await fetchItems(filter);
-      setItems(results);
-      setLoading(false);
+      const results = await fetchItems(filter, more);
+      const currentItems = [...items];
+      if (!_.isEmpty(results)) {
+        const newList = _.concat(currentItems, results);
+        setItems(newList);
+        setPage(page + 1);
+      }
+      setLoadingMore(false);
     };
-    setLoading(true);
-    loadData();
-  }, [selectedCategory, limit, title]);
-  useEffect(() => {
-    console.log('page: ', page);
-    if (page > 1) {
-      // load more
-    }
-  }, [page]);
+    load();
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       {treeModalVisible && (
@@ -470,7 +497,7 @@ const News = ({ navigation }) => {
             onEndReachedThreshold={0.01}
             scrollEventThrottle={250}
             onEndReached={info => {
-              setPage(page + 1);
+              loadMore();
             }}
           />
         )}

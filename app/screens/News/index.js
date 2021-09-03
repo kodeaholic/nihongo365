@@ -115,23 +115,56 @@ const CategoriesTreeModal = props => {
       }}
       deviceHeight={windowHeight}
       deviceWidth={windowWidth}>
-      <View style={{ flex: 1, borderColor: '#fff', boderWidth: 1 }}>
-        <Text
-          style={[
-            {
-              fontFamily: 'SF-Pro-Display-Regular',
-              textAlign: 'left',
-              color: '#fff',
-              fontWeight: '500',
-              fontSize: 16,
-              textTransform: 'uppercase',
-              width: windowWidth,
-              height: 50,
-              margin: 0,
-            },
-          ]}>
-          Chuyên mục
-        </Text>
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignContent: 'center',
+          }}>
+          <Text
+            style={[
+              {
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'left',
+                color: '#fff',
+                fontWeight: '500',
+                fontSize: 16,
+                textTransform: 'uppercase',
+                width: windowWidth - 60,
+                height: 50,
+                margin: 0,
+                paddingTop: 7,
+              },
+            ]}>
+            Chuyên mục
+          </Text>
+          <Text
+            onPress={() => {
+              if (visible) {
+                setVisible(false);
+              }
+            }}
+            style={[
+              {
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'center',
+                color: '#fff',
+                fontWeight: '500',
+                fontSize: 10,
+                textTransform: 'uppercase',
+                width: 20,
+                height: 20,
+                margin: 0,
+                borderRadius: 20,
+                borderColor: 'white',
+                borderWidth: 1,
+              },
+            ]}>
+            X
+          </Text>
+        </View>
+
         <ScrollView style={{ height: windowHeight - 45, marginTop: 5 }}>
           <View
             style={{

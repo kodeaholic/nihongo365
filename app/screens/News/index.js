@@ -12,6 +12,7 @@ import {
   Button,
   ActivityIndicator,
   Image,
+  RefreshControl,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { Divider, List } from 'react-native-paper';
@@ -296,6 +297,7 @@ const News = ({ navigation }) => {
   const [page, setPage] = useState(1);
   const [title, setTitle] = useState('');
   const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   // const headerProps = {
   //   title: 'Bảng tin',
   //   disableBackButton: true,
@@ -343,7 +345,7 @@ const News = ({ navigation }) => {
         list = data.results;
         if (_.isEmpty(list)) {
           const msg = more
-            ? 'Không còn thêm bài viết'
+            ? 'Tất cả bài viết đã được hiển thị'
             : 'Chưa có bài viết trong chuyên mục này. Vui lòng quay lại sau';
           ToastAndroid.showWithGravityAndOffset(
             msg,
@@ -419,6 +421,34 @@ const News = ({ navigation }) => {
       }
       setTimeout(() => {
         setLoadingMore(false);
+      }, 2000);
+    };
+    load();
+  };
+
+  // refresh
+  const refresh = () => {
+    const load = async () => {
+      setRefreshing(true);
+      let filter = { limit: 10, title, page: 1 };
+      let more = true;
+      if (selectedCategory && selectedCategory.id) {
+        filter.parent = selectedCategory.id;
+      }
+      const results = await fetchItems(filter, more);
+      if (!_.isEmpty(results)) {
+        setItems(results);
+        setPage(1);
+      }
+      setTimeout(() => {
+        setRefreshing(false);
+        ToastAndroid.showWithGravityAndOffset(
+          'Bài viết mới nhất đã được cập nhật',
+          ToastAndroid.SHORT,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
       }, 2000);
     };
     load();
@@ -566,6 +596,9 @@ const News = ({ navigation }) => {
             onEndReached={info => {
               loadMore();
             }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+            }
           />
         )}
       </View>

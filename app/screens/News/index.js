@@ -317,7 +317,7 @@ const News = ({ navigation }) => {
     };
     let url = `${apiConfig.baseUrl}${
       apiConfig.apiEndpoint
-    }/news?sortBy=createdAt:desc&populate=parent`;
+    }/news?sortBy=createdAt:desc&populate=parent&mobile=1`;
     if (_.get(filter, 'parent')) {
       url += `&parent=${_.get(filter, 'parent')}`;
     }

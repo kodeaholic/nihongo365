@@ -14,7 +14,7 @@ import {
   Image,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import { List } from 'react-native-paper';
+import { Divider, List } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
 import { Dimensions } from 'react-native';
@@ -31,14 +31,14 @@ const CategoriesTreeModal = props => {
   const defaultCategory = { title: 'Tổng hợp' };
   const parentTitleStyle = {
     fontFamily: 'SF-Pro-Display-Regular',
-    fontSize: 15,
+    fontSize: 18,
     color: '#000',
   };
   const childTitleStyle = {
     fontFamily: 'SF-Pro-Display-Regular',
-    fontSize: 13,
+    fontSize: 16,
     color: '#000',
-    paddingLeft: 5,
+    // paddingLeft: 5,
   };
   useEffect(() => {
     async function fetchCategories() {
@@ -175,46 +175,70 @@ const CategoriesTreeModal = props => {
                         onItemSelected(defaultCategory);
                       }}
                     />
-                    {categories.map(category => {
+                    <Divider />
+                    {categories.map((category, index) => {
+                      const n = categories.length;
+                      const last = index === n - 1;
                       if (
                         _.isArray(category.children) &&
                         category.children.length
                       ) {
                         return (
-                          <List.Accordion
-                            key={category.id}
-                            title={category.title}
-                            titleStyle={parentTitleStyle}
-                            right={props => null}
-                            titleEllipsizeMode="tail"
-                            id={category.id}
-                            expanded={category.expanded}>
-                            {category.children.map(child => {
-                              return (
-                                <List.Item
-                                  title={child.title}
-                                  key={child.id}
-                                  titleStyle={childTitleStyle}
-                                  onPress={() => {
-                                    setTimeout(() => setVisible(!visible), 800);
-                                    onItemSelected(child);
-                                  }}
-                                />
-                              );
-                            })}
-                          </List.Accordion>
+                          <View key={category.id}>
+                            <List.Accordion
+                              // key={category.id}
+                              title={category.title}
+                              titleStyle={parentTitleStyle}
+                              right={properties => null}
+                              titleEllipsizeMode="tail"
+                              id={category.id}
+                              expanded={category.expanded}>
+                              {category.children.map((child, idx) => {
+                                const m = category.children.length;
+                                return (
+                                  <View key={child.id}>
+                                    <List.Item
+                                      title={child.title}
+                                      // key={child.id}
+                                      titleStyle={childTitleStyle}
+                                      onPress={() => {
+                                        setTimeout(
+                                          () => setVisible(!visible),
+                                          800,
+                                        );
+                                        onItemSelected(child);
+                                      }}
+                                      left={properties => (
+                                        <List.Icon
+                                          {...properties}
+                                          icon="plus"
+                                        />
+                                      )}
+                                      titleEllipsizeMode="tail"
+                                    />
+                                    {idx !== m - 1 && <Divider />}
+                                  </View>
+                                );
+                              })}
+                            </List.Accordion>
+                            {!last && <Divider />}
+                          </View>
                         );
                       } else {
                         return (
-                          <List.Item
-                            title={category.title}
-                            key={category.id}
-                            titleStyle={parentTitleStyle}
-                            onPress={() => {
-                              setTimeout(() => setVisible(!visible), 800);
-                              onItemSelected(category);
-                            }}
-                          />
+                          <View key={category.id}>
+                            <List.Item
+                              title={category.title}
+                              // key={category.id}
+                              titleStyle={parentTitleStyle}
+                              onPress={() => {
+                                setTimeout(() => setVisible(!visible), 800);
+                                onItemSelected(category);
+                              }}
+                              titleEllipsizeMode="tail"
+                            />
+                            {!last && <Divider />}
+                          </View>
                         );
                       }
                     })}
@@ -360,7 +384,9 @@ const News = ({ navigation }) => {
         setItems(newList);
         setPage(page + 1);
       }
-      setLoadingMore(false);
+      setTimeout(() => {
+        setLoadingMore(false);
+      }, 2000);
     };
     load();
   };

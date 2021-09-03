@@ -515,7 +515,15 @@ const News = ({ navigation }) => {
             }}
             ListFooterComponent={() =>
               loadingMore ? (
-                <ActivityIndicator color="white" style={{ marginLeft: 8 }} />
+                <View
+                  style={{
+                    minHeight: 100,
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <ActivityIndicator size="large" />
+                </View>
               ) : (
                 <></>
               )

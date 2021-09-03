@@ -43,6 +43,7 @@ import Alphabet from '../screens/Alphabet';
 import News from '../screens/News';
 import More from '../screens/More';
 import _ from 'lodash';
+import { NewsDetail } from '../screens/News/detail';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -144,11 +145,12 @@ function NewsStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
-          Object.assign(headerProps, { disableBackButton: true });
+          // Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
       }}>
       <NewsStack.Screen name="News" component={News} />
+      <NewsStack.Screen name="NewsDetail" component={NewsDetail} />
     </NewsStack.Navigator>
   );
 }

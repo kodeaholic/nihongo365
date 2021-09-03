@@ -23,8 +23,11 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { getPostTimeFromCreatedAt } from '../../helpers/time';
 // import DebounceInput from '../../components/DebounceInput';
+import * as programActions from '../../actions/programActions';
+import { useSelector, useDispatch } from 'react-redux';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const floorW = Math.floor(windowWidth);
 const CategoriesTreeModal = props => {
   const { visible, setVisible, onItemSelected } = props;
   const [loading, setLoading] = useState(false);
@@ -298,6 +301,7 @@ const News = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const dispatch = useDispatch();
   // const headerProps = {
   //   title: 'Bảng tin',
   //   disableBackButton: true,
@@ -489,8 +493,21 @@ const News = ({ navigation }) => {
           <FlatList
             data={items}
             renderItem={({ item, index }) => {
+              const navigateToItem = () => {
+                dispatch(
+                  programActions.newsArticleSelected({
+                    selectedNewsArticle: {
+                      item,
+                    },
+                  }),
+                );
+                navigation.navigate('NewsDetail', {
+                  itemId: item.id,
+                });
+              };
               return (
-                <View
+                <TouchableOpacity
+                  onPress={() => navigateToItem()}
                   style={{
                     minHeight: 100,
                     backgroundColor: '#fff',
@@ -570,7 +587,7 @@ const News = ({ navigation }) => {
                       {getPostTimeFromCreatedAt(item.createdAt)}
                     </Text>
                   </View>
-                </View>
+                </TouchableOpacity>
               );
             }}
             keyExtractor={(item, index) => {

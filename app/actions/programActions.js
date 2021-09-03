@@ -61,3 +61,9 @@ export function grammarLessonSelected(actionPayload) {
     actionPayload: actionPayload,
   };
 }
+export function newsArticleSelected(actionPayload) {
+  return {
+    type: types.NEWS_ARTICLE_SELECTED,
+    actionPayload: actionPayload,
+  };
+}

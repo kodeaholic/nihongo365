@@ -25,6 +25,7 @@ const CategoriesTreeModal = props => {
   const { visible, setVisible, onItemSelected } = props;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const defaultCategory = { title: 'Tổng hợp' };
   const parentTitleStyle = {
     fontFamily: 'SF-Pro-Display-Regular',
     fontSize: 15,
@@ -138,102 +139,39 @@ const CategoriesTreeModal = props => {
             }}>
             {loading && (
               <Skeleton speed={1500}>
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    {
-                      marginTop: 10,
-                      marginLeft: 8,
-                      marginRight: 8,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      height: 50,
-                      width: '95%',
-                      borderRadius: 10,
-                    },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    {
-                      marginTop: 10,
-                      marginLeft: 8,
-                      marginRight: 8,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      height: 50,
-                      width: '95%',
-                      borderRadius: 10,
-                    },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    {
-                      marginTop: 10,
-                      marginLeft: 8,
-                      marginRight: 8,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      height: 50,
-                      width: '95%',
-                      borderRadius: 10,
-                    },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    {
-                      marginTop: 10,
-                      marginLeft: 8,
-                      marginRight: 8,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      height: 50,
-                      width: '95%',
-                      borderRadius: 10,
-                    },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    {
-                      marginTop: 10,
-                      marginLeft: 8,
-                      marginRight: 8,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      height: 50,
-                      width: '95%',
-                      borderRadius: 10,
-                    },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.skeletonRow,
-                    {
-                      marginTop: 10,
-                      marginLeft: 8,
-                      marginRight: 8,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      height: 50,
-                      width: '95%',
-                      borderRadius: 10,
-                    },
-                  ]}
-                />
+                {[...Array(6).keys()].map(item => (
+                  <View
+                    key={item}
+                    style={[
+                      styles.skeletonRow,
+                      {
+                        marginTop: 10,
+                        marginLeft: 8,
+                        marginRight: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        height: 50,
+                        width: '95%',
+                        borderRadius: 10,
+                      },
+                    ]}
+                  />
+                ))}
               </Skeleton>
             )}
             {!loading && (
               <List.AccordionGroup>
                 {categories && categories.length > 0 && (
                   <>
+                    <List.Item
+                      title={defaultCategory.title}
+                      // key={defaultCategory.id}
+                      titleStyle={parentTitleStyle}
+                      onPress={() => {
+                        setTimeout(() => setVisible(!visible), 800);
+                        onItemSelected(defaultCategory);
+                      }}
+                    />
                     {categories.map(category => {
                       if (
                         _.isArray(category.children) &&
@@ -291,6 +229,11 @@ const CategoriesTreeModal = props => {
 const News = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(undefined);
   const [treeModalVisible, setTreeModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [title, setTitle] = useState('');
   const headerProps = {
     title: 'Bảng tin',
     disableBackButton: true,
@@ -310,8 +253,80 @@ const News = ({ navigation }) => {
       navigation.setOptions({
         headerProps: { ...headerProps, subtitle: selectedCategory?.title },
       });
+      setPage(prev => 1);
     }
   }, [selectedCategory, navigation, headerProps]);
+  const fetchItems = async filter => {
+    let list = [];
+    const headers = await authHeader();
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    let url = `${apiConfig.baseUrl}${
+      apiConfig.apiEndpoint
+    }/news?sortBy=createdAt:desc`;
+    if (_.get(filter, 'parent')) {
+      url += `&parent=${_.get(filter, 'parent')}`;
+    }
+    if (_.get(filter, 'title')) {
+      url += `&title=${_.get(filter, 'title')}`;
+    }
+    if (_.get(filter, 'page')) {
+      url += `&page=${_.get(filter, 'page')}`;
+    }
+    if (_.get(filter, 'limit')) {
+      url += `&limit=${_.get(filter, 'limit')}`;
+    }
+    try {
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.code) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+      } else {
+        list = data.results;
+        if (_.isEmpty(list)) {
+          ToastAndroid.showWithGravityAndOffset(
+            'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            100,
+          );
+        } else {
+        }
+      }
+    } catch (error) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+    }
+    return list;
+  };
+  useEffect(() => {
+    const loadData = async () => {
+      const results = await fetchItems({
+        selectedCategory,
+        limit,
+        title,
+      });
+      console.log(results);
+      setItems(results);
+      setLoading(false);
+    };
+    setLoading(true);
+    loadData();
+  }, [selectedCategory, limit, title]);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       {treeModalVisible && (
@@ -321,112 +336,30 @@ const News = ({ navigation }) => {
           onItemSelected={setSelectedCategory}
         />
       )}
-      {/* <View style={styles.container}>
-        <Skeleton speed={1000}>
-          <View
-            style={[
-              styles.skeletonRow,
-              {
-                marginLeft: 8,
-                marginRight: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                height: 36,
-              },
-            ]}>
-            <View
-              style={[
-                {
-                  width: (windowWidth - 32) / 3,
-                  height: 36,
-                  borderRadius: 50,
-                  marginRight: 10,
-                },
-              ]}
-            />
-            <View
-              style={[
-                {
-                  width: (windowWidth - 32) / 3,
-                  height: 36,
-                  borderRadius: 50,
-                  marginRight: 10,
-                },
-              ]}
-            />
-            <View
-              style={[
-                {
-                  width: (windowWidth - 32) / 3,
-                  height: 36,
-                  borderRadius: 50,
-                  marginRight: 0,
-                },
-              ]}
-            />
-          </View>
-          <View
-            style={[
-              styles.skeletonRow,
-              {
-                marginTop: 10,
-                marginLeft: 8,
-                marginRight: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                height: 80,
-                width: windowWidth - 16,
-                borderRadius: 10,
-              },
-            ]}
-          />
-          <View
-            style={[
-              styles.skeletonRow,
-              {
-                marginTop: 10,
-                marginLeft: 8,
-                marginRight: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                height: 80,
-                width: windowWidth - 16,
-                borderRadius: 10,
-              },
-            ]}
-          />
-          <View
-            style={[
-              styles.skeletonRow,
-              {
-                marginTop: 10,
-                marginLeft: 8,
-                marginRight: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                height: 80,
-                width: windowWidth - 16,
-                borderRadius: 10,
-              },
-            ]}
-          />
-          <View
-            style={[
-              styles.skeletonRow,
-              {
-                marginTop: 10,
-                marginLeft: 8,
-                marginRight: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                height: 80,
-                width: windowWidth - 16,
-                borderRadius: 10,
-              },
-            ]}
-          />
-        </Skeleton>
-      </View> */}
+      <View style={styles.container}>
+        {loading && (
+          <Skeleton speed={1500}>
+            {[...Array(10).keys()].map(item => (
+              <View
+                key={item}
+                style={[
+                  styles.skeletonRow,
+                  {
+                    marginTop: 10,
+                    marginLeft: 8,
+                    marginRight: 8,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    height: 50,
+                    width: '95%',
+                    borderRadius: 10,
+                  },
+                ]}
+              />
+            ))}
+          </Skeleton>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -435,6 +368,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 5,
     flex: 1,
+    paddingBottom: 7,
   },
   skeletonRow: {},
   buttonGroup: {

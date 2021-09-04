@@ -1,17 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid, FlatList } from 'react-native';
-import { Button, Text, Chip, Card, Divider, Badge } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { Header } from '../../components/commonHeader';
-import { useSelector, useDispatch } from 'react-redux';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { Text, Card, Divider } from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 // import * as programActions from '../../actions/programActions';
 // import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
-// import HTML from 'react-native-render-html';
 import { AudioPlayer } from '../../components/audio-player';
 // import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
 import _ from 'lodash';

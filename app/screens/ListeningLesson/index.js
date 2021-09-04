@@ -2,18 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { Button, Text, Card, Divider, Badge } from 'react-native-paper';
-import { Header } from '../../components/commonHeader';
 import { useSelector } from 'react-redux';
 import {
   SafeAreaView,
   ScrollView,
   AppState,
-  TouchableOpacity,
 } from 'react-native';
 import { ActivityIndicator } from 'react-native';
-import HTML from 'react-native-render-html';
-import RenderHtml from 'react-native-render-html';
-import HTMLView from 'react-native-htmlview';
 import { WebView } from 'react-native-webview';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialIcons';

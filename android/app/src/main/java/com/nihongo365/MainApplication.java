@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import net.no_mad.tts.TextToSpeechPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.reactnativecommunity.clipboard.ClipboardPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;

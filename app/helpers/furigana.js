@@ -1,6 +1,4 @@
 import { Furigana } from 'gem-furigana';
-import select from 'xpath.js';
-import { DOMParser } from 'xmldom';
 export const furiganaHTML = str => {
   const furigana = new Furigana(str);
   return furigana.ReadingHtml;

@@ -444,6 +444,7 @@ const News = ({ navigation }) => {
       if (!_.isEmpty(results)) {
         setItems(results);
         setPage(1);
+        setScrolled(false); // re-init the list
       }
       setTimeout(() => {
         setRefreshing(false);

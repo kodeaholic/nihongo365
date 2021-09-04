@@ -79,7 +79,7 @@ export const NewsDetail = ({ route, navigation }) => {
             navigation.navigate('News');
           } else {
             setItem(res);
-            console.log(htmlEntityDecode(res.content));
+            // console.log(htmlEntityDecode(res.content));
           }
         }
       } catch (error) {
@@ -97,11 +97,14 @@ export const NewsDetail = ({ route, navigation }) => {
     };
     fetchItem();
   }, [navigation, selectedNewsArticle, itemId]);
+  let myInjectedJs = `(function(){let e=document.querySelectorAll("img");for(let t=0;t<e.length;t++)e[t]&&e[t].setAttribute("style", "width:${floorW}px;height:auto;margin-top:15px;margin-bottom:15px;")})()`;
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         {!loading && (
           <WebView
+            injectJavaScript={myInjectedJs}
+            injectedJavaScript={myInjectedJs}
             style={{ flex: 1 }}
             source={{
               html: item && item.content ? htmlEntityDecode(item.content) : '',

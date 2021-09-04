@@ -9,364 +9,628 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  ActivityIndicator,
+  Image,
+  RefreshControl,
 } from 'react-native';
-import { Badge } from 'react-native-paper';
+import Modal from 'react-native-modal';
+import { Divider, List } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
 import { Dimensions } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
+import { getPostTimeFromCreatedAt } from '../../helpers/time';
 // import DebounceInput from '../../components/DebounceInput';
-export default function News({ navigation }) {
+import * as programActions from '../../actions/programActions';
+import { useDispatch } from 'react-redux';
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const floorW = Math.floor(windowWidth);
+const CategoriesTreeModal = props => {
+  const { visible, setVisible, onItemSelected } = props;
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const defaultCategory = { title: 'Tổng hợp' };
+  const parentTitleStyle = {
+    fontFamily: 'SF-Pro-Display-Regular',
+    fontSize: 18,
+    color: '#000',
+  };
+  const childTitleStyle = {
+    fontFamily: 'SF-Pro-Display-Regular',
+    fontSize: 16,
+    color: '#000',
+    // paddingLeft: 5,
+  };
   useEffect(() => {
-    navigation.setOptions({ headerProps: { title: 'Trang chủ' } });
-  }, [navigation]);
-  const [keyWord, setKeyWord] = useState('');
-  const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState([]);
-  const [selected, setSelected] = useState('dictionary');
-  useEffect(() => {
-    function clean(object) {
-      const obj = Object.assign({}, object);
-      const result = {};
-      for (var propName in obj) {
-        if (obj[propName].length > 0) {
-          result[propName] = obj[propName];
-        }
-      }
-      return result;
-    }
-    async function search(key) {
+    async function fetchCategories() {
       const headers = await authHeader();
       const requestOptions = {
-        method: 'POST',
+        method: 'GET',
         headers: headers,
-        body: JSON.stringify({ search: key }),
       };
-      let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/search`;
+      let url = `${apiConfig.baseUrl}${
+        apiConfig.apiEndpoint
+      }/news-categories?populate=children&sortBy=title:asc&limit=1000`;
+      // if (searchTerm && searchTerm.length > 0) {
+      //   url += `&title=${searchTerm}`;
+      // }
       try {
-        setSearching(true);
+        setLoading(true);
         const response = await fetch(url, requestOptions);
         const data = await response.json();
         if (data.code) {
-          setSearching(false);
+          setLoading(false);
           ToastAndroid.showWithGravityAndOffset(
-            'Có lỗi tìm kiếm. Vui lòng thử lại sau ít phút',
-            ToastAndroid.SHORT,
+            'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+            ToastAndroid.LONG,
             ToastAndroid.TOP,
             0,
             100,
           );
+          setCategories([]);
         } else {
-          //   console.log(htmlEntityDecode(data.quiz[0].question));
-          let res = clean(data.results);
-          /* Filter for empty */
-          if (_.isEmpty(res)) {
-            setSearching(false);
+          let list = data.results;
+          list = list.filter(item => _.isEmpty(item.parent));
+          if (_.isEmpty(list)) {
             ToastAndroid.showWithGravityAndOffset(
-              'Không tìm thấy kết quả tương tự',
+              'Kết nối mạng không ổn định. Vui lòng thử lại sau',
               ToastAndroid.LONG,
               ToastAndroid.TOP,
               0,
               100,
             );
           } else {
-            setResults(res);
-            setSearching(false);
-            if (res.dictionary) {
-              setSelected('dictionary');
-            } else if (res.vocabs) {
-              setSelected('vocabs');
-            } else {
-              setSelected('cards');
-            }
+            setCategories(list);
           }
+          setLoading(false);
         }
       } catch (error) {
-        setSearching(false);
-        return error;
+        setLoading(false);
+        ToastAndroid.showWithGravityAndOffset(
+          'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
       }
     }
-    if (keyWord.length) {
-      // console.log(keyWord);
-      search(keyWord);
-    } else {
-      setSearching(false);
-      setResults({});
-    }
-  }, [keyWord]);
-  const windowWidth = Dimensions.get('window').width;
-  const getItemLabel = item => {
-    switch (selected) {
-      case 'dictionary':
-        return item.phrase;
-      case 'vocabs':
-        return item.extractedVocab;
-      case 'cards':
-        return item.letter;
-      default:
-        return '';
-    }
-  };
-  const getItemMeaning = item => {
-    switch (selected) {
-      case 'dictionary':
-        return item.meaning;
-      case 'vocabs':
-        return item.vocabMeaning;
-      case 'cards':
-        return item.meaning;
-      default:
-        return '';
-    }
-  };
-  const renderListItem = (item, index) => {
-    return (
-      <View style={styles.listItem} key={item.id}>
-        <Text>{getItemLabel(item)}</Text>
-      </View>
-    );
-  };
+    fetchCategories();
+  }, []);
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: '#FFFFFF', paddingBottom: 15 }}>
-      <View styles={styles.container}>
-        {searching && (
-          <Skeleton speed={1000}>
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 36,
-                },
-              ]}>
-              <View
-                style={[
-                  {
-                    width: (windowWidth - 32) / 3,
-                    height: 36,
-                    borderRadius: 50,
-                    marginRight: 10,
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  {
-                    width: (windowWidth - 32) / 3,
-                    height: 36,
-                    borderRadius: 50,
-                    marginRight: 10,
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  {
-                    width: (windowWidth - 32) / 3,
-                    height: 36,
-                    borderRadius: 50,
-                    marginRight: 0,
-                  },
-                ]}
-              />
-            </View>
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
-            />
-          </Skeleton>
-        )}
-        {!searching && !_.isEmpty(results) && (
-          <View style={styles.buttonGroup}>
-            {true && (
-              <TouchableOpacity
-                disabled={
-                  selected === 'dictionary' ||
-                  !_.get(results, 'dictionary.length')
-                }
-                onPress={() => setSelected('dictionary')}
-                style={[
-                  styles.buttonGroupItem,
-                  selected === 'dictionary' ? styles.buttonActive : {},
-                ]}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    selected === 'dictionary'
-                      ? styles.textActivie
-                      : styles.textNormal,
-                  ]}>
-                  Từ điển
-                </Text>
-                {_.get(results, 'dictionary.length') && (
-                  <Badge
+    <Modal
+      isVisible={visible}
+      animationIn="bounceInLeft"
+      animationOut="bounceOutLeft"
+      animationInTiming={1500}
+      animationOutTiming={500}
+      onBackButtonPress={() => {
+        if (visible) {
+          setVisible(false);
+        }
+      }}
+      onBackdropPress={() => {
+        if (visible) {
+          setVisible(false);
+        }
+      }}
+      deviceHeight={windowHeight}
+      deviceWidth={windowWidth}>
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignContent: 'center',
+          }}>
+          <Text
+            style={[
+              {
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'left',
+                color: '#fff',
+                fontWeight: '500',
+                fontSize: 16,
+                textTransform: 'uppercase',
+                width: windowWidth - 60,
+                height: 50,
+                margin: 0,
+                paddingTop: 7,
+              },
+            ]}>
+            Chuyên mục
+          </Text>
+          <Text
+            onPress={() => {
+              if (visible) {
+                setVisible(false);
+              }
+            }}
+            style={[
+              {
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'center',
+                color: '#fff',
+                fontWeight: '500',
+                fontSize: 10,
+                textTransform: 'uppercase',
+                width: 20,
+                height: 20,
+                margin: 0,
+                borderRadius: 20,
+                borderColor: 'white',
+                borderWidth: 1,
+              },
+            ]}>
+            X
+          </Text>
+        </View>
+
+        <ScrollView style={{ height: windowHeight - 45, marginTop: 5 }}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: '#fff',
+              borderRadius: 5,
+              paddingBottom: 7,
+            }}>
+            {loading && (
+              <Skeleton speed={1500}>
+                {[...Array(10).keys()].map(item => (
+                  <View
+                    key={item}
                     style={[
-                      selected === 'dictionary'
-                        ? styles.badgeActive
-                        : styles.badge,
-                    ]}>
-                    {_.get(results, 'dictionary.length')}
-                  </Badge>
-                )}
-              </TouchableOpacity>
+                      styles.skeletonRow,
+                      {
+                        marginTop: 10,
+                        marginLeft: 8,
+                        marginRight: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        height: 50,
+                        width: '95%',
+                        borderRadius: 10,
+                      },
+                    ]}
+                  />
+                ))}
+              </Skeleton>
             )}
-            {true && (
-              <TouchableOpacity
-                onPress={() => setSelected('vocabs')}
-                disabled={
-                  selected === 'vocabs' || !_.get(results, 'vocabs.length')
-                }
-                style={[
-                  styles.buttonGroupItem,
-                  selected === 'vocabs' ? styles.buttonActive : {},
-                ]}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    selected === 'vocabs'
-                      ? styles.textActivie
-                      : styles.textNormal,
-                  ]}>
-                  Từ vựng
-                </Text>
-                {_.get(results, 'vocabs.length') && (
-                  <Badge
-                    style={[
-                      selected === 'vocabs' ? styles.badgeActive : styles.badge,
-                    ]}>
-                    {_.get(results, 'vocabs.length')}
-                  </Badge>
+            {!loading && (
+              <List.AccordionGroup>
+                {categories && categories.length > 0 && (
+                  <>
+                    <List.Item
+                      title={defaultCategory.title}
+                      // key={defaultCategory.id}
+                      titleStyle={parentTitleStyle}
+                      onPress={() => {
+                        setTimeout(() => setVisible(!visible), 800);
+                        onItemSelected(defaultCategory);
+                      }}
+                    />
+                    <Divider />
+                    {categories.map((category, index) => {
+                      const n = categories.length;
+                      const last = index === n - 1;
+                      if (
+                        _.isArray(category.children) &&
+                        category.children.length
+                      ) {
+                        return (
+                          <View key={category.id}>
+                            <List.Accordion
+                              // key={category.id}
+                              title={category.title}
+                              titleStyle={parentTitleStyle}
+                              right={properties => null}
+                              titleEllipsizeMode="tail"
+                              id={category.id}
+                              expanded={category.expanded}>
+                              {category.children.map((child, idx) => {
+                                const m = category.children.length;
+                                return (
+                                  <View key={child.id}>
+                                    <List.Item
+                                      title={child.title}
+                                      // key={child.id}
+                                      titleStyle={childTitleStyle}
+                                      onPress={() => {
+                                        setTimeout(
+                                          () => setVisible(!visible),
+                                          800,
+                                        );
+                                        onItemSelected(child);
+                                      }}
+                                      left={properties => (
+                                        <List.Icon
+                                          {...properties}
+                                          icon="plus"
+                                        />
+                                      )}
+                                      titleEllipsizeMode="tail"
+                                    />
+                                    {idx !== m - 1 && <Divider />}
+                                  </View>
+                                );
+                              })}
+                            </List.Accordion>
+                            {!last && <Divider />}
+                          </View>
+                        );
+                      } else {
+                        return (
+                          <View key={category.id}>
+                            <List.Item
+                              title={category.title}
+                              // key={category.id}
+                              titleStyle={parentTitleStyle}
+                              onPress={() => {
+                                setTimeout(() => setVisible(!visible), 800);
+                                onItemSelected(category);
+                              }}
+                              titleEllipsizeMode="tail"
+                            />
+                            {!last && <Divider />}
+                          </View>
+                        );
+                      }
+                    })}
+                  </>
                 )}
-              </TouchableOpacity>
-            )}
-            {true && (
-              <TouchableOpacity
-                onPress={() => setSelected('cards')}
-                disabled={
-                  selected === 'cards' || !_.get(results, 'cards.length')
-                }
-                style={[
-                  styles.buttonGroupItem,
-                  styles.buttonGroupItem_lastChild,
-                  selected === 'cards' ? styles.buttonActive : {},
-                ]}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    selected === 'cards'
-                      ? styles.textActivie
-                      : styles.textNormal,
-                  ]}>
-                  Chữ Hán
-                </Text>
-                {_.get(results, 'cards.length') && (
-                  <Badge
-                    style={[
-                      selected === 'cards' ? styles.badgeActive : styles.badge,
-                    ]}>
-                    {_.get(results, 'cards.length')}
-                  </Badge>
-                )}
-              </TouchableOpacity>
+              </List.AccordionGroup>
             )}
           </View>
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+};
+
+const News = ({ navigation }) => {
+  const [selectedCategory, setSelectedCategory] = useState({
+    title: 'Tổng hợp',
+  });
+  const [treeModalVisible, setTreeModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [title] = useState('');
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const dispatch = useDispatch();
+  // const headerProps = {
+  //   title: 'Bảng tin',
+  //   disableBackButton: true,
+  //   leftAction: {
+  //     color: '#fff',
+  //     icon: 'table-of-contents',
+  //     action: visible => setTreeModalVisible(visible),
+  //   },
+  // };
+
+  const fetchItems = async (filter, more = false) => {
+    let list = [];
+    const headers = await authHeader();
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    let url = `${apiConfig.baseUrl}${
+      apiConfig.apiEndpoint
+    }/news?sortBy=createdAt:desc&populate=parent&mobile=1`;
+    if (_.get(filter, 'parent')) {
+      url += `&parent=${_.get(filter, 'parent')}`;
+    }
+    if (_.get(filter, 'title')) {
+      url += `&title=${_.get(filter, 'title')}`;
+    }
+    if (_.get(filter, 'page')) {
+      url += `&page=${_.get(filter, 'page')}`;
+    }
+    if (_.get(filter, 'limit')) {
+      url += `&limit=${_.get(filter, 'limit')}`;
+    }
+    try {
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.code) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Kết nối mạng không ổn định',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+      } else {
+        list = data.results;
+        if (_.isEmpty(list)) {
+          const msg =
+            'Chưa có bài viết trong chuyên mục này. Vui lòng quay lại sau';
+          if (!more) {
+            ToastAndroid.showWithGravityAndOffset(
+              msg,
+              ToastAndroid.LONG,
+              ToastAndroid.TOP,
+              0,
+              100,
+            );
+          }
+        } else {
+        }
+      }
+    } catch (error) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Kết nối mạng không ổn định',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+    }
+    return list;
+  };
+
+  // load data for the first time of selectedCategory
+  useEffect(() => {
+    if (selectedCategory) {
+      setPage(prev => 1);
+
+      navigation.setOptions({
+        headerProps: {
+          title: 'Bài viết',
+          disableBackButton: true,
+          leftAction: {
+            color: '#fff',
+            icon: 'table-of-contents',
+            action: visible => setTreeModalVisible(visible),
+          },
+          subtitle:
+            selectedCategory && selectedCategory.title
+              ? selectedCategory.title
+              : undefined,
+        },
+      });
+      const loadData = async () => {
+        setLoading(true);
+        let filter = { limit: 10, title };
+        if (selectedCategory && selectedCategory.id) {
+          filter.parent = selectedCategory.id;
+        }
+        const results = await fetchItems(filter);
+        setItems(results);
+        setLoading(false);
+      };
+      loadData();
+    }
+  }, [selectedCategory, title, navigation]);
+
+  // loadmore
+  const loadMore = () => {
+    const load = async () => {
+      setLoadingMore(true);
+      let filter = { limit: 10, title, page: page + 1 };
+      let more = true;
+      if (selectedCategory && selectedCategory.id) {
+        filter.parent = selectedCategory.id;
+      }
+      const results = await fetchItems(filter, more);
+      const currentItems = [...items];
+      if (!_.isEmpty(results)) {
+        const newList = _.concat(currentItems, results);
+        setItems(newList);
+        setPage(page + 1);
+      }
+      setTimeout(() => {
+        setLoadingMore(false);
+      }, 2000);
+    };
+    load();
+  };
+
+  // refresh
+  const refresh = () => {
+    const load = async () => {
+      setRefreshing(true);
+      let filter = { limit: 10, title, page: 1 };
+      let more = true;
+      if (selectedCategory && selectedCategory.id) {
+        filter.parent = selectedCategory.id;
+      }
+      const results = await fetchItems(filter, more);
+      if (!_.isEmpty(results)) {
+        setItems(results);
+        setPage(1);
+        setScrolled(false); // re-init the list
+      }
+      setTimeout(() => {
+        setRefreshing(false);
+        // ToastAndroid.showWithGravityAndOffset(
+        //   'Bài viết mới nhất đã được cập nhật',
+        //   ToastAndroid.SHORT,
+        //   ToastAndroid.TOP,
+        //   0,
+        //   100,
+        // );
+      }, 2000);
+    };
+    load();
+  };
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      {treeModalVisible && (
+        <CategoriesTreeModal
+          visible={treeModalVisible}
+          setVisible={setTreeModalVisible}
+          onItemSelected={setSelectedCategory}
+        />
+      )}
+      <View style={styles.container} scrollEnabled={true}>
+        {loading && (
+          <Skeleton speed={1500}>
+            {[...Array(15).keys()].map(item => (
+              <View
+                key={item}
+                style={[
+                  styles.skeletonRow,
+                  {
+                    marginTop: 10,
+                    marginLeft: 8,
+                    marginRight: 8,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    height: 115,
+                    width: '95%',
+                    borderRadius: 10,
+                  },
+                ]}
+              />
+            ))}
+          </Skeleton>
         )}
-        {!searching && !_.isEmpty(results[selected]) && (
+        {!loading && !_.isEmpty(items) && (
           <FlatList
-            data={results[selected]}
+            data={items}
             renderItem={({ item, index }) => {
+              const length = items.length;
+              const navigateToItem = () => {
+                dispatch(
+                  programActions.newsArticleSelected({
+                    selectedNewsArticle: {
+                      item,
+                    },
+                  }),
+                );
+                navigation.navigate('NewsDetail', {
+                  itemId: item.id,
+                });
+              };
               return (
-                <View style={styles.listItem}>
-                  <Text style={[styles.japaneseText]}>
-                    {getItemLabel(item)}
-                  </Text>
-                  <Text style={[styles.japaneseText]}>
-                    {getItemMeaning(item)}
-                  </Text>
-                </View>
+                <TouchableOpacity
+                  onPress={() => navigateToItem()}
+                  style={{
+                    minHeight: 100,
+                    backgroundColor: '#fff',
+                    marginTop: index === 0 ? 5 : 0, // first
+                    marginBottom: index === length - 1 ? 10 : 5, // last
+                    marginLeft: 5,
+                    marginRight: 5,
+                    borderRadius: 5,
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                    flexDirection: 'row',
+                  }}>
+                  <View style={{ width: 115, height: 115, padding: 5 }}>
+                    <Image
+                      source={
+                        item.thumbnail
+                          ? { uri: item.thumbnail }
+                          : require('../../assets/logo.png')
+                      }
+                      style={{ width: 95, height: 95 }}
+                      resizeMethod="auto"
+                    />
+                  </View>
+                  <View style={{ width: windowWidth - 125, padding: 5 }}>
+                    <Text
+                      style={{
+                        fontFamily: 'SF-Pro-Display-Regular',
+                        textAlign: 'left',
+                        color: '#000',
+                        fontWeight: 'bold',
+                        fontSize: 16,
+                        textTransform: 'uppercase',
+                      }}
+                      numberOfLines={1}
+                      ellipsizeMode="tail">
+                      {item.title}
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: 'SF-Pro-Display-Regular',
+                        textAlign: 'left',
+                        color: '#000',
+                        fontWeight: '400',
+                        fontSize: 14,
+                      }}
+                      numberOfLines={4}
+                      ellipsizeMode="tail">
+                      {item.description}
+                    </Text>
+                    {/* {_.isEmpty(_.get(selectedCategory, 'id')) && (
+                      <Text
+                        style={{
+                          fontFamily: 'SF-Pro-Display-Regular',
+                          textAlign: 'left',
+                          color: '#000',
+                          fontWeight: '400',
+                          fontSize: 12,
+                        }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail">
+                        {_.get(item, 'parent.title')}
+                      </Text>
+                    )} */}
+                    <Text
+                      style={{
+                        fontFamily: 'SF-Pro-Display-Regular',
+                        textAlign: 'left',
+                        color: '#000',
+                        fontWeight: '400',
+                        fontSize: 12,
+                      }}
+                      numberOfLines={1}
+                      ellipsizeMode="tail">
+                      {getPostTimeFromCreatedAt(item.createdAt)}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               );
             }}
             keyExtractor={(item, index) => {
               return item.id;
             }}
+            ListFooterComponent={() => {
+              return loadingMore ? (
+                <ActivityIndicator size="small" style={{ marginBottom: 10 }} />
+              ) : null;
+            }}
+            onEndReachedThreshold={0.01}
+            scrollEventThrottle={0} // 250
+            onEndReached={info => {
+              if (scrolled) {
+                loadMore();
+              }
+            }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+            }
+            onScroll={() => setScrolled(true)}
           />
         )}
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
+    height: floorW,
+    backgroundColor: '#EAF8D2',
+    // paddingTop: 5,
     flex: 1,
+    paddingBottom: 0,
   },
-  skeletonRow: {
-    // marginLeft: 8,
-    // marginRight: 8,
-    // // paddingLeft: 8,
-    // // paddingRight: 8,
-  },
+  skeletonRow: {},
   buttonGroup: {
     flexDirection: 'row',
     alignContent: 'stretch',
@@ -447,3 +711,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default News;

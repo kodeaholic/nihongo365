@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import _ from 'lodash';
 export const Header = props => {
   const confirmExit = text => {
     Alert.alert('Thông báo', `${text}`, [
@@ -21,6 +22,7 @@ export const Header = props => {
     disableBackButton = false,
     customStyles,
     enableLogoutButton = true,
+    leftAction = {},
   } = props;
   const navigation = useNavigation();
   const _goBack = () => {
@@ -34,6 +36,13 @@ export const Header = props => {
     <Appbar.Header style={[styles.header, customStyles]}>
       {!disableBackButton && (
         <Appbar.BackAction color="#fff" onPress={_goBack} />
+      )}
+      {!_.isEmpty(leftAction) && (
+        <Appbar.Action
+          icon={leftAction.icon ? leftAction.icon : 'table-of-contents'}
+          color={leftAction.color ? leftAction.color : '#fff'}
+          onPress={() => leftAction.action && leftAction.action(true)}
+        />
       )}
       {subtitle && (
         <Appbar.Content

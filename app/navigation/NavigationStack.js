@@ -42,6 +42,8 @@ import { Grammar } from '../screens/Grammar';
 import Alphabet from '../screens/Alphabet';
 import News from '../screens/News';
 import More from '../screens/More';
+import _ from 'lodash';
+import { NewsDetail } from '../screens/News/detail';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -117,6 +119,10 @@ function DictionaryStackScreen() {
       screenOptions={{
         header: ({ scene }) => {
           let { headerProps } = scene.descriptor.options;
+          if (_.isEmpty(headerProps)) {
+            headerProps = {};
+          }
+          Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
       }}>
@@ -136,10 +142,15 @@ function NewsStackScreen() {
       screenOptions={{
         header: ({ scene }) => {
           let { headerProps } = scene.descriptor.options;
+          if (_.isEmpty(headerProps)) {
+            headerProps = {};
+          }
+          // Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
       }}>
       <NewsStack.Screen name="News" component={News} />
+      <NewsStack.Screen name="NewsDetail" component={NewsDetail} />
     </NewsStack.Navigator>
   );
 }
@@ -155,6 +166,10 @@ function MoreStackScreen() {
       screenOptions={{
         header: ({ scene }) => {
           let { headerProps } = scene.descriptor.options;
+          if (_.isEmpty(headerProps)) {
+            headerProps = {};
+          }
+          Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
       }}>
@@ -174,6 +189,10 @@ function AlphabetStackScreen() {
       screenOptions={{
         header: ({ scene }) => {
           let { headerProps } = scene.descriptor.options;
+          if (_.isEmpty(headerProps)) {
+            headerProps = {};
+          }
+          Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
       }}>
@@ -205,20 +224,6 @@ function MainStackScreen() {
         {...tabBarProps}
         tabBarOptions={{ showLabel: true, labelPosition: 'below-icon' }}>
         <Tab.Screen
-          name="Trang chủ"
-          component={NewsStackScreen}
-          options={{
-            showIcon: true,
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                name="newspaper-variant-outline"
-                color={color}
-                size={26}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
           component={LearnStackScreen}
           name="Học"
           options={{
@@ -240,6 +245,20 @@ function MainStackScreen() {
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="google-translate"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Bài viết"
+          component={NewsStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="newspaper-variant-outline"
                 color={color}
                 size={26}
               />

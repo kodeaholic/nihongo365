@@ -93,4 +93,12 @@ export const programReducer = createReducer(initialState, {
       selectedGrammarLesson: selectedGrammarLesson,
     };
   },
+  [types.NEWS_ARTICLE_SELECTED](state, action) {
+    const payload = action.actionPayload;
+    const { selectedNewsArticle } = payload;
+    return {
+      ...state,
+      selectedNewsArticle: selectedNewsArticle,
+    };
+  },
 });

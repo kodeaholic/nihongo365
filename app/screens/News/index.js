@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
-  Button,
   ActivityIndicator,
   Image,
   RefreshControl,
@@ -24,7 +23,7 @@ import { authHeader } from '../../api/authHeader';
 import { getPostTimeFromCreatedAt } from '../../helpers/time';
 // import DebounceInput from '../../components/DebounceInput';
 import * as programActions from '../../actions/programActions';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
@@ -298,7 +297,7 @@ const News = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
-  const [title, setTitle] = useState('');
+  const [title] = useState('');
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
@@ -339,7 +338,7 @@ const News = ({ navigation }) => {
       const data = await response.json();
       if (data.code) {
         ToastAndroid.showWithGravityAndOffset(
-          'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+          'Kết nối mạng không ổn định',
           ToastAndroid.LONG,
           ToastAndroid.TOP,
           0,
@@ -348,22 +347,23 @@ const News = ({ navigation }) => {
       } else {
         list = data.results;
         if (_.isEmpty(list)) {
-          const msg = more
-            ? 'Tất cả bài viết đã được hiển thị'
-            : 'Chưa có bài viết trong chuyên mục này. Vui lòng quay lại sau';
-          ToastAndroid.showWithGravityAndOffset(
-            msg,
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-            0,
-            100,
-          );
+          const msg =
+            'Chưa có bài viết trong chuyên mục này. Vui lòng quay lại sau';
+          if (!more) {
+            ToastAndroid.showWithGravityAndOffset(
+              msg,
+              ToastAndroid.LONG,
+              ToastAndroid.TOP,
+              0,
+              100,
+            );
+          }
         } else {
         }
       }
     } catch (error) {
       ToastAndroid.showWithGravityAndOffset(
-        'Kết nối mạng không ổn định. Vui lòng thử lại sau',
+        'Kết nối mạng không ổn định',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
         0,
@@ -446,13 +446,13 @@ const News = ({ navigation }) => {
       }
       setTimeout(() => {
         setRefreshing(false);
-        ToastAndroid.showWithGravityAndOffset(
-          'Bài viết mới nhất đã được cập nhật',
-          ToastAndroid.SHORT,
-          ToastAndroid.TOP,
-          0,
-          100,
-        );
+        // ToastAndroid.showWithGravityAndOffset(
+        //   'Bài viết mới nhất đã được cập nhật',
+        //   ToastAndroid.SHORT,
+        //   ToastAndroid.TOP,
+        //   0,
+        //   100,
+        // );
       }, 2000);
     };
     load();
@@ -466,7 +466,7 @@ const News = ({ navigation }) => {
           onItemSelected={setSelectedCategory}
         />
       )}
-      <View style={styles.container}>
+      <View style={styles.container} scrollEnabled={true}>
         {loading && (
           <Skeleton speed={1500}>
             {[...Array(15).keys()].map(item => (
@@ -493,6 +493,7 @@ const News = ({ navigation }) => {
           <FlatList
             data={items}
             renderItem={({ item, index }) => {
+              const length = items.length;
               const navigateToItem = () => {
                 dispatch(
                   programActions.newsArticleSelected({
@@ -511,7 +512,10 @@ const News = ({ navigation }) => {
                   style={{
                     minHeight: 100,
                     backgroundColor: '#fff',
-                    margin: 5,
+                    marginTop: index === 0 ? 5 : 0, // first
+                    marginBottom: index === length - 1 ? 10 : 5, // last
+                    marginLeft: 5,
+                    marginRight: 5,
                     borderRadius: 5,
                     shadowColor: '#000',
                     shadowOffset: {
@@ -593,21 +597,11 @@ const News = ({ navigation }) => {
             keyExtractor={(item, index) => {
               return item.id;
             }}
-            ListFooterComponent={() =>
-              loadingMore ? (
-                <View
-                  style={{
-                    minHeight: 100,
-                    alignContent: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <ActivityIndicator size="large" />
-                </View>
-              ) : (
-                <></>
-              )
-            }
+            ListFooterComponent={() => {
+              return loadingMore ? (
+                <ActivityIndicator size="small" style={{ marginBottom: 10 }} />
+              ) : null;
+            }}
             onEndReachedThreshold={0.01}
             scrollEventThrottle={250}
             onEndReached={info => {
@@ -625,10 +619,11 @@ const News = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    height: floorW,
     backgroundColor: '#EAF8D2',
-    paddingTop: 5,
+    // paddingTop: 5,
     flex: 1,
-    // paddingBottom: 7,
+    paddingBottom: 0,
   },
   skeletonRow: {},
   buttonGroup: {

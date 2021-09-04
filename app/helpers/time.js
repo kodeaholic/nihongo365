@@ -19,15 +19,15 @@ export const getPostTimeFromCreatedAt = timeString => {
       return `${hours} giờ trước`;
     } else {
       return (
-        date.getDate() +
+        ('0' + date.getDate()).slice(-2) +
         '-' +
-        (date.getMonth() + 1) +
+        ('0' + (date.getMonth() + 1)).slice(-2) +
         '-' +
         date.getFullYear() +
         ' ' +
-        date.getHours() +
+        ('0' + date.getHours()).slice(-2) +
         ':' +
-        date.getMinutes()
+        ('0' + date.getMinutes()).slice(-2)
       );
     }
   }

@@ -300,6 +300,7 @@ const News = ({ navigation }) => {
   const [title] = useState('');
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dispatch = useDispatch();
   // const headerProps = {
   //   title: 'Bảng tin',
@@ -603,13 +604,16 @@ const News = ({ navigation }) => {
               ) : null;
             }}
             onEndReachedThreshold={0.01}
-            scrollEventThrottle={250}
+            scrollEventThrottle={0} // 250
             onEndReached={info => {
-              loadMore();
+              if (scrolled) {
+                loadMore();
+              }
             }}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={refresh} />
             }
+            onScroll={() => setScrolled(true)}
           />
         )}
       </View>

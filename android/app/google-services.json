@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "401904380301",
+    "firebase_url": "https://nihongo365-318404-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "nihongo365-318404",
+    "storage_bucket": "nihongo365-318404.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401904380301:android:277e9c45a5c3123458b5c4",
+        "android_client_info": {
+          "package_name": "com.nihongo365"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nihongo365",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "401904380301-m2dsci6thglpu8camq3hqavc8sv1gmru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSmxaLKyOEbjh_d_dWulQKHI9pvptTjhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401904380301-m2dsci6thglpu8camq3hqavc8sv1gmru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

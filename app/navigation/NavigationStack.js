@@ -44,6 +44,7 @@ import News from '../screens/News';
 import More from '../screens/More';
 import _ from 'lodash';
 import { NewsDetail } from '../screens/News/detail';
+import { Chat } from '../screens/Chat';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -201,6 +202,18 @@ function AlphabetStackScreen() {
   );
 }
 
+const ChatStack = createStackNavigator();
+function ChatStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'none' };
+  return (
+    <ChatStack.Navigator {...stackProps}>
+      <ChatStack.Screen name="Chat" component={Chat} />
+    </ChatStack.Navigator>
+  );
+}
+
 const Tab = DeviceInfo.isTablet()
   ? createMaterialTopTabNavigator()
   : createMaterialBottomTabNavigator();
@@ -238,13 +251,13 @@ function MainStackScreen() {
           }}
         />
         <Tab.Screen
-          name="Từ điển"
-          component={DictionaryStackScreen}
+          name="Chat"
+          component={ChatStackScreen}
           options={{
             showIcon: true,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
-                name="google-translate"
+                name="chat-outline"
                 color={color}
                 size={26}
               />
@@ -287,6 +300,20 @@ function MainStackScreen() {
                   />
                 </View>
               </>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Từ điển"
+          component={DictionaryStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="google-translate"
+                color={color}
+                size={26}
+              />
             ),
           }}
         />

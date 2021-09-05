@@ -1130,6 +1130,11 @@
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
+"@react-native-firebase/messaging@^12.7.5":
+  version "12.7.5"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-12.7.5.tgz#cfe61c5a2e9c562d9801d97825fafe3dd91044c8"
+  integrity sha512-HLsjmuI5ZcU0j6r1ttlcadeAS0+wIALzY1St5ITmJsQ/VzbGilzbr4oGTRZxAXBN8cHn4UyXl55MB62346OxFA==
+
 "@react-native-google-signin/google-signin@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@react-native-google-signin/google-signin/-/google-signin-6.0.1.tgz#c953c24c74c42009f59213015d4bdd4e58133c54"

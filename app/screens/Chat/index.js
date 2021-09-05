@@ -35,7 +35,7 @@ export class Chat extends React.Component {
         renderTime: true,
         sendStatus: 0,
         time: '1542006036549',
-        isIphoneX: isIPX,
+        isIPhoneX: isIPX,
       },
       {
         id: uuidv4(),
@@ -50,7 +50,7 @@ export class Chat extends React.Component {
         renderTime: true,
         sendStatus: 0,
         time: '1542106036549',
-        isIphoneX: isIPX,
+        isIPhoneX: isIPX,
       },
       {
         id: uuidv4(),
@@ -70,7 +70,7 @@ export class Chat extends React.Component {
         renderTime: false,
         sendStatus: 0,
         time: '1542106037000',
-        isIphoneX: isIPX,
+        isIPhoneX: isIPX,
       },
       {
         id: uuidv4(),
@@ -84,7 +84,7 @@ export class Chat extends React.Component {
         renderTime: true,
         sendStatus: -2,
         time: '1542177036549',
-        isIphoneX: isIPX,
+        isIPhoneX: isIPX,
       },
       {
         id: uuidv4(),
@@ -103,7 +103,7 @@ export class Chat extends React.Component {
         renderTime: true,
         sendStatus: 1,
         time: '1542260667161',
-        isIphoneX: isIPX,
+        isIPhoneX: isIPX,
       },
       {
         id: uuidv4(),
@@ -121,7 +121,7 @@ export class Chat extends React.Component {
         renderTime: true,
         sendStatus: 1,
         time: '1542264667161',
-        isIphoneX: isIPX,
+        isIPhoneX: isIPX,
       },
     ],
     // chatBg: require('../../source/bg.jpg'),
@@ -138,7 +138,7 @@ export class Chat extends React.Component {
   };
 
   sendMessage = (type, content, isInverted) => {
-    console.log(type, content, isInverted);
+    // console.log(type, content, isInverted);
     const newMsg = {
       id: uuidv4(),
       type: 'text',
@@ -151,7 +151,7 @@ export class Chat extends React.Component {
       renderTime: true,
       sendStatus: 1,
       time: Date.now() + '',
-      isIphoneX: isIPX,
+      isIPhoneX: isIPX,
     };
     const newMessagesList = [...this.state.messages, newMsg];
     this.setState({ ...this.state, messages: newMessagesList });

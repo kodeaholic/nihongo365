@@ -46,6 +46,7 @@ import More from '../screens/More';
 import _ from 'lodash';
 import { NewsDetail } from '../screens/News/detail';
 import { Chat } from '../screens/Chat';
+import Rooms from '../screens/ChatRoom';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -210,7 +211,8 @@ function ChatStackScreen() {
     : { headerMode: 'none' };
   return (
     <ChatStack.Navigator {...stackProps}>
-      <ChatStack.Screen name="Chat" component={Chat} />
+      <ChatStack.Screen name="Chat" component={Rooms} />
+      {/* <ChatStack.Screen name="Chat" component={Chat} /> */}
     </ChatStack.Navigator>
   );
 }

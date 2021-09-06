@@ -16,10 +16,12 @@ import { apiConfig } from '../../../api/config/apiConfig';
 import { SOCIAL_PROVIDER } from '../../../constants/socialAuth';
 import AsyncStorage from '@react-native-community/async-storage';
 import _ from 'lodash';
+import { useDispatch } from 'react-redux';
+import { userActions } from '../../../actions/userActions';
 export default function StartScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState({});
-
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!_.isEmpty(result) && result.user && result.tokens) {
       try {
@@ -59,6 +61,7 @@ export default function StartScreen({ navigation }) {
   }, [navigation, result]);
   const _googleSignIn = async () => {
     setLoading(true);
+    dispatch(userActions.socialLogin());
     GoogleSignin.configure({
       androidClientId:
         '401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com',
@@ -66,11 +69,7 @@ export default function StartScreen({ navigation }) {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      // console.log(userInfo);
-      // register with userInfo
       try {
-        await GoogleSignin.revokeAccess();
-        await GoogleSignin.signOut();
         let url = `${apiConfig.baseUrl}${
           apiConfig.apiEndpoint
         }/auth/social-login`;
@@ -90,16 +89,30 @@ export default function StartScreen({ navigation }) {
         try {
           const response = await fetch(url, requestOptions);
           const data = await response.json();
+          if (data.code) {
+            dispatch(userActions.socialLoginFailed());
+          } else {
+            let user = _.get(data, 'user');
+            if (
+              user.socialUserDetails &&
+              typeof user.socialUserDetails === 'string'
+            ) {
+              user.socialUserDetails = JSON.parse(user.socialUserDetails);
+            }
+            dispatch(userActions.socialLoginSucceeded({ user }));
+          }
           setResult(data);
           setLoading(false);
           return data;
         } catch (error) {
+          dispatch(userActions.socialLoginFailed());
           return error;
         }
       } catch (error) {
-        // console.error(error);
+        dispatch(userActions.socialLoginFailed());
       }
     } catch (error) {
+      dispatch(userActions.socialLoginFailed());
       setLoading(false);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         ToastAndroid.showWithGravityAndOffset(

@@ -5,6 +5,8 @@ import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import _ from 'lodash';
+import { useDispatch } from 'react-redux';
+import { userActions } from '../actions/userActions';
 export const Header = props => {
   const confirmExit = text => {
     Alert.alert('Thông báo', `${text}`, [
@@ -32,6 +34,7 @@ export const Header = props => {
       confirmExit('Bạn muốn thoát ứng dụng?');
     }
   };
+  const dispatch = useDispatch();
   return (
     <Appbar.Header style={[styles.header, customStyles]}>
       {!disableBackButton && (
@@ -77,6 +80,7 @@ export const Header = props => {
                         console.error(error);
                       }
                     }
+                    dispatch(userActions.socialLoginFailed());
                     AsyncStorage.removeItem('user');
                     AsyncStorage.removeItem('tokens');
                     navigation.reset({

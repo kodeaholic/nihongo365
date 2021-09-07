@@ -149,7 +149,7 @@ const Rooms = ({ navigation }) => {
                 const lastMessage = {
                   type: 'text',
                   content:
-                    'Chào mừng bạn đến với Nihongo365. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi',
+                    'Chào mừng bạn đã đến với Nihongo365! Hãy cùng Nihongo365 xây dựng nên cộng đồng người học tiếng Nhật nhé! Thân ái!',
                   targetId: 'ADMIN_ID', // ID of the person sent this message
                   chatInfo: {
                     // This is the person you are chatting with
@@ -179,9 +179,9 @@ const Rooms = ({ navigation }) => {
                         { merge: true },
                       )
                       .then(() => {
-                        console.log(
-                          'Created new room with Admin and be welcomed!',
-                        );
+                        // console.log(
+                        //   'Created new room with Admin and be welcomed!',
+                        // );
                       });
                   });
               });
@@ -196,7 +196,10 @@ const Rooms = ({ navigation }) => {
                 const time = Date.now();
                 const lastMessage = {
                   type: 'text',
-                  content: 'Tin nhắn hệ thống từ Nihongo365',
+                  content: `Chào mừng bạn gia nhập Nihongo365!
+                  Bạn sẽ nhận được tin nhắn từ hệ thống trong hộp thư này.
+                  Trân trọng!
+                  `,
                   targetId: 'SYSTEM_ID', // ID of the person sent this message
                   chatInfo: {
                     // This is the person you are chatting with
@@ -226,14 +229,14 @@ const Rooms = ({ navigation }) => {
                         { merge: true },
                       )
                       .then(() => {
-                        console.log(
-                          'Created room for system notification with Admin and be welcomed!',
-                        );
+                        // console.log(
+                        //   'Created room for system notification with Admin and be welcomed!',
+                        // );
                       });
                   });
               });
           } catch (e) {
-            console.log(e);
+            // console.log(e);
           }
         }
         setItems(rooms);

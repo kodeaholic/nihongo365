@@ -18,7 +18,10 @@ import {
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
 import { Dimensions } from 'react-native';
-import { getPostTimeFromCreatedAt } from '../../helpers/time';
+import {
+  getPostedTimeFromMillis,
+  getPostTimeFromCreatedAt,
+} from '../../helpers/time';
 // import DebounceInput from '../../components/DebounceInput';
 import * as programActions from '../../actions/programActions';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,32 +34,64 @@ import { isIphoneX } from '../../lib/isIphoneX';
 import { RANDOM_STR } from '../../helpers/random';
 const isIPX = isIphoneX();
 const TimeCounter = ({ time }) => {
-  //   console.log(time);
-  const [timeInMillis, setTimeInMillis] = useState(
-    _.isEmpty(time) ? new Date.now() + '' : time + '',
-  );
+  const [timeInMillis, setTimeInMillis] = useState(Date.now());
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeInMillis(old => parseInt(old) + 60000);
-      //   console.log('One minute passed ...');
+    setTimeout(() => {
+      setTimeInMillis(timeInMillis + 60000);
     }, 60000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  }, [timeInMillis]);
+  const getDiff = () => {
+    const date = new Date(parseInt(time));
+    // console.log('date: ', date);
+    const today = new Date(timeInMillis);
+    // console.log('today: ', today);
+    let mins = Math.abs(today - date) / (60 * 1000);
+    mins = parseInt(mins);
+    let res = '';
+    if (mins < 60) {
+      res = `${mins} phút trước`;
+      //   return res;
+    } else {
+      let hours = Math.abs(today - date) / (60 * 60 * 1000);
+      hours = parseInt(hours);
+      if (hours < 12) {
+        res = `${hours} giờ trước`;
+        // return res;
+      } else {
+        res =
+          ('0' + date.getDate()).slice(-2) +
+          '-' +
+          ('0' + (date.getMonth() + 1)).slice(-2) +
+          '-' +
+          date.getFullYear() +
+          ' ' +
+          ('0' + date.getHours()).slice(-2) +
+          ':' +
+          ('0' + date.getMinutes()).slice(-2);
+        // return res;
+      }
+    }
+    // console.log(res);
+    return res;
+  };
   return (
-    <Text
-      style={{
-        fontFamily: 'SF-Pro-Display-Regular',
-        textAlign: 'left',
-        color: '#000',
-        fontWeight: '400',
-        fontSize: 12,
-      }}
-      numberOfLines={1}
-      ellipsizeMode="tail">
-      {getPostTimeFromCreatedAt(new Date(parseInt(timeInMillis)))}
-    </Text>
+    <>
+      {timeInMillis > 0 && (
+        <Text
+          style={{
+            fontFamily: 'SF-Pro-Display-Regular',
+            textAlign: 'left',
+            color: '#000',
+            fontWeight: '400',
+            fontSize: 12,
+          }}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          key={timeInMillis}>
+          {getDiff()}
+        </Text>
+      )}
+    </>
   );
 };
 const Rooms = ({ navigation }) => {
@@ -80,7 +115,7 @@ const Rooms = ({ navigation }) => {
     });
     const isAdmin = _.get(user, 'role', 'user') === 'admin';
     const unsubscribe = firestore()
-      .collection('ROOMS')
+      .collection('rooms')
       .onSnapshot(querySnapshot => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {
@@ -100,7 +135,7 @@ const Rooms = ({ navigation }) => {
           });
         if (rooms && rooms.length === 0 && !isAdmin) {
           firestore()
-            .collection('ROOMS')
+            .collection('rooms')
             .add({
               ownerId: user.id,
               type: ROOM_TYPES.MEVSADMIN,
@@ -109,7 +144,7 @@ const Rooms = ({ navigation }) => {
               ownerRef: firestore().doc('USERS/' + user.id),
             })
             .then(docRef => {
-              const time = Date.now() + '';
+              const time = Date.now();
               const lastMessage = {
                 type: 'text',
                 content:
@@ -127,14 +162,14 @@ const Rooms = ({ navigation }) => {
                 isIPhoneX: isIPX,
               };
               firestore()
-                .collection('ROOMS')
+                .collection('rooms')
                 .doc(docRef.id)
                 .collection('MESSAGES')
                 .doc(time + RANDOM_STR(5))
                 .set(lastMessage)
                 .then(() => {
                   firestore()
-                    .collection('ROOMS')
+                    .collection('rooms')
                     .doc(docRef.id)
                     .set(
                       {
@@ -150,14 +185,14 @@ const Rooms = ({ navigation }) => {
                 });
             });
           firestore()
-            .collection('ROOMS')
+            .collection('rooms')
             .add({
               ownerId: user.id,
               type: ROOM_TYPES.SYSTEM,
               name: 'Tin nhắn hệ thống',
             })
             .then(docRef => {
-              const time = Date.now() + '';
+              const time = Date.now();
               const lastMessage = {
                 type: 'text',
                 content: 'Tin nhắn hệ thống từ Nihongo365',
@@ -174,14 +209,14 @@ const Rooms = ({ navigation }) => {
                 isIPhoneX: isIPX,
               };
               firestore()
-                .collection('ROOMS')
+                .collection('rooms')
                 .doc(docRef.id)
                 .collection('MESSAGES')
                 .doc(time + RANDOM_STR(5))
                 .set(lastMessage)
                 .then(() => {
                   firestore()
-                    .collection('ROOMS')
+                    .collection('rooms')
                     .doc(docRef.id)
                     .set(
                       {
@@ -352,7 +387,7 @@ const Rooms = ({ navigation }) => {
                       numberOfLines={1}
                       ellipsizeMode="tail">
                       {getPostTimeFromCreatedAt(
-                        new Date(parseInt(lastMessage?.time)),
+                        new Date((lastMessage?.time)),
                       )}
                     </Text> */}
                   </View>

@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import _ from 'lodash';
 import { useDispatch } from 'react-redux';
 import { userActions } from '../../../actions/userActions';
+import firestore from '@react-native-firebase/firestore';
 export default function StartScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState({});
@@ -100,6 +101,17 @@ export default function StartScreen({ navigation }) {
               user.socialUserDetails = JSON.parse(user.socialUserDetails);
             }
             dispatch(userActions.socialLoginSucceeded({ user }));
+            // add or update users collection in firestore
+            try {
+              let clone = Object.assign({}, user);
+              delete clone.id;
+              firestore()
+                .collection('USERS')
+                .doc(user.id)
+                .set(clone);
+            } catch (error) {
+              // console.log(error)
+            }
           }
           setResult(data);
           setLoading(false);

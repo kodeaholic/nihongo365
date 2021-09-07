@@ -210,7 +210,22 @@ function ChatStackScreen() {
     ? { headerMode: 'none' }
     : { headerMode: 'none' };
   return (
-    <ChatStack.Navigator {...stackProps}>
+    <ChatStack.Navigator
+      {...stackProps}
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          if (_.isEmpty(headerProps)) {
+            headerProps = {};
+          }
+          Object.assign(headerProps, {
+            disableBackButton: true,
+            title: 'Nihongo365 Chat',
+            leftAction: undefined,
+          });
+          return <Header {...headerProps} />;
+        },
+      }}>
       <ChatStack.Screen name="Chat" component={Rooms} />
       {/* <ChatStack.Screen name="Chat" component={Chat} /> */}
     </ChatStack.Navigator>

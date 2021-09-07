@@ -8,70 +8,247 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  ScrollView,
-  ActivityIndicator,
+  //   ScrollView,
+  //   ActivityIndicator,
   Image,
   RefreshControl,
+  //   RefreshControl,
 } from 'react-native';
-import Modal from 'react-native-modal';
-import { Divider, List } from 'react-native-paper';
+// import Modal from 'react-native-modal';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
 import { Dimensions } from 'react-native';
-import { apiConfig } from '../../api/config/apiConfig';
-import { authHeader } from '../../api/authHeader';
 import { getPostTimeFromCreatedAt } from '../../helpers/time';
 // import DebounceInput from '../../components/DebounceInput';
 import * as programActions from '../../actions/programActions';
-import { useDispatch } from 'react-redux';
-import AsyncStorage from '@react-native-community/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+import { ROOM_TYPES } from '../../constants/chat.constants';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
+import { isIphoneX } from '../../lib/isIphoneX';
+import { RANDOM_STR } from '../../helpers/random';
+const isIPX = isIphoneX();
+const TimeCounter = ({ time }) => {
+  //   console.log(time);
+  const [timeInMillis, setTimeInMillis] = useState(
+    _.isEmpty(time) ? new Date.now() + '' : time + '',
+  );
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeInMillis(old => parseInt(old) + 60000);
+      //   console.log('One minute passed ...');
+    }, 60000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  return (
+    <Text
+      style={{
+        fontFamily: 'SF-Pro-Display-Regular',
+        textAlign: 'left',
+        color: '#000',
+        fontWeight: '400',
+        fontSize: 12,
+      }}
+      numberOfLines={1}
+      ellipsizeMode="tail">
+      {getPostTimeFromCreatedAt(new Date(parseInt(timeInMillis)))}
+    </Text>
+  );
+};
 const Rooms = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState({
-    title: 'Tổng hợp',
-  });
+  const user = useSelector(state => state.userReducer.user);
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
-  const [page, setPage] = useState(1);
   const [title] = useState('');
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refresh, setRefresh] = useState(0);
   const dispatch = useDispatch();
 
-  const loadAsyncStorage = async () => {
-    let user = await AsyncStorage.getItem('user');
-    user = JSON.parse(user);
-    if (user.socialUserDetails && typeof user.socialUserDetails === 'string') {
-      user.socialUserDetails = JSON.parse(user.socialUserDetails);
-    }
-    console.log(user);
-    return user;
-  };
-
-  // load data for the first time of selectedCategory
   useEffect(() => {
-    if (selectedCategory) {
-      setPage(prev => 1);
-
-      const loadData = async () => {
-        setLoading(true);
-        let filter = { limit: 10, title };
-        if (selectedCategory && selectedCategory.id) {
-          filter.parent = selectedCategory.id;
+    setRefreshing(false);
+    navigation.setOptions({
+      headerProps: {
+        title: 'Nihongo365 Chat',
+        disableBackButton: true,
+        leftAction: undefined,
+      },
+    });
+    const isAdmin = _.get(user, 'role', 'user') === 'admin';
+    const unsubscribe = firestore()
+      .collection('ROOMS')
+      .onSnapshot(querySnapshot => {
+        const rooms = querySnapshot.docs
+          .filter(documentSnapshot => {
+            if (!isAdmin) {
+              const ownerId = _.get(documentSnapshot.data(), 'ownerId');
+              return ownerId === user.id;
+            } else {
+              const type = _.get(documentSnapshot.data(), 'type');
+              return type === ROOM_TYPES.MEVSADMIN;
+            }
+          })
+          .map(filteredSnapshot => {
+            return {
+              id: filteredSnapshot.id,
+              ...filteredSnapshot.data(),
+            };
+          });
+        if (rooms && rooms.length === 0 && !isAdmin) {
+          firestore()
+            .collection('ROOMS')
+            .add({
+              ownerId: user.id,
+              type: ROOM_TYPES.MEVSADMIN,
+              name: 'Admin',
+              avatar: user.photo || 'DEFAULT_USER_AVATAR',
+              ownerRef: firestore().doc('USERS/' + user.id),
+            })
+            .then(docRef => {
+              const time = Date.now() + '';
+              const lastMessage = {
+                type: 'text',
+                content:
+                  'Chào mừng bạn đến với Nihongo365. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi',
+                targetId: 'ADMIN_ID', // ID of the person sent this message
+                chatInfo: {
+                  // This is the person you are chatting with
+                  avatar: 'ADMIN_AVATAR',
+                  id: 'ADMIN_ID',
+                  nickName: 'Admin',
+                },
+                renderTime: true,
+                sendStatus: 0,
+                time: time,
+                isIPhoneX: isIPX,
+              };
+              firestore()
+                .collection('ROOMS')
+                .doc(docRef.id)
+                .collection('MESSAGES')
+                .doc(time + RANDOM_STR(5))
+                .set(lastMessage)
+                .then(() => {
+                  firestore()
+                    .collection('ROOMS')
+                    .doc(docRef.id)
+                    .set(
+                      {
+                        lastMessage,
+                      },
+                      { merge: true },
+                    )
+                    .then(() => {
+                      console.log(
+                        'Created new room with Admin and be welcomed!',
+                      );
+                    });
+                });
+            });
+          firestore()
+            .collection('ROOMS')
+            .add({
+              ownerId: user.id,
+              type: ROOM_TYPES.SYSTEM,
+              name: 'Tin nhắn hệ thống',
+            })
+            .then(docRef => {
+              const time = Date.now() + '';
+              const lastMessage = {
+                type: 'text',
+                content: 'Tin nhắn hệ thống từ Nihongo365',
+                targetId: 'SYSTEM_ID', // ID of the person sent this message
+                chatInfo: {
+                  // This is the person you are chatting with
+                  avatar: 'SYSTEM_AVATAR',
+                  id: 'SYSTEM_ID',
+                  nickName: 'System',
+                },
+                renderTime: true,
+                sendStatus: 0,
+                time: time,
+                isIPhoneX: isIPX,
+              };
+              firestore()
+                .collection('ROOMS')
+                .doc(docRef.id)
+                .collection('MESSAGES')
+                .doc(time + RANDOM_STR(5))
+                .set(lastMessage)
+                .then(() => {
+                  firestore()
+                    .collection('ROOMS')
+                    .doc(docRef.id)
+                    .set(
+                      {
+                        lastMessage,
+                      },
+                      { merge: true },
+                    )
+                    .then(() => {
+                      console.log(
+                        'Created room for system notification with Admin and be welcomed!',
+                      );
+                    });
+                });
+            });
         }
-        loadAsyncStorage();
+        setItems(rooms);
         setLoading(false);
-      };
-      loadData();
+      });
+    /**
+     * unsubscribe listener
+     */
+    return () => unsubscribe();
+  }, [user, navigation, refresh]);
+
+  const renderImage = room => {
+    const isAdmin = _.get(user, 'role', 'user') === 'admin';
+    switch (room.type) {
+      case ROOM_TYPES.SYSTEM:
+        return (
+          <Image
+            source={require('../../assets/system_notification.png')}
+            style={styles.roomAvatar}
+            resizeMethod="auto"
+          />
+        );
+      case ROOM_TYPES.GROUP:
+        return (
+          <Image
+            source={require('../../assets/teamwork.png')}
+            style={styles.roomAvatar}
+            resizeMethod="auto"
+          />
+        );
+      case ROOM_TYPES.MEVSADMIN:
+        if (!isAdmin) {
+          return (
+            <Image
+              source={require('../../assets/logo.png')}
+              style={styles.roomAvatar}
+              resizeMethod="auto"
+            />
+          );
+        } else {
+          return (
+            <Image
+              source={require('../../assets/girl.png')}
+              style={styles.roomAvatar}
+              resizeMethod="auto"
+            />
+          );
+        }
     }
-  }, [selectedCategory, title, navigation]);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <View style={styles.container} scrollEnabled={true}>
+      <View style={styles.container} scrollEnabled={true} refresh={refresh}>
         {loading && (
           <Skeleton speed={1500}>
             {[...Array(15).keys()].map(item => (
@@ -98,6 +275,7 @@ const Rooms = ({ navigation }) => {
           <FlatList
             data={items}
             renderItem={({ item, index }) => {
+              const { lastMessage } = item;
               const length = items.length;
               const navigateToItem = () => {
                 dispatch(
@@ -113,15 +291,15 @@ const Rooms = ({ navigation }) => {
               };
               return (
                 <TouchableOpacity
-                  onPress={() => navigateToItem()}
+                  //   onPress={() => navigateToItem()}
                   style={{
                     minHeight: 100,
                     backgroundColor: '#fff',
-                    marginTop: index === 0 ? 5 : 0, // first
-                    marginBottom: index === length - 1 ? 10 : 5, // last
-                    marginLeft: 5,
-                    marginRight: 5,
-                    borderRadius: 5,
+                    marginTop: index === 0 ? 1 : 0, // first
+                    marginBottom: index === length - 1 ? 10 : 0.5, // last
+                    marginLeft: 1,
+                    marginRight: 1,
+                    // borderRadius: 5,
                     shadowColor: '#000',
                     shadowOffset: {
                       width: 0,
@@ -131,17 +309,10 @@ const Rooms = ({ navigation }) => {
                     shadowRadius: 3.84,
                     elevation: 5,
                     flexDirection: 'row',
+                    alignItems: 'center',
                   }}>
-                  <View style={{ width: 115, height: 115, padding: 5 }}>
-                    <Image
-                      source={
-                        item.thumbnail
-                          ? { uri: item.thumbnail }
-                          : require('../../assets/logo.png')
-                      }
-                      style={{ width: 95, height: 95 }}
-                      resizeMethod="auto"
-                    />
+                  <View style={styles.roomAvatarContainer}>
+                    {!_.isEmpty(item) && renderImage(item)}
                   </View>
                   <View style={{ width: windowWidth - 125, padding: 5 }}>
                     <Text
@@ -155,7 +326,7 @@ const Rooms = ({ navigation }) => {
                       }}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {item.title}
+                      {item.name}
                     </Text>
                     <Text
                       style={{
@@ -167,9 +338,10 @@ const Rooms = ({ navigation }) => {
                       }}
                       numberOfLines={4}
                       ellipsizeMode="tail">
-                      {item.description}
+                      {lastMessage?.content}
                     </Text>
-                    <Text
+                    <TimeCounter time={lastMessage?.time} />
+                    {/* <Text
                       style={{
                         fontFamily: 'SF-Pro-Display-Regular',
                         textAlign: 'left',
@@ -179,8 +351,10 @@ const Rooms = ({ navigation }) => {
                       }}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {getPostTimeFromCreatedAt(item.createdAt)}
-                    </Text>
+                      {getPostTimeFromCreatedAt(
+                        new Date(parseInt(lastMessage?.time)),
+                      )}
+                    </Text> */}
                   </View>
                 </TouchableOpacity>
               );
@@ -188,11 +362,11 @@ const Rooms = ({ navigation }) => {
             keyExtractor={(item, index) => {
               return item.id;
             }}
-            ListFooterComponent={() => {
-              return loadingMore ? (
-                <ActivityIndicator size="small" style={{ marginBottom: 10 }} />
-              ) : null;
-            }}
+            // ListFooterComponent={() => {
+            //   return loadingMore ? (
+            //     <ActivityIndicator size="small" style={{ marginBottom: 10 }} />
+            //   ) : null;
+            // }}
             onEndReachedThreshold={0.01}
             scrollEventThrottle={0} // 250
             onEndReached={info => {
@@ -201,7 +375,13 @@ const Rooms = ({ navigation }) => {
               }
             }}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={() => {}} />
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => {
+                  setRefreshing(true);
+                  setRefresh(refresh + 1);
+                }}
+              />
             }
             onScroll={() => setScrolled(true)}
           />
@@ -298,6 +478,21 @@ const styles = StyleSheet.create({
     margin: 10,
     fontFamily: 'KosugiMaru-Regular',
     fontSize: 16,
+  },
+  roomAvatar: {
+    width: 75,
+    height: 75,
+  },
+  roomAvatarContainer: {
+    width: 95,
+    height: 95,
+    // padding: 5,
+    // borderWidth: 1,
+    borderRadius: 95,
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#EAF8D2',
   },
 });
 

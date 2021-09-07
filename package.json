@@ -16,6 +16,7 @@
     "@react-native-community/toolbar-android": "0.1.0-rc.2",
     "@react-native-community/viewpager": "5.0.11",
     "@react-native-firebase/app": "^12.7.5",
+    "@react-native-firebase/firestore": "^12.7.5",
     "@react-native-firebase/messaging": "^12.7.5",
     "@react-native-google-signin/google-signin": "^6.0.1",
     "@react-navigation/material-bottom-tabs": "^5.1.7",

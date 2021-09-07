@@ -71,14 +71,22 @@ export const Header = props => {
                 text: 'ĐĂNG XUẤT',
                 onPress: () => {
                   const logout = async () => {
-                    const isSignedIn = await GoogleSignin.isSignedIn();
-                    if (isSignedIn) {
-                      try {
-                        await GoogleSignin.revokeAccess();
-                        await GoogleSignin.signOut();
-                      } catch (error) {
-                        console.error(error);
+                    try {
+                      GoogleSignin.configure({
+                        androidClientId:
+                          '401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com',
+                      });
+                      const isSignedIn = await GoogleSignin.isSignedIn();
+                      if (isSignedIn) {
+                        try {
+                          await GoogleSignin.revokeAccess();
+                          await GoogleSignin.signOut();
+                        } catch (error) {
+                          console.error(error);
+                        }
                       }
+                    } catch (e) {
+                      // console.log(e);
                     }
                     dispatch(userActions.socialLoginFailed());
                     AsyncStorage.removeItem('user');

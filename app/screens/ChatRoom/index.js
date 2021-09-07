@@ -105,6 +105,7 @@ const Rooms = ({ navigation }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setLoading(true);
     setRefreshing(false);
     // navigation.setOptions({
     //   headerProps: {
@@ -119,11 +120,11 @@ const Rooms = ({ navigation }) => {
       .onSnapshot(querySnapshot => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {
+            const type = _.get(documentSnapshot.data(), 'type');
             if (!isAdmin) {
               const ownerId = _.get(documentSnapshot.data(), 'ownerId');
-              return ownerId === user.id;
+              return ownerId === user.id && type !== ROOM_TYPES.SYSTEM;
             } else {
-              const type = _.get(documentSnapshot.data(), 'type');
               return type === ROOM_TYPES.MEVSADMIN;
             }
           })
@@ -153,7 +154,7 @@ const Rooms = ({ navigation }) => {
                   targetId: 'ADMIN_ID', // ID of the person sent this message
                   chatInfo: {
                     // This is the person you are chatting with
-                    avatar: 'ADMIN_AVATAR',
+                    avatar: require('../../assets/logo.png'),
                     id: 'ADMIN_ID',
                     nickName: 'Admin',
                   },
@@ -185,56 +186,56 @@ const Rooms = ({ navigation }) => {
                       });
                   });
               });
-            firestore()
-              .collection('rooms')
-              .add({
-                ownerId: user.id,
-                type: ROOM_TYPES.SYSTEM,
-                name: 'Tin nhắn hệ thống',
-              })
-              .then(docRef => {
-                const time = Date.now();
-                const lastMessage = {
-                  type: 'text',
-                  content: `Chào mừng bạn gia nhập Nihongo365!
-                  Bạn sẽ nhận được tin nhắn từ hệ thống trong hộp thư này.
-                  Trân trọng!
-                  `,
-                  targetId: 'SYSTEM_ID', // ID of the person sent this message
-                  chatInfo: {
-                    // This is the person you are chatting with
-                    avatar: 'SYSTEM_AVATAR',
-                    id: 'SYSTEM_ID',
-                    nickName: 'System',
-                  },
-                  renderTime: true,
-                  sendStatus: 0,
-                  time: time,
-                  isIPhoneX: isIPX,
-                };
-                firestore()
-                  .collection('rooms')
-                  .doc(docRef.id)
-                  .collection('MESSAGES')
-                  .doc(time + RANDOM_STR(5))
-                  .set(lastMessage)
-                  .then(() => {
-                    firestore()
-                      .collection('rooms')
-                      .doc(docRef.id)
-                      .set(
-                        {
-                          lastMessage,
-                        },
-                        { merge: true },
-                      )
-                      .then(() => {
-                        // console.log(
-                        //   'Created room for system notification with Admin and be welcomed!',
-                        // );
-                      });
-                  });
-              });
+            // firestore()
+            //   .collection('rooms')
+            //   .add({
+            //     ownerId: user.id,
+            //     type: ROOM_TYPES.SYSTEM,
+            //     name: 'Tin nhắn hệ thống',
+            //   })
+            //   .then(docRef => {
+            //     const time = Date.now();
+            //     const lastMessage = {
+            //       type: 'text',
+            //       content: `Chào mừng bạn gia nhập Nihongo365!
+            //       Bạn sẽ nhận được tin nhắn từ hệ thống trong hộp thư này.
+            //       Trân trọng!
+            //       `,
+            //       targetId: 'SYSTEM_ID', // ID of the person sent this message
+            //       chatInfo: {
+            //         // This is the person you are chatting with
+            //         avatar: 'SYSTEM_AVATAR',
+            //         id: 'SYSTEM_ID',
+            //         nickName: 'System',
+            //       },
+            //       renderTime: true,
+            //       sendStatus: 0,
+            //       time: time,
+            //       isIPhoneX: isIPX,
+            //     };
+            //     firestore()
+            //       .collection('rooms')
+            //       .doc(docRef.id)
+            //       .collection('MESSAGES')
+            //       .doc(time + RANDOM_STR(5))
+            //       .set(lastMessage)
+            //       .then(() => {
+            //         firestore()
+            //           .collection('rooms')
+            //           .doc(docRef.id)
+            //           .set(
+            //             {
+            //               lastMessage,
+            //             },
+            //             { merge: true },
+            //           )
+            //           .then(() => {
+            //             // console.log(
+            //             //   'Created room for system notification with Admin and be welcomed!',
+            //             // );
+            //           });
+            //       });
+            //   });
           } catch (e) {
             // console.log(e);
           }
@@ -320,20 +321,20 @@ const Rooms = ({ navigation }) => {
               const { lastMessage } = item;
               const length = items.length;
               const navigateToItem = () => {
-                dispatch(
-                  programActions.newsArticleSelected({
-                    selectedNewsArticle: {
-                      item,
-                    },
-                  }),
-                );
-                navigation.navigate('NewsDetail', {
-                  itemId: item.id,
+                // dispatch(
+                //   programActions.newsArticleSelected({
+                //     selectedNewsArticle: {
+                //       item,
+                //     },
+                //   }),
+                // );
+                navigation.navigate('Chat', {
+                  roomId: item.id,
                 });
               };
               return (
                 <TouchableOpacity
-                  //   onPress={() => navigateToItem()}
+                  onPress={() => navigateToItem()}
                   style={{
                     minHeight: 100,
                     backgroundColor: '#fff',
@@ -382,7 +383,9 @@ const Rooms = ({ navigation }) => {
                       ellipsizeMode="tail">
                       {lastMessage?.content}
                     </Text>
-                    <TimeCounter time={lastMessage?.time} />
+                    {lastMessage?.time && (
+                      <TimeCounter time={lastMessage?.time} />
+                    )}
                     {/* <Text
                       style={{
                         fontFamily: 'SF-Pro-Display-Regular',

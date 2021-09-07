@@ -227,8 +227,8 @@ function ChatStackScreen() {
       //   },
       // }}
     >
-      <ChatStack.Screen name="Chat" component={Rooms} />
-      {/* <ChatStack.Screen name="Chat" component={Chat} /> */}
+      <ChatStack.Screen name="ChatRooms" component={Rooms} />
+      <ChatStack.Screen name="Chat" component={Chat} />
     </ChatStack.Navigator>
   );
 }

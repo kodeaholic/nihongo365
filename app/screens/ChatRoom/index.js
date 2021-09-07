@@ -106,13 +106,13 @@ const Rooms = ({ navigation }) => {
 
   useEffect(() => {
     setRefreshing(false);
-    navigation.setOptions({
-      headerProps: {
-        title: 'Nihongo365 Chat',
-        disableBackButton: true,
-        leftAction: undefined,
-      },
-    });
+    // navigation.setOptions({
+    //   headerProps: {
+    //     title: 'Nihongo365 Chat',
+    //     disableBackButton: true,
+    //     leftAction: undefined,
+    //   },
+    // });
     const isAdmin = _.get(user, 'role', 'user') === 'admin';
     const unsubscribe = firestore()
       .collection('rooms')
@@ -134,103 +134,107 @@ const Rooms = ({ navigation }) => {
             };
           });
         if (rooms && rooms.length === 0 && !isAdmin) {
-          firestore()
-            .collection('rooms')
-            .add({
-              ownerId: user.id,
-              type: ROOM_TYPES.MEVSADMIN,
-              name: 'Admin',
-              avatar: user.photo || 'DEFAULT_USER_AVATAR',
-              ownerRef: firestore().doc('USERS/' + user.id),
-            })
-            .then(docRef => {
-              const time = Date.now();
-              const lastMessage = {
-                type: 'text',
-                content:
-                  'Chào mừng bạn đến với Nihongo365. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi',
-                targetId: 'ADMIN_ID', // ID of the person sent this message
-                chatInfo: {
-                  // This is the person you are chatting with
-                  avatar: 'ADMIN_AVATAR',
-                  id: 'ADMIN_ID',
-                  nickName: 'Admin',
-                },
-                renderTime: true,
-                sendStatus: 0,
-                time: time,
-                isIPhoneX: isIPX,
-              };
-              firestore()
-                .collection('rooms')
-                .doc(docRef.id)
-                .collection('MESSAGES')
-                .doc(time + RANDOM_STR(5))
-                .set(lastMessage)
-                .then(() => {
-                  firestore()
-                    .collection('rooms')
-                    .doc(docRef.id)
-                    .set(
-                      {
-                        lastMessage,
-                      },
-                      { merge: true },
-                    )
-                    .then(() => {
-                      console.log(
-                        'Created new room with Admin and be welcomed!',
-                      );
-                    });
-                });
-            });
-          firestore()
-            .collection('rooms')
-            .add({
-              ownerId: user.id,
-              type: ROOM_TYPES.SYSTEM,
-              name: 'Tin nhắn hệ thống',
-            })
-            .then(docRef => {
-              const time = Date.now();
-              const lastMessage = {
-                type: 'text',
-                content: 'Tin nhắn hệ thống từ Nihongo365',
-                targetId: 'SYSTEM_ID', // ID of the person sent this message
-                chatInfo: {
-                  // This is the person you are chatting with
-                  avatar: 'SYSTEM_AVATAR',
-                  id: 'SYSTEM_ID',
-                  nickName: 'System',
-                },
-                renderTime: true,
-                sendStatus: 0,
-                time: time,
-                isIPhoneX: isIPX,
-              };
-              firestore()
-                .collection('rooms')
-                .doc(docRef.id)
-                .collection('MESSAGES')
-                .doc(time + RANDOM_STR(5))
-                .set(lastMessage)
-                .then(() => {
-                  firestore()
-                    .collection('rooms')
-                    .doc(docRef.id)
-                    .set(
-                      {
-                        lastMessage,
-                      },
-                      { merge: true },
-                    )
-                    .then(() => {
-                      console.log(
-                        'Created room for system notification with Admin and be welcomed!',
-                      );
-                    });
-                });
-            });
+          try {
+            firestore()
+              .collection('rooms')
+              .add({
+                ownerId: user.id,
+                type: ROOM_TYPES.MEVSADMIN,
+                name: 'Admin',
+                avatar: user.photo || 'DEFAULT_USER_AVATAR',
+                ownerRef: firestore().doc('USERS/' + user.id),
+              })
+              .then(docRef => {
+                const time = Date.now();
+                const lastMessage = {
+                  type: 'text',
+                  content:
+                    'Chào mừng bạn đến với Nihongo365. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi',
+                  targetId: 'ADMIN_ID', // ID of the person sent this message
+                  chatInfo: {
+                    // This is the person you are chatting with
+                    avatar: 'ADMIN_AVATAR',
+                    id: 'ADMIN_ID',
+                    nickName: 'Admin',
+                  },
+                  renderTime: true,
+                  sendStatus: 0,
+                  time: time,
+                  isIPhoneX: isIPX,
+                };
+                firestore()
+                  .collection('rooms')
+                  .doc(docRef.id)
+                  .collection('MESSAGES')
+                  .doc(time + RANDOM_STR(5))
+                  .set(lastMessage)
+                  .then(() => {
+                    firestore()
+                      .collection('rooms')
+                      .doc(docRef.id)
+                      .set(
+                        {
+                          lastMessage,
+                        },
+                        { merge: true },
+                      )
+                      .then(() => {
+                        console.log(
+                          'Created new room with Admin and be welcomed!',
+                        );
+                      });
+                  });
+              });
+            firestore()
+              .collection('rooms')
+              .add({
+                ownerId: user.id,
+                type: ROOM_TYPES.SYSTEM,
+                name: 'Tin nhắn hệ thống',
+              })
+              .then(docRef => {
+                const time = Date.now();
+                const lastMessage = {
+                  type: 'text',
+                  content: 'Tin nhắn hệ thống từ Nihongo365',
+                  targetId: 'SYSTEM_ID', // ID of the person sent this message
+                  chatInfo: {
+                    // This is the person you are chatting with
+                    avatar: 'SYSTEM_AVATAR',
+                    id: 'SYSTEM_ID',
+                    nickName: 'System',
+                  },
+                  renderTime: true,
+                  sendStatus: 0,
+                  time: time,
+                  isIPhoneX: isIPX,
+                };
+                firestore()
+                  .collection('rooms')
+                  .doc(docRef.id)
+                  .collection('MESSAGES')
+                  .doc(time + RANDOM_STR(5))
+                  .set(lastMessage)
+                  .then(() => {
+                    firestore()
+                      .collection('rooms')
+                      .doc(docRef.id)
+                      .set(
+                        {
+                          lastMessage,
+                        },
+                        { merge: true },
+                      )
+                      .then(() => {
+                        console.log(
+                          'Created room for system notification with Admin and be welcomed!',
+                        );
+                      });
+                  });
+              });
+          } catch (e) {
+            console.log(e);
+          }
         }
         setItems(rooms);
         setLoading(false);
@@ -239,7 +243,7 @@ const Rooms = ({ navigation }) => {
      * unsubscribe listener
      */
     return () => unsubscribe();
-  }, [user, navigation, refresh]);
+  }, [user, refresh]);
 
   const renderImage = room => {
     const isAdmin = _.get(user, 'role', 'user') === 'admin';

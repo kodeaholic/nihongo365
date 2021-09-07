@@ -19,6 +19,9 @@ import _ from 'lodash';
 import { useDispatch } from 'react-redux';
 import { userActions } from '../../../actions/userActions';
 import firestore from '@react-native-firebase/firestore';
+firestore().settings({
+  ignoreUndefinedProperties: true,
+});
 export default function StartScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState({});

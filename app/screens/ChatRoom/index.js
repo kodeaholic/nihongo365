@@ -17,7 +17,7 @@ import {
 // import Modal from 'react-native-modal';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import {
   getPostedTimeFromMillis,
   getPostTimeFromCreatedAt,
@@ -36,9 +36,12 @@ const isIPX = isIphoneX();
 const TimeCounter = ({ time }) => {
   const [timeInMillis, setTimeInMillis] = useState(Date.now());
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setTimeInMillis(timeInMillis + 60000);
     }, 60000);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [timeInMillis]);
   const getDiff = () => {
     const date = new Date(parseInt(time));

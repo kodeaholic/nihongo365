@@ -6041,10 +6041,10 @@ react-native-autoheight-webview@^1.5.8:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-device-info@^5.5.4:
-  version "5.6.5"
-  resolved "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-5.6.5.tgz"
-  integrity sha512-l457wv7gYXSRnm38AH+NpCgKYa1zxxfN0EL8mTBxo+TnasXtk0FZ86zWDLhm4eqpcSH8xpT/+z2MQrATfqCaoA==
+react-native-device-info@^8.3.1:
+  version "8.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-8.3.1.tgz#f32cbb22a74e51b05b896c03649fcbfd0a0da513"
+  integrity sha512-tEJlyECZeFVZcEJVSZIN8OGghnlrZmSy0J8PGU4mCNk4KMTvx3tHpHMc6c7afl3lS2vOBP3jslzHzRMDgh42cA==
 
 react-native-easy-chat-ui@0.4.14:
   version "0.4.14"

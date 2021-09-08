@@ -6,7 +6,7 @@ import Header from '../../../components/Header';
 // import Button from '../../../components/Button';
 // import { CommonActions } from '@react-navigation/native';
 import Paragraph from '../../../components/Paragraph';
-import { ToastAndroid, ActivityIndicator } from 'react-native';
+import { ToastAndroid, ActivityIndicator, Platform } from 'react-native';
 import {
   GoogleSignin,
   statusCodes,
@@ -19,6 +19,7 @@ import _ from 'lodash';
 import { useDispatch } from 'react-redux';
 import { userActions } from '../../../actions/userActions';
 import firestore from '@react-native-firebase/firestore';
+import deviceInfoModule from 'react-native-device-info';
 firestore().settings({
   ignoreUndefinedProperties: true,
 });
@@ -53,9 +54,17 @@ export default function StartScreen({ navigation }) {
           100,
         );
       }
-    } else if (!_.isEmpty(result)) {
+    } else if (!_.isEmpty(result) && result.code !== 409) {
       ToastAndroid.showWithGravityAndOffset(
         'Đăng nhập thất bại. Vui lòng thử lại',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+    } else {
+      ToastAndroid.showWithGravityAndOffset(
+        'Đăng nhập thất bại',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
         0,
@@ -103,17 +112,72 @@ export default function StartScreen({ navigation }) {
             ) {
               user.socialUserDetails = JSON.parse(user.socialUserDetails);
             }
-            dispatch(userActions.socialLoginSucceeded({ user }));
             // add or update users collection in firestore
             try {
               let clone = Object.assign({}, user);
               delete clone.id;
-              firestore()
+              let uniqueId = deviceInfoModule.getUniqueId();
+              const res = await firestore()
                 .collection('USERS')
                 .doc(user.id)
-                .set(clone);
+                .get();
+              if (_.isEmpty(res)) {
+                //chưa đăng nhập bao giờ
+                await firestore()
+                  .collection('USERS')
+                  .doc(user.id)
+                  .set({
+                    ...clone,
+                    device: { id: uniqueId, platform: Platform.OS },
+                  });
+                dispatch(userActions.socialLoginSucceeded({ user }));
+              } else {
+                // đã từng đăng nhập
+                const { device } = res.data();
+                if (_.isEmpty(device)) {
+                  // hiện tại chưa dùng thiết bị nào
+                  await firestore()
+                    .collection('USERS')
+                    .doc(user.id)
+                    .set(
+                      {
+                        device: { id: uniqueId, platform: Platform.OS },
+                      },
+                      { merge: true },
+                    );
+                  dispatch(userActions.socialLoginSucceeded({ user }));
+                } else {
+                  // đã dùng 1 thiết bị
+                  if (device.id === uniqueId) {
+                    // trùng thiết bị này
+                    dispatch(userActions.socialLoginSucceeded({ user }));
+                  } else {
+                    // không trùng
+                    const isSignedIn = await GoogleSignin.isSignedIn();
+                    if (isSignedIn) {
+                      try {
+                        await GoogleSignin.revokeAccess();
+                        await GoogleSignin.signOut();
+                      } catch (error) {
+                        // console.error(error);
+                      }
+                    }
+                    ToastAndroid.showWithGravityAndOffset(
+                      'Bạn đã đăng nhập trước đó trên thiết bị khác. Vui lòng liên hệ Admin để biết thêm chi tiết',
+                      ToastAndroid.LONG,
+                      ToastAndroid.TOP,
+                      0,
+                      100,
+                    );
+                    setResult({ code: 409 });
+                    setLoading(false);
+                    dispatch(userActions.socialLoginFailed());
+                    return;
+                  }
+                }
+              }
             } catch (error) {
-              // console.log(error)
+              dispatch(userActions.socialLoginFailed());
             }
           }
           setResult(data);

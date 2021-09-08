@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 // import {
 //   Platform,
@@ -17,9 +18,26 @@ import { isIphoneX } from '../../lib/isIphoneX';
 import firestore from '@react-native-firebase/firestore';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
-import { ToastAndroid, Image } from 'react-native';
+import { ToastAndroid, Image, View, Text } from 'react-native';
 import { ROOM_TYPES } from '../../constants/chat.constants';
+import { getCurrentTime } from '../../helpers/time';
 const isIPX = isIphoneX();
+const renderMessageTime = time => (
+  <View
+    style={{ justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}>
+    <View
+      style={{
+        backgroundColor: '#e6e6e6',
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        borderRadius: 16,
+      }}>
+      <Text style={{ color: '#333', fontSize: 10 }}>
+        {getCurrentTime(parseInt(time))}
+      </Text>
+    </View>
+  </View>
+);
 export const Chat = ({ route, navigation }) => {
   const user = useSelector(state => state.userReducer.user);
   const { roomId } = route.params;
@@ -233,6 +251,9 @@ export const Chat = ({ route, navigation }) => {
           useVoice={false}
           usePlus={false}
           userProfile={userProfile}
+          showUserName={true}
+          isIPhoneX={isIPX}
+          renderMessageTime={renderMessageTime}
         />
       )}
     </>

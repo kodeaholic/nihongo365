@@ -134,36 +134,30 @@ export const Chat = ({ route, navigation }) => {
     let unsubscribe;
     if (!_.isEmpty(user) && !_.isEmpty(roomId)) {
       setLoading(true);
-      const isAdmin = _.get(user, 'role', 'user') === 'admin';
+      const isAdmin = _.get(user, 'role') === 'admin';
       if (isAdmin) {
         setUserProfile({
           id: 'ADMIN_ID',
-          avatar: 'ADMIN_AVATAR',
-          nickName: 'Admin',
+          avatar: require('../../assets/logo.png'),
         });
       } else {
         setUserProfile({
           id: user.id,
           avatar: user.photo,
-          nickName: user.name,
         });
       }
       unsubscribe = firestore()
         .collection('rooms')
         .doc(roomId)
         .collection('MESSAGES')
+        .orderBy('time', 'desc')
         .onSnapshot(querySnapshot => {
           let items = querySnapshot.docs.map(msg => {
             let item = {
               id: msg.id,
               ...msg.data(),
             };
-            if (_.get(item, 'chatInfo.avatar' === 'ADMIN_AVATAR')) {
-              item.chatInfo.avatar = require('../../assets/logo.png');
-              item.chatInfo.id = 'ADMIN_ID';
-              item.chatInfo.nickName = 'Admin';
-            }
-            console.log(item);
+            // console.log(item);
             return item;
           });
           setMessages(msgs => items);
@@ -188,11 +182,10 @@ export const Chat = ({ route, navigation }) => {
       content: content,
       targetId: user.role === 'admin' ? 'ADMIN_ID' : user.id, // id of person sent the message
       chatInfo: {
-        // info of the person we are chatting with
+        // sender info
         avatar:
-          user.role !== 'admin' ? require('../../assets/logo.png') : user.photo,
-        id: user.role !== 'admin' ? 'ADMIN_ID' : user.id,
-        nickName: user.role !== 'admin' ? 'Admin' : user.name,
+          user.role === 'admin' ? require('../../assets/logo.png') : user.photo,
+        id: user.role === 'admin' ? 'ADMIN_ID' : user.id,
       },
       renderTime: true,
       sendStatus: 1,

@@ -114,7 +114,7 @@ const Rooms = ({ navigation }) => {
     //     leftAction: undefined,
     //   },
     // });
-    const isAdmin = _.get(user, 'role', 'user') === 'admin';
+    const isAdmin = _.get(user, 'role') === 'admin';
     const unsubscribe = firestore()
       .collection('rooms')
       .onSnapshot(querySnapshot => {
@@ -153,13 +153,13 @@ const Rooms = ({ navigation }) => {
                     'Chào mừng bạn đã đến với Nihongo365! Hãy cùng Nihongo365 xây dựng nên cộng đồng người học tiếng Nhật nhé! Thân ái!',
                   targetId: 'ADMIN_ID', // ID of the person sent this message
                   chatInfo: {
-                    // This is the person you are chatting with
+                    // sender information
                     avatar: require('../../assets/logo.png'),
-                    id: 'ADMIN_ID',
+                    // id: 'ADMIN_ID',
                     nickName: 'Admin',
                   },
                   renderTime: true,
-                  sendStatus: 0,
+                  sendStatus: 1,
                   time: time,
                   isIPhoneX: isIPX,
                 };
@@ -250,7 +250,7 @@ const Rooms = ({ navigation }) => {
   }, [user, refresh]);
 
   const renderImage = room => {
-    const isAdmin = _.get(user, 'role', 'user') === 'admin';
+    const isAdmin = _.get(user, 'role') === 'admin';
     switch (room.type) {
       case ROOM_TYPES.SYSTEM:
         return (

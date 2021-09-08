@@ -121,18 +121,68 @@ const Rooms = ({ navigation }) => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {
             const type = _.get(documentSnapshot.data(), 'type');
+            const isEmpty = _.isEmpty(documentSnapshot);
             if (!isAdmin) {
               const ownerId = _.get(documentSnapshot.data(), 'ownerId');
-              return ownerId === user.id && type !== ROOM_TYPES.SYSTEM;
+              return (
+                !isEmpty && ownerId === user.id && type !== ROOM_TYPES.SYSTEM
+              );
             } else {
-              return type === ROOM_TYPES.MEVSADMIN;
+              return !isEmpty && type === ROOM_TYPES.MEVSADMIN;
             }
           })
           .map(filteredSnapshot => {
-            return {
-              id: filteredSnapshot.id,
-              ...filteredSnapshot.data(),
-            };
+            if (filteredSnapshot.data().ownerRef) {
+              const data = filteredSnapshot.data();
+              try {
+                const toReturn = data.ownerRef.get().then(snap => {
+                  const res = snap.data();
+                  const ownerData = res
+                    ? Object.assign({}, { name: res?.name, avatar: res?.photo })
+                    : undefined;
+                  const item = {
+                    id: filteredSnapshot.id,
+                    ...filteredSnapshot.data(),
+                    ownerData,
+                  };
+                  setItems(channels => {
+                    const index = _.findIndex(channels, function(channel) {
+                      return channel.id === item.id;
+                    });
+                    if (index < 0) {
+                      return [...channels, item];
+                    } else {
+                      return channels;
+                    }
+                  });
+                  // console.log(item);
+                  return item;
+                });
+                return toReturn;
+              } catch (e) {
+                return {
+                  id: filteredSnapshot.id,
+                  ...filteredSnapshot.data(),
+                };
+              }
+            } else {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              setItems(channels => {
+                const index = _.findIndex(channels, function(channel) {
+                  return channel.id === item.id;
+                });
+                if (index < 0) {
+                  return [...channels, item];
+                } else {
+                  return channels;
+                }
+              });
+              // console.log(item);
+              return item;
+            }
           });
         if (rooms && rooms.length === 0 && !isAdmin) {
           try {
@@ -240,7 +290,8 @@ const Rooms = ({ navigation }) => {
             // console.log(e);
           }
         }
-        setItems(rooms);
+        // setItems(rooms);
+        // console.log(rooms);
         setLoading(false);
       });
     /**
@@ -278,13 +329,24 @@ const Rooms = ({ navigation }) => {
             />
           );
         } else {
-          return (
-            <Image
-              source={require('../../assets/girl.png')}
-              style={styles.roomAvatar}
-              resizeMethod="auto"
-            />
-          );
+          if (!_.isEmpty(room.ownerData)) {
+            const ownerData = room.ownerData;
+            return (
+              <Image
+                source={{ uri: ownerData?.avatar }}
+                style={styles.roomAvatar}
+                resizeMethod="auto"
+              />
+            );
+          } else {
+            return (
+              <Image
+                source={require('../../assets/girl.png')}
+                style={styles.roomAvatar}
+                resizeMethod="auto"
+              />
+            );
+          }
         }
     }
   };
@@ -292,7 +354,7 @@ const Rooms = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <View style={styles.container} scrollEnabled={true} refresh={refresh}>
-        {loading && (
+        {_.isEmpty(items) && (
           <Skeleton speed={1500}>
             {[...Array(15).keys()].map(item => (
               <View
@@ -314,7 +376,7 @@ const Rooms = ({ navigation }) => {
             ))}
           </Skeleton>
         )}
-        {!loading && !_.isEmpty(items) && (
+        {!_.isEmpty(items) && !_.isEmpty(items) && (
           <FlatList
             data={items}
             renderItem={({ item, index }) => {
@@ -365,11 +427,11 @@ const Rooms = ({ navigation }) => {
                         color: '#000',
                         fontWeight: 'bold',
                         fontSize: 16,
-                        textTransform: 'uppercase',
+                        // textTransform: 'uppercase',
                       }}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {item.name}
+                      {item.ownerData ? item.ownerData.name : item.name}
                     </Text>
                     <Text
                       style={{
@@ -527,17 +589,20 @@ const styles = StyleSheet.create({
   roomAvatar: {
     width: 75,
     height: 75,
+    borderRadius: 75 / 2,
+    borderWidth: 1,
+    borderColor: 'rgba(63, 195, 128, 1)',
   },
   roomAvatarContainer: {
-    width: 95,
-    height: 95,
+    width: 80,
+    height: 80,
     // padding: 5,
     // borderWidth: 1,
-    borderRadius: 95,
+    borderRadius: 80,
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#EAF8D2',
+    // backgroundColor: '#EAF8D2',
   },
 });
 

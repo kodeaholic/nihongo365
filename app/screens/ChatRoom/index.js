@@ -254,7 +254,7 @@ const Rooms = ({ navigation }) => {
   }, [user, refresh]);
 
   const renderImage = room => {
-    const isAdmin = _.get(user, 'role') === 'admin';
+    const isAdmin = user.role === 'admin';
     switch (room.type) {
       case ROOM_TYPES.SYSTEM:
         return (
@@ -282,11 +282,10 @@ const Rooms = ({ navigation }) => {
             />
           );
         } else {
-          if (!_.isEmpty(room.ownerData)) {
-            const ownerData = room.ownerData;
+          if (!_.isEmpty(room.avatar)) {
             return (
               <Image
-                source={{ uri: ownerData?.avatar }}
+                source={{ uri: room.avatar }}
                 style={styles.roomAvatar}
                 resizeMethod="auto"
               />

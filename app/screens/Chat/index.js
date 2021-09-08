@@ -132,6 +132,7 @@ export const Chat = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
   useEffect(() => {
     let unsubscribe;
+    let items;
     if (!_.isEmpty(user) && !_.isEmpty(roomId)) {
       setLoading(true);
       const isAdmin = _.get(user, 'role') === 'admin';
@@ -152,7 +153,7 @@ export const Chat = ({ route, navigation }) => {
         .collection('MESSAGES')
         .orderBy('time', 'desc')
         .onSnapshot(querySnapshot => {
-          let items = querySnapshot.docs.map(msg => {
+          items = querySnapshot.docs.map(msg => {
             let item = {
               id: msg.id,
               ...msg.data(),

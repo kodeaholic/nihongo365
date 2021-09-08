@@ -132,109 +132,62 @@ const Rooms = ({ navigation }) => {
             }
           })
           .map(filteredSnapshot => {
-            if (filteredSnapshot.data().ownerRef) {
-              const data = filteredSnapshot.data();
-              try {
-                const toReturn = data.ownerRef.get().then(snap => {
-                  const res = snap.data();
-                  const ownerData = res
-                    ? Object.assign({}, { name: res?.name, avatar: res?.photo })
-                    : undefined;
-                  const item = {
-                    id: filteredSnapshot.id,
-                    ...filteredSnapshot.data(),
-                    ownerData,
-                  };
-                  setItems(channels => {
-                    const index = _.findIndex(channels, function(channel) {
-                      return channel.id === item.id;
-                    });
-                    if (index < 0) {
-                      return [...channels, item];
-                    } else {
-                      return channels;
-                    }
-                  });
-                  // console.log(item);
-                  return item;
-                });
-                return toReturn;
-              } catch (e) {
-                return {
-                  id: filteredSnapshot.id,
-                  ...filteredSnapshot.data(),
-                };
-              }
-            } else {
-              const item = {
-                id: filteredSnapshot.id,
-                ...filteredSnapshot.data(),
-              };
-              setItems(channels => {
-                const index = _.findIndex(channels, function(channel) {
-                  return channel.id === item.id;
-                });
-                if (index < 0) {
-                  return [...channels, item];
-                } else {
-                  return channels;
-                }
+            const item = {
+              id: filteredSnapshot.id,
+              ...filteredSnapshot.data(),
+            };
+            setItems(channels => {
+              const index = _.findIndex(channels, function(channel) {
+                return channel.id === item.id;
               });
-              // console.log(item);
-              return item;
-            }
+              if (index < 0) {
+                return [...channels, item];
+              } else {
+                return channels;
+              }
+            });
+            // console.log(item);
+            return item;
           });
-        if (rooms && rooms.length === 0 && !isAdmin) {
+        if (!isAdmin && rooms && rooms.length === 0) {
+          const time = Date.now();
+          const lastMessage = {
+            type: 'text',
+            content:
+              'Chào mừng bạn đã đến với Nihongo365! Hãy cùng Nihongo365 xây dựng nên cộng đồng người học tiếng Nhật nhé! Thân ái!',
+            targetId: 'ADMIN_ID', // ID of the person sent this message
+            chatInfo: {
+              // sender information
+              avatar: require('../../assets/logo.png'),
+              // id: 'ADMIN_ID',
+            },
+            renderTime: true,
+            sendStatus: 1,
+            time: time,
+            isIPhoneX: isIPX,
+          };
+          const newRoom = {
+            type: ROOM_TYPES.MEVSADMIN,
+            name: user.name,
+            avatar: user.photo,
+            lastMessage,
+          };
+          if (!isAdmin) {
+            newRoom.ownerId = user.id;
+            newRoom.ownerRef = firestore().doc('USERS/' + user.id);
+          }
           try {
             firestore()
               .collection('rooms')
-              .add({
-                ownerId: user.id,
-                type: ROOM_TYPES.MEVSADMIN,
-                name: 'Admin',
-                avatar: user.photo || 'DEFAULT_USER_AVATAR',
-                ownerRef: firestore().doc('USERS/' + user.id),
-              })
+              .add(newRoom)
               .then(docRef => {
-                const time = Date.now();
-                const lastMessage = {
-                  type: 'text',
-                  content:
-                    'Chào mừng bạn đã đến với Nihongo365! Hãy cùng Nihongo365 xây dựng nên cộng đồng người học tiếng Nhật nhé! Thân ái!',
-                  targetId: 'ADMIN_ID', // ID of the person sent this message
-                  chatInfo: {
-                    // sender information
-                    avatar: require('../../assets/logo.png'),
-                    // id: 'ADMIN_ID',
-                    nickName: 'Admin',
-                  },
-                  renderTime: true,
-                  sendStatus: 1,
-                  time: time,
-                  isIPhoneX: isIPX,
-                };
                 firestore()
                   .collection('rooms')
                   .doc(docRef.id)
                   .collection('MESSAGES')
                   .doc(time + RANDOM_STR(5))
                   .set(lastMessage)
-                  .then(() => {
-                    firestore()
-                      .collection('rooms')
-                      .doc(docRef.id)
-                      .set(
-                        {
-                          lastMessage,
-                        },
-                        { merge: true },
-                      )
-                      .then(() => {
-                        // console.log(
-                        //   'Created new room with Admin and be welcomed!',
-                        // );
-                      });
-                  });
+                  .then(() => {});
               });
             // firestore()
             //   .collection('rooms')
@@ -380,6 +333,7 @@ const Rooms = ({ navigation }) => {
           <FlatList
             data={items}
             renderItem={({ item, index }) => {
+              console.log(item);
               const { lastMessage } = item;
               const length = items.length;
               const navigateToItem = () => {
@@ -431,7 +385,7 @@ const Rooms = ({ navigation }) => {
                       }}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {item.ownerData ? item.ownerData.name : item.name}
+                      {user.role === 'admin' ? item.name : 'Admin'}
                     </Text>
                     <Text
                       style={{

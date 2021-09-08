@@ -136,16 +136,16 @@ const Rooms = ({ navigation }) => {
               id: filteredSnapshot.id,
               ...filteredSnapshot.data(),
             };
-            setItems(channels => {
-              const index = _.findIndex(channels, function(channel) {
-                return channel.id === item.id;
-              });
-              if (index < 0) {
-                return [...channels, item];
-              } else {
-                return channels;
-              }
-            });
+            // setItems(channels => {
+            //   const index = _.findIndex(channels, function(channel) {
+            //     return channel.id === item.id;
+            //   });
+            //   if (index < 0) {
+            //     return [...channels, item];
+            //   } else {
+            //     return channels;
+            //   }
+            // });
             // console.log(item);
             return item;
           });
@@ -243,7 +243,7 @@ const Rooms = ({ navigation }) => {
             // console.log(e);
           }
         }
-        // setItems(rooms);
+        setItems(rooms);
         // console.log(rooms);
         setLoading(false);
       });

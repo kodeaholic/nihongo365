@@ -58,6 +58,7 @@ function LearnStackScreen() {
       screenOptions={{
         header: ({ scene }) => {
           let { headerProps } = scene.descriptor.options;
+          headerProps.enableLogoutButton = false;
           return <Header {...headerProps} />;
         },
       }}>
@@ -125,6 +126,7 @@ function DictionaryStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
+          headerProps.enableLogoutButton = false;
           Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
@@ -148,6 +150,7 @@ function NewsStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
+          headerProps.enableLogoutButton = false;
           // Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
@@ -198,6 +201,7 @@ function AlphabetStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
+          headerProps.enableLogoutButton = false;
           Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },

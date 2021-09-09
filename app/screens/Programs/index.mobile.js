@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { Title } from 'react-native-paper';
 
-import { useSelector } from 'react-redux';
-
 import Item from './components/item';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
+import { DATA } from './data';
 export default function Programs() {
   const [navigation] = useState(useNavigation());
   useEffect(() => {
@@ -14,12 +13,12 @@ export default function Programs() {
       headerProps: { title: 'Học', disableBackButton: true },
     });
   }, [navigation]);
-  const programs = useSelector(state => state.programReducer.programs);
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         style={styles.list}
-        data={programs}
+        data={DATA}
         renderItem={({ item }) => <Item item={item} />}
         renderSectionHeader={({ section: { key } }) => <Title>{key}</Title>}
         stickySectionHeadersEnabled={false}

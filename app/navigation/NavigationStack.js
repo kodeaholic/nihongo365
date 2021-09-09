@@ -172,7 +172,10 @@ function MoreStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
-          Object.assign(headerProps, { disableBackButton: true });
+          Object.assign(headerProps, {
+            disableBackButton: true,
+            headerTitleAlign: 'center',
+          });
           return <Header {...headerProps} />;
         },
       }}>
@@ -352,13 +355,13 @@ function MainStackScreen() {
           }}
         />
         <Tab.Screen
-          name="Khác"
+          name="Tài khoản"
           component={MoreStackScreen}
           options={{
             showIcon: true,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
-                name="reorder-horizontal"
+                name="account-circle-outline"
                 color={color}
                 size={26}
               />

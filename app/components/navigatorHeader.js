@@ -35,6 +35,17 @@ export const Header = props => {
     }
   };
   const dispatch = useDispatch();
+  let contentProps = {
+    titleStyle: styles.title,
+    title: title,
+  };
+  if (!_.isEmpty(subtitle)) {
+    contentProps = {
+      ...contentProps,
+      subtitle: subtitle,
+      subtitleStyle: styles.subTitle,
+    };
+  }
   return (
     <Appbar.Header style={[styles.header, customStyles]}>
       {!disableBackButton && (
@@ -47,15 +58,7 @@ export const Header = props => {
           onPress={() => leftAction.action && leftAction.action(true)}
         />
       )}
-      {subtitle && (
-        <Appbar.Content
-          titleStyle={styles.title}
-          title={title}
-          subtitle={subtitle}
-          subtitleStyle={styles.subTitle}
-        />
-      )}
-      {!subtitle && <Appbar.Content titleStyle={styles.title} title={title} />}
+      <Appbar.Content {...contentProps} />
       {enableLogoutButton && (
         <Appbar.Action
           color="#fff"

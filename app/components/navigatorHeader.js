@@ -44,6 +44,7 @@ export const Header = props => {
       ...contentProps,
       subtitle: subtitle,
       subtitleStyle: styles.subTitle,
+      titleStyle: [styles.title, { marginTop: 5 }],
     };
   }
   return (

@@ -154,7 +154,11 @@ const Alphabet = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.opacityButton, styles.frolyBackground]}
+                style={[
+                  styles.opacityButton,
+                  styles.frolyBackground,
+                  { marginBottom: 5 },
+                ]}
                 onPress={() => {
                   setScreen(SCREEN.DETAIL);
                   setType(TYPES.CONTRACTED_KATAKANA);
@@ -255,7 +259,9 @@ const Alphabet = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   opacityButton: {
-    margin: 5,
+    marginTop: 5,
+    marginLeft: 5,
+    marginRight: 5,
     backgroundColor: '#F5FCFF',
     flex: 1,
     borderRadius: 2,

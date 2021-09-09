@@ -139,27 +139,34 @@ export default function StartScreen({ navigation }) {
                     dispatch(userActions.socialLoginSucceeded({ user }));
                   } else {
                     // không trùng
-                    try {
-                      const isSignedIn = await GoogleSignin.isSignedIn();
-                      if (isSignedIn) {
-                        try {
-                          await GoogleSignin.revokeAccess();
-                          await GoogleSignin.signOut();
-                        } catch (error) {
-                          // console.error(error);
+                    if (user.role && user.role === 'user') {
+                      try {
+                        const isSignedIn = await GoogleSignin.isSignedIn();
+                        if (isSignedIn) {
+                          try {
+                            await GoogleSignin.revokeAccess();
+                            await GoogleSignin.signOut();
+                          } catch (error) {
+                            // console.error(error);
+                          }
                         }
-                      }
-                    } catch (e) {}
-                    ToastAndroid.showWithGravityAndOffset(
-                      'Bạn đã đăng nhập trước đó trên thiết bị khác. Vui lòng liên hệ Admin để biết thêm chi tiết',
-                      ToastAndroid.LONG,
-                      ToastAndroid.TOP,
-                      0,
-                      100,
-                    );
-                    setResult({ code: 409 });
-                    setLoading(false);
-                    dispatch(userActions.socialLoginFailed());
+                        ToastAndroid.showWithGravityAndOffset(
+                          'Bạn đã đăng nhập trước đó trên thiết bị khác. Vui lòng liên hệ Admin để biết thêm chi tiết',
+                          ToastAndroid.LONG,
+                          ToastAndroid.TOP,
+                          0,
+                          100,
+                        );
+                      } catch (e) {}
+                      setResult({ code: 409 });
+                      setLoading(false);
+                      dispatch(userActions.socialLoginFailed());
+                    } else {
+                      // admin login anywhere
+                      setResult(data);
+                      setLoading(false);
+                      dispatch(userActions.socialLoginSucceeded({ user }));
+                    }
                     return;
                   }
                 }

@@ -120,6 +120,7 @@ const Rooms = ({ navigation }) => {
     const isAdmin = _.get(user, 'role') === 'admin';
     const unsubscribe = firestore()
       .collection('rooms')
+      .orderBy('lastMessage.time', 'desc')
       .onSnapshot(querySnapshot => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {

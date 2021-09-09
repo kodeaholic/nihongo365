@@ -127,6 +127,7 @@ export default function StartScreen({ navigation }) {
                     .doc(user.id)
                     .set(
                       {
+                        ...clone,
                         device: { id: uniqueId, platform: Platform.OS },
                       },
                       { merge: true },
@@ -136,6 +137,16 @@ export default function StartScreen({ navigation }) {
                   // đã dùng 1 thiết bị
                   if (device.id === uniqueId) {
                     // trùng thiết bị này
+                    await firestore()
+                      .collection('USERS')
+                      .doc(user.id)
+                      .set(
+                        {
+                          ...clone,
+                          device: { id: uniqueId, platform: Platform.OS },
+                        },
+                        { merge: true },
+                      );
                     dispatch(userActions.socialLoginSucceeded({ user }));
                   } else {
                     // không trùng

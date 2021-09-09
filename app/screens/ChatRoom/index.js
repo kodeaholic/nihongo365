@@ -286,7 +286,7 @@ const Rooms = ({ navigation }) => {
           <FlatList
             data={items}
             renderItem={({ item, index }) => {
-              console.log(item);
+              // console.log(item);
               const { lastMessage } = item;
               const length = items.length;
               const navigateToItem = () => {

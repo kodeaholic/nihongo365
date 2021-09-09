@@ -58,7 +58,7 @@ function LearnStackScreen() {
       screenOptions={{
         header: ({ scene }) => {
           let { headerProps } = scene.descriptor.options;
-          headerProps.enableLogoutButton = false;
+          headerProps = { ...headerProps, enableLogoutButton: false };
           return <Header {...headerProps} />;
         },
       }}>
@@ -126,7 +126,7 @@ function DictionaryStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
-          headerProps.enableLogoutButton = false;
+          headerProps = { ...headerProps, enableLogoutButton: false };
           Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
@@ -150,7 +150,7 @@ function NewsStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
-          headerProps.enableLogoutButton = false;
+          headerProps = { ...headerProps, enableLogoutButton: false };
           // Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
@@ -177,7 +177,9 @@ function MoreStackScreen() {
           }
           Object.assign(headerProps, {
             disableBackButton: true,
-            headerTitleAlign: 'center',
+            renderCenterImage: true,
+            enableLogoutButton: true,
+            screen: 'MORE',
           });
           return <Header {...headerProps} />;
         },
@@ -201,7 +203,7 @@ function AlphabetStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
-          headerProps.enableLogoutButton = false;
+          headerProps = { ...headerProps, enableLogoutButton: false };
           Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },

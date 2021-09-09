@@ -5,9 +5,10 @@ import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import _ from 'lodash';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '../actions/userActions';
 export const Header = props => {
+  const user = useSelector(state => state.userReducer.user);
   const confirmExit = text => {
     Alert.alert('Thông báo', `${text}`, [
       {
@@ -25,6 +26,7 @@ export const Header = props => {
     customStyles,
     enableLogoutButton = true,
     leftAction = {},
+    screen = '',
   } = props;
   const navigation = useNavigation();
   const _goBack = () => {
@@ -46,6 +48,13 @@ export const Header = props => {
       subtitleStyle: styles.subTitle,
       titleStyle: [styles.title, { marginTop: 5 }],
     };
+  }
+  if (screen === 'MORE') {
+    contentProps = {
+      ...contentProps,
+      title: user.name,
+    };
+    // console.log(user);
   }
   return (
     <Appbar.Header style={[styles.header, customStyles]}>

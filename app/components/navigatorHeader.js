@@ -3,7 +3,10 @@ import { StyleSheet, BackHandler, Alert, ToastAndroid } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '../actions/userActions';
@@ -89,13 +92,19 @@ export const Header = props => {
                         androidClientId:
                           '401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com',
                       });
-                      const isSignedIn = await GoogleSignin.isSignedIn();
-                      if (isSignedIn) {
+                      try {
+                        await GoogleSignin.signInSilently();
                         try {
                           await GoogleSignin.revokeAccess();
                           await GoogleSignin.signOut();
                         } catch (error) {
-                          console.error(error);
+                          // console.error(error);
+                        }
+                      } catch (error) {
+                        if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+                          // user has not signed in yet
+                        } else {
+                          // some other error
                         }
                       }
                     } catch (e) {

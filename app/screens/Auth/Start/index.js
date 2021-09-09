@@ -122,17 +122,19 @@ export default function StartScreen({ navigation }) {
                 const { device } = res.data();
                 if (_.isEmpty(device)) {
                   // hiện tại chưa dùng thiết bị nào
-                  await firestore()
-                    .collection('USERS')
-                    .doc(user.id)
-                    .set(
-                      {
-                        ...clone,
-                        device: { id: uniqueId, platform: Platform.OS },
-                      },
-                      { merge: true },
-                    );
-                  dispatch(userActions.socialLoginSucceeded({ user }));
+                  if (true) {
+                    await firestore()
+                      .collection('USERS')
+                      .doc(user.id)
+                      .set(
+                        {
+                          ...clone,
+                          device: { id: uniqueId, platform: Platform.OS },
+                        },
+                        { merge: true },
+                      );
+                    dispatch(userActions.socialLoginSucceeded({ user }));
+                  }
                 } else {
                   // đã dùng 1 thiết bị
                   if (device.id === uniqueId) {
@@ -152,14 +154,12 @@ export default function StartScreen({ navigation }) {
                     // không trùng
                     if (user.role && user.role === 'user') {
                       try {
-                        const isSignedIn = await GoogleSignin.isSignedIn();
-                        if (isSignedIn) {
-                          try {
-                            await GoogleSignin.revokeAccess();
-                            await GoogleSignin.signOut();
-                          } catch (error) {
-                            // console.error(error);
-                          }
+                        await GoogleSignin.signInSilently();
+                        try {
+                          await GoogleSignin.revokeAccess();
+                          await GoogleSignin.signOut();
+                        } catch (error) {
+                          // console.error(error);
                         }
                         ToastAndroid.showWithGravityAndOffset(
                           'Bạn đã đăng nhập trước đó trên thiết bị khác. Vui lòng liên hệ Admin để biết thêm chi tiết',
@@ -168,7 +168,13 @@ export default function StartScreen({ navigation }) {
                           0,
                           100,
                         );
-                      } catch (e) {}
+                      } catch (error) {
+                        if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+                          // user has not signed in yet
+                        } else {
+                          // some other error
+                        }
+                      }
                       setResult({ code: 409 });
                       setLoading(false);
                       dispatch(userActions.socialLoginFailed());

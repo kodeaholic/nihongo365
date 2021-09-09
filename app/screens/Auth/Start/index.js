@@ -6,7 +6,7 @@ import Header from '../../../components/Header';
 // import Button from '../../../components/Button';
 // import { CommonActions } from '@react-navigation/native';
 import Paragraph from '../../../components/Paragraph';
-import { ToastAndroid, ActivityIndicator, Platform } from 'react-native';
+import { ToastAndroid, ActivityIndicator, Platform, Text } from 'react-native';
 import {
   GoogleSignin,
   statusCodes,
@@ -38,12 +38,6 @@ export default function StartScreen({ navigation }) {
           index: 0,
           routes: [{ name: 'Main' }],
         });
-        // navigation.dispatch({
-        //   ...CommonActions.reset({
-        //     index: 0,
-        //     routes: [{ name: 'AnotherStackNavigator' }],
-        //   }),
-        // });
       } catch (error) {
         // Error saving data
         ToastAndroid.showWithGravityAndOffset(
@@ -57,14 +51,6 @@ export default function StartScreen({ navigation }) {
     } else if (!_.isEmpty(result) && result.code !== 409) {
       ToastAndroid.showWithGravityAndOffset(
         'Đăng nhập thất bại. Vui lòng thử lại',
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-        0,
-        100,
-      );
-    } else {
-      ToastAndroid.showWithGravityAndOffset(
-        'Đăng nhập thất bại',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
         0,
@@ -153,15 +139,17 @@ export default function StartScreen({ navigation }) {
                     dispatch(userActions.socialLoginSucceeded({ user }));
                   } else {
                     // không trùng
-                    const isSignedIn = await GoogleSignin.isSignedIn();
-                    if (isSignedIn) {
-                      try {
-                        await GoogleSignin.revokeAccess();
-                        await GoogleSignin.signOut();
-                      } catch (error) {
-                        // console.error(error);
+                    try {
+                      const isSignedIn = await GoogleSignin.isSignedIn();
+                      if (isSignedIn) {
+                        try {
+                          await GoogleSignin.revokeAccess();
+                          await GoogleSignin.signOut();
+                        } catch (error) {
+                          // console.error(error);
+                        }
                       }
-                    }
+                    } catch (e) {}
                     ToastAndroid.showWithGravityAndOffset(
                       'Bạn đã đăng nhập trước đó trên thiết bị khác. Vui lòng liên hệ Admin để biết thêm chi tiết',
                       ToastAndroid.LONG,
@@ -238,19 +226,37 @@ export default function StartScreen({ navigation }) {
         Chào mừng bạn đến với app học tiếng Nhật số 1 Việt Nam
       </Paragraph>
       {!loading && (
-        <GoogleSigninButton
-          style={{
-            width: '100%',
-            height: 55,
-            marginVertical: 10,
-            paddingVertical: 2,
-          }}
-          size={GoogleSigninButton.Size.Wide}
-          color={GoogleSigninButton.Color.Dark}
-          onPress={_googleSignIn}
-        />
+        <>
+          <GoogleSigninButton
+            style={{
+              width: '100%',
+              height: 55,
+              marginVertical: 10,
+              paddingVertical: 2,
+            }}
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={_googleSignIn}
+          />
+        </>
       )}
-      {loading && <ActivityIndicator size="large" />}
+      {loading && (
+        <>
+          <ActivityIndicator size="large" />
+          <Text
+            style={{
+              color: 'rgba(241, 90, 34, 1)',
+              // fontStyle: 'italic',
+              fontFamily: 'SF-Pro-Display-Regular',
+              fontWeight: 'normal',
+              fontSize: 13,
+              marginTop: 5,
+              textAlign: 'center',
+            }}>
+            Mỗi tài khoản Google chỉ sử dụng được trên 01 thiết bị duy nhất
+          </Text>
+        </>
+      )}
       {/* <Button
         mode="contained"
         onPress={() => navigation.navigate('LoginScreen')}>

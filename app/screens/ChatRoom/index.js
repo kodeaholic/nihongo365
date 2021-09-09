@@ -192,56 +192,6 @@ const Rooms = ({ navigation }) => {
                   .set(lastMessage)
                   .then(() => {});
               });
-            // firestore()
-            //   .collection('rooms')
-            //   .add({
-            //     ownerId: user.id,
-            //     type: ROOM_TYPES.SYSTEM,
-            //     name: 'Tin nhắn hệ thống',
-            //   })
-            //   .then(docRef => {
-            //     const time = Date.now();
-            //     const lastMessage = {
-            //       type: 'text',
-            //       content: `Chào mừng bạn gia nhập Nihongo365!
-            //       Bạn sẽ nhận được tin nhắn từ hệ thống trong hộp thư này.
-            //       Trân trọng!
-            //       `,
-            //       targetId: 'SYSTEM_ID', // ID of the person sent this message
-            //       chatInfo: {
-            //         // This is the person you are chatting with
-            //         avatar: 'SYSTEM_AVATAR',
-            //         id: 'SYSTEM_ID',
-            //         nickName: 'System',
-            //       },
-            //       renderTime: true,
-            //       sendStatus: 0,
-            //       time: time,
-            //       isIPhoneX: isIPX,
-            //     };
-            //     firestore()
-            //       .collection('rooms')
-            //       .doc(docRef.id)
-            //       .collection('MESSAGES')
-            //       .doc(time + RANDOM_STR(5))
-            //       .set(lastMessage)
-            //       .then(() => {
-            //         firestore()
-            //           .collection('rooms')
-            //           .doc(docRef.id)
-            //           .set(
-            //             {
-            //               lastMessage,
-            //             },
-            //             { merge: true },
-            //           )
-            //           .then(() => {
-            //             // console.log(
-            //             //   'Created room for system notification with Admin and be welcomed!',
-            //             // );
-            //           });
-            //       });
-            //   });
           } catch (e) {
             // console.log(e);
           }

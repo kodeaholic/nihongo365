@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     marginHorizontal: 4,
     fontFamily: 'SF-Pro-Detail-Regular',
+    color: '#000',
   },
   tags: { flexDirection: 'row' },
   tag: {

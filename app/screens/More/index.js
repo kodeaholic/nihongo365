@@ -54,7 +54,7 @@ export default function More({ navigation }) {
           />
           <Text
             style={{
-              width: windowWidth - 66,
+              width: windowWidth - 76,
               margin: 10,
               fontFamily: 'SF-Pro-Detail-Regular',
               fontSize: 15,
@@ -83,7 +83,7 @@ export default function More({ navigation }) {
           />
           <Text
             style={{
-              width: windowWidth - 66,
+              width: windowWidth - 76,
               margin: 10,
               fontFamily: 'SF-Pro-Detail-Regular',
               fontSize: 15,
@@ -112,14 +112,43 @@ export default function More({ navigation }) {
           />
           <Text
             style={{
-              width: windowWidth - 66,
+              width: windowWidth - 76,
               margin: 10,
               fontFamily: 'SF-Pro-Detail-Regular',
               fontSize: 15,
               fontWeight: 'normal',
               color: '#000',
             }}>
-            Liên hệ giảng viên
+            Đăng ký học offline
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          // onPress={() => navigateToItem()}
+          style={{
+            height: 60,
+            width: windowWidth,
+            backgroundColor: '#fff',
+            marginTop: 5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <MaterialCommunityIcons
+            name="airplane"
+            size={26}
+            style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+            color="rgba(241, 90, 34, 1)"
+          />
+          <Text
+            style={{
+              width: windowWidth - 76,
+              margin: 10,
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              color: '#000',
+            }}>
+            Tư vấn du học và XKLĐ
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -141,7 +170,7 @@ export default function More({ navigation }) {
           />
           <Text
             style={{
-              width: windowWidth - 66,
+              width: windowWidth - 76,
               margin: 10,
               fontFamily: 'SF-Pro-Detail-Regular',
               fontSize: 15,
@@ -226,7 +255,7 @@ export default function More({ navigation }) {
             />
             <Text
               style={{
-                width: windowWidth - 66,
+                width: windowWidth - 76,
                 margin: 10,
                 fontFamily: 'SF-Pro-Detail-Regular',
                 fontSize: 15,

@@ -19,7 +19,11 @@ export default function Programs() {
       <FlatList
         style={styles.list}
         data={DATA}
-        renderItem={({ item }) => <Item item={item} />}
+        renderItem={({ item, index }) => {
+          const first = index === 0;
+          const last = index === DATA.length - 1;
+          return <Item item={item} first={first} last={last} />;
+        }}
         renderSectionHeader={({ section: { key } }) => <Title>{key}</Title>}
         stickySectionHeadersEnabled={false}
         showsVerticalScrollIndicator={false}

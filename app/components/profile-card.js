@@ -32,11 +32,16 @@ export default function profileCard({
 }
 
 const styles = StyleSheet.create({
-  cardTitle: { fontWeight: 'normal' },
-  cardSub: { fontSize: 13, color: '#0097e8' },
+  cardTitle: { fontWeight: 'normal', fontFamily: 'SF-Pro-Detail-Regular' },
+  cardSub: {
+    fontSize: 13,
+    color: '#0097e8',
+    fontFamily: 'SF-Pro-Detail-Regular',
+  },
   chip: {
     marginRight: 5,
     backgroundColor: '#5cdb5e',
     color: '#ffffff',
+    fontFamily: 'SF-Pro-Detail-Regular',
   },
 });

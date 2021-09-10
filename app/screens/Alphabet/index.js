@@ -211,7 +211,7 @@ const Alphabet = ({ navigation }) => {
             <>
               <View style={{ height: '100%', flex: 1 }}>
                 <FlatGrid
-                  itemDimension={50}
+                  itemDimension={(windowWidth - 70) / 5}
                   data={items}
                   style={styles.gridView}
                   spacing={10}

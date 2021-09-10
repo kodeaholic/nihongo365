@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f0f6f9',
   },
-  list: { marginHorizontal: 20 },
+  // list: { paddingHorizontal: 10 },
   headline: {
     marginBottom: 12,
     marginTop: 24,

@@ -1,5 +1,14 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import { StyleSheet, BackHandler, Alert, ToastAndroid } from 'react-native';
+import {
+  StyleSheet,
+  BackHandler,
+  Alert,
+  ToastAndroid,
+  Text,
+  Image,
+  View,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -10,6 +19,7 @@ import {
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '../actions/userActions';
+import { getCurrentTime, getPostTimeFromCreatedAt } from '../helpers/time';
 export const Header = props => {
   const user = useSelector(state => state.userReducer.user);
   const confirmExit = text => {
@@ -60,7 +70,14 @@ export const Header = props => {
     // console.log(user);
   }
   return (
-    <Appbar.Header style={[styles.header, customStyles]}>
+    <Appbar.Header
+      style={[
+        styles.header,
+        customStyles,
+        // screen === 'MORE'
+        //   ? { alignItems: 'center', justifyContent: 'center' }
+        //   : {},
+      ]}>
       {!disableBackButton && (
         <Appbar.BackAction color="#fff" onPress={_goBack} />
       )}
@@ -71,7 +88,61 @@ export const Header = props => {
           onPress={() => leftAction.action && leftAction.action(true)}
         />
       )}
-      <Appbar.Content {...contentProps} />
+      {screen !== 'MORE' && <Appbar.Content {...contentProps} />}
+      {screen === 'MORE' && (
+        <>
+          <Image
+            style={{
+              width: 52,
+              height: 52,
+              padding: 0,
+              margin: 0,
+              borderRadius: 52 / 2,
+              backgroundColor: '#fff',
+              borderWidth: 2,
+              borderColor: 'rgba(63, 195, 128, 1)',
+              marginLeft: 2,
+            }}
+            source={
+              user.photo
+                ? { uri: user.photo }
+                : require('../assets/default_avatar.png')
+            }
+            resizeMethod="auto"
+          />
+
+          {!_.isEmpty(user.name) && (
+            <View
+              style={{ marginLeft: 5, padding: 2, marginTop: 0, height: 56 }}>
+              <Text
+                style={{
+                  flex: 1,
+                  color: '#fff',
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 17,
+                  fontWeight: 'normal',
+                  textAlign: 'left',
+                  marginTop: 0,
+                }}>
+                {user.name}
+              </Text>
+              <Text
+                style={{
+                  paddingTop: 9,
+                  flex: 1,
+                  color: '#fff',
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 11,
+                  fontWeight: 'normal',
+                  textAlign: 'left',
+                  marginTop: 0,
+                }}>
+                Gia nhập: {getPostTimeFromCreatedAt(user.createdAt)}
+              </Text>
+            </View>
+          )}
+        </>
+      )}
       {enableLogoutButton && (
         <Appbar.Action
           color="#fff"
@@ -140,6 +211,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#5cdb5e',
     textAlign: 'center',
+    height: 56,
   },
   backButton: {},
   title: { color: '#fff', marginLeft: -4 },

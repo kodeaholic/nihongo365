@@ -177,8 +177,8 @@ function MoreStackScreen() {
           }
           Object.assign(headerProps, {
             disableBackButton: true,
-            renderCenterImage: true,
-            enableLogoutButton: true,
+            // renderCenterImage: true,
+            enableLogoutButton: false,
             screen: 'MORE',
           });
           return <Header {...headerProps} />;
@@ -361,7 +361,7 @@ function MainStackScreen() {
           }}
         />
         <Tab.Screen
-          name="Tài khoản"
+          name="Cá nhân"
           component={MoreStackScreen}
           options={{
             showIcon: true,

@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   tag: {
     flex: 1,
     margin: 4,
-    borderRadius: 20,
+    borderRadius: 5,
     fontFamily: 'SF-Pro-Detail-Regular',
   },
   tagLabel: { fontSize: 12, fontFamily: 'SF-Pro-Detail-Regular' },

@@ -28,6 +28,16 @@ import {
 import { userActions } from '../../actions/userActions';
 import AsyncStorage from '@react-native-community/async-storage';
 const windowWidth = Dimensions.get('window').width;
+
+const alertFeatureUnavailable = () => {
+  ToastAndroid.showWithGravityAndOffset(
+    'Tính năng đang được phát triển. Vui lòng thử lại sau',
+    ToastAndroid.LONG,
+    ToastAndroid.TOP,
+    0,
+    100,
+  );
+};
 export default function More({ navigation }) {
   const [exiting, setExiting] = useState(false);
   const dispatch = useDispatch();
@@ -36,7 +46,7 @@ export default function More({ navigation }) {
       style={{ flex: 1, backgroundColor: '#E8EAEF', paddingBottom: 15 }}>
       <View styles={styles.container}>
         <TouchableOpacity
-          // onPress={() => navigateToItem()}
+          onPress={() => alertFeatureUnavailable()}
           style={{
             height: 60,
             width: windowWidth,
@@ -94,7 +104,7 @@ export default function More({ navigation }) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          // onPress={() => navigateToItem()}
+          onPress={() => alertFeatureUnavailable()}
           style={{
             height: 60,
             width: windowWidth,
@@ -123,7 +133,7 @@ export default function More({ navigation }) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          // onPress={() => navigateToItem()}
+          onPress={() => alertFeatureUnavailable()}
           style={{
             height: 60,
             width: windowWidth,
@@ -152,7 +162,7 @@ export default function More({ navigation }) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          // onPress={() => navigateToItem()}
+          onPress={() => alertFeatureUnavailable()}
           style={{
             height: 60,
             width: windowWidth,

@@ -79,7 +79,9 @@ export const More = ({ navigation }) => {
         )}
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('Services');
+            if (user.role !== 'admin') {
+              navigation.navigate('Services');
+            }
           }}
           style={{
             height: 60,

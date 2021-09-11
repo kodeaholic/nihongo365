@@ -9,8 +9,6 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
-  Alert,
-  ActivityIndicator,
   ScrollView,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,10 +29,10 @@ import {
 const LENGTH_OF_CODE = 8;
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const getButtonLabelFromStatus = (status, service) => {
+const getButtonLabelFromStatus = (status, serviceName) => {
   switch (status) {
     case STATUS.NEW.value:
-      if (service === 'N5') {
+      if (serviceName === 'N5') {
         return STATUS.FREE.buttonTitle;
       } else {
         return STATUS.NEW.buttonTitle;
@@ -49,11 +47,349 @@ const getButtonLabelFromStatus = (status, service) => {
       return STATUS.FREE.buttonTitle;
   }
 };
+
+const RegisterModal = ({ service, setVisible, visible }) => {
+  const user = useSelector(state => state.userReducer.user);
+  const userName = user.email.split('@')[0];
+  return (
+    <Modal
+      isVisible={visible}
+      animationIn="bounceInLeft"
+      animationOut="bounceOutLeft"
+      animationInTiming={1500}
+      animationOutTiming={1500}
+      onBackButtonPress={() => {
+        if (visible) {
+          setVisible(false);
+        }
+      }}
+      onBackdropPress={() => {
+        if (visible) {
+          setVisible(false);
+        }
+      }}
+      deviceHeight={windowHeight}
+      deviceWidth={windowWidth}>
+      <View style={{ flex: 1, borderRadius: 10 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignContent: 'center',
+          }}>
+          <Text
+            onPress={() => {
+              if (visible) {
+                setVisible(false);
+              }
+            }}
+            style={[
+              {
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'center',
+                color: '#fff',
+                fontWeight: '500',
+                fontSize: 10,
+                textTransform: 'uppercase',
+                width: 20,
+                height: 20,
+                margin: 0,
+                borderRadius: 20,
+              },
+            ]}>
+            {' '}
+          </Text>
+          <Text
+            style={{
+              color: '#fff',
+              textAlign: 'center',
+              textTransform: 'uppercase',
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 22,
+              height: 30,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingVertical: 2,
+              width: windowWidth - 90,
+            }}>
+            {service.status === STATUS.NEW.value ||
+            service.status === STATUS.CANCELLED.value
+              ? 'Đăng ký ' + SERVICES[service.serviceName].label
+              : 'Nihongo365 cảm ơn bạn đã đăng ký ' +
+                SERVICES[service.serviceName].label}
+          </Text>
+          <Text
+            onPress={() => {
+              if (visible) {
+                setVisible(false);
+              }
+            }}
+            style={[
+              {
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'center',
+                color: '#fff',
+                fontWeight: '500',
+                fontSize: 10,
+                textTransform: 'uppercase',
+                width: 20,
+                height: 20,
+                margin: 0,
+                borderRadius: 20,
+                borderColor: 'white',
+                borderWidth: 1,
+              },
+            ]}>
+            X
+          </Text>
+        </View>
+        <ScrollView
+          style={{ backgroundColor: '#fff', borderRadius: 10, marginTop: 10 }}>
+          <Text
+            style={{
+              marginTop: 10,
+              marginBottom: 5,
+              marginHorizontal: 15,
+              color: 'rgba(246, 36, 89, 1)',
+              textAlign: 'center',
+              borderRadius: 5,
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              padding: 2,
+            }}>
+            Vui lòng chuyển khoản tới số tài khoản dưới đây
+          </Text>
+          <View
+            onPress={() => {}}
+            style={{
+              height: 60,
+              backgroundColor: '#fff',
+              marginTop: 0, // first
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}>
+            <MaterialCommunityIcons
+              name="currency-usd"
+              size={26}
+              style={{
+                marginLeft: 10,
+                width: 46,
+                textAlign: 'center',
+              }}
+              color="rgba(0, 181, 204, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 96,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              {service.priceTag}
+            </Text>
+          </View>
+          <View
+            onPress={() => {}}
+            style={{
+              height: 60,
+              backgroundColor: '#fff',
+              marginTop: 0, // first
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}>
+            <MaterialCommunityIcons
+              name="bank-outline"
+              size={26}
+              style={{
+                marginLeft: 10,
+                width: 46,
+                textAlign: 'center',
+              }}
+              color="rgba(241, 130, 141,1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 96,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              {TARGET_BANK_ACCOUNT.TPBANK.bankName}
+            </Text>
+          </View>
+          <View
+            onPress={() => {}}
+            style={{
+              height: 60,
+              backgroundColor: '#fff',
+              marginTop: 0, // first
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}>
+            <MaterialCommunityIcons
+              name="source-branch"
+              size={26}
+              style={{
+                marginLeft: 10,
+                width: 46,
+                textAlign: 'center',
+              }}
+              color="rgba(241, 90, 34, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 96,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              {TARGET_BANK_ACCOUNT.TPBANK.branch} (Chi nhánh)
+            </Text>
+          </View>
+          <View
+            onPress={() => {}}
+            style={{
+              height: 60,
+              backgroundColor: '#fff',
+              marginTop: 0, // first
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}>
+            <MaterialCommunityIcons
+              name="tag-text-outline"
+              size={26}
+              style={{
+                marginLeft: 10,
+                width: 46,
+                textAlign: 'center',
+              }}
+              color="rgba(63, 195, 128, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 96,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              {TARGET_BANK_ACCOUNT.TPBANK.ownerName} (Tên người nhận)
+            </Text>
+          </View>
+          <View
+            onPress={() => {}}
+            style={{
+              height: 60,
+              backgroundColor: '#fff',
+              marginTop: 0,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}>
+            <MaterialCommunityIcons
+              name="account"
+              size={26}
+              style={{
+                marginLeft: 10,
+                width: 46,
+                textAlign: 'center',
+              }}
+              color="rgba(246, 36, 89, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 96,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              {TARGET_BANK_ACCOUNT.TPBANK.ownerAccount}
+            </Text>
+          </View>
+          <Text
+            style={{
+              marginTop: 10,
+              marginBottom: 5,
+              marginHorizontal: 15,
+              color: 'rgba(246, 36, 89, 1)',
+              textAlign: 'center',
+              borderRadius: 5,
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              padding: 2,
+            }}>
+            Nội dung chuyển khoản
+          </Text>
+          <View
+            onPress={() => {}}
+            style={{
+              height: 60,
+              backgroundColor: '#fff',
+              marginTop: 0,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}>
+            <MaterialCommunityIcons
+              name="content-paste"
+              size={26}
+              style={{
+                marginLeft: 10,
+                width: 46,
+                textAlign: 'center',
+              }}
+              color="#5cdb5e"
+            />
+            <Text
+              style={{
+                width: windowWidth - 96,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              {userName + ' ' + service.serviceName}
+            </Text>
+          </View>
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+};
 export const Services = ({ navigation }) => {
   const [services, setServices] = useState([]); // fetch from fire-store
-  const [selected, setSelected] = useState('');
   const [data] = useState([...Object.keys(SERVICES)]);
   const user = useSelector(state => state.userReducer.user);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedService, setSelectedService] = useState(undefined);
   useEffect(() => {
     let unsubscribe;
     let items;
@@ -81,27 +417,66 @@ export const Services = ({ navigation }) => {
     }
     return () => unsubscribe && unsubscribe();
   }, [user]);
+  useEffect(() => {
+    if (modalVisible) {
+    }
+  }, [modalVisible]);
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: '#fff', paddingBottom: 15 }}>
+      {modalVisible && !_.isEmpty(selectedService) && (
+        <RegisterModal
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          service={selectedService}
+        />
+      )}
       <ScrollView styles={styles.container}>
-        {data.map((service, index) => {
-          const item = _.get(SERVICES, service);
-          const { price, priceTag, label, description } = item;
-          const backGroundColor = COLORS[service];
+        <Text
+          style={{
+            margin: 10,
+            textAlign: 'center',
+            fontFamily: 'SF-Pro-Detail-Regular',
+            fontSize: 18,
+            fontWeight: 'normal',
+            color: '#000',
+            textTransform: 'uppercase',
+          }}>
+          Đăng ký sử dụng dịch vụ Nihongo365
+        </Text>
+        {data.map((serviceName, index) => {
+          const item = _.get(SERVICES, serviceName);
+          const { priceTag, label, description } = item;
+          const backgroundColor = COLORS[serviceName];
           const color = '#fff';
-          const status =
-            _.get(services, service + '.status') || STATUS.NEW.value;
-          let buttonTitle = getButtonLabelFromStatus(status, service);
+          const idx = _.findIndex(services, function(sv) {
+            return sv.serviceName === serviceName;
+          });
+          const status = idx > -1 ? services[idx].status : STATUS.NEW.value;
+          let buttonTitle = getButtonLabelFromStatus(status, serviceName);
+          let registeredService =
+            idx > -1
+              ? services[idx]
+              : {
+                  serviceName: serviceName,
+                  status: STATUS.NEW.value,
+                  price: item.price,
+                  priceTag: item.priceTag,
+                  createdAt: Date.now(),
+                  updatedAt: Date.now(),
+                };
           return (
             <TouchableOpacity
               key={'service-' + index}
               onPress={() => {
-                setSelected(service);
+                if (label !== 'N5') {
+                  setModalVisible(true);
+                  setSelectedService(registeredService);
+                }
               }}
               style={{
                 height: 100,
-                backgroundColor: backGroundColor,
+                backgroundColor: backgroundColor,
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: 10,
@@ -117,7 +492,7 @@ export const Services = ({ navigation }) => {
                 elevation: 5,
                 marginHorizontal: 15,
                 borderRadius: 8,
-                marginTop: index === 0 ? 15 : 0,
+                marginTop: index === 0 ? 0 : 0,
                 flexDirection: 'column',
               }}>
               <View style={{ flexDirection: 'row' }}>

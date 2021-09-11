@@ -8,27 +8,27 @@ export const SERVICES = {
     description: 'Miễn phí trọn bộ giáo trình N5',
   },
   N4: {
-    price: 200000,
+    price: 100000,
     label: 'N4',
-    priceTag: numberToCurrencyFormat(200000),
+    priceTag: numberToCurrencyFormat(100000),
     description: 'Học + thi trọn đời, không giới hạn',
   },
   N3: {
-    price: 350000,
+    price: 200000,
     label: 'N3',
-    priceTag: numberToCurrencyFormat(350000),
+    priceTag: numberToCurrencyFormat(200000),
     description: 'Học + thi trọn đời, không giới hạn',
   },
   N2: {
-    price: 500000,
+    price: 300000,
     label: 'N2',
-    priceTag: numberToCurrencyFormat(500000),
+    priceTag: numberToCurrencyFormat(300000),
     description: 'Học + thi trọn đời, không giới hạn',
   },
   N1: {
-    price: 1000000,
+    price: 500000,
     label: 'N1',
-    priceTag: numberToCurrencyFormat(1000000),
+    priceTag: numberToCurrencyFormat(500000),
     description: 'Học + thi trọn đời, không giới hạn',
   },
   // VIP: {
@@ -41,7 +41,7 @@ export const SERVICES = {
     label: 'Bỏ quảng cáo',
     expirable: true,
     priceTag: numberToCurrencyFormat(50000),
-    description: 'Loại bỏ hoàn toàn quảng cáo để trải nghiệm ads free',
+    description: 'Loại bỏ hoàn toàn quảng cáo',
   },
 };
 
@@ -82,6 +82,10 @@ export const STATUS = {
     value: 'SUCCESS',
     buttonTitle: 'Đã thanh toán',
   },
-  CANCELLED: { label: 'Đã bị hủy', value: 'CANCELLED', buttonTitle: 'Đăng ký' },
+  CANCELLED: {
+    label: 'Đã bị hủy',
+    value: 'CANCELLED',
+    buttonTitle: 'Đăng ký',
+  },
   FREE: { label: 'Miễn phí', value: 'FREE', buttonTitle: '' },
 };

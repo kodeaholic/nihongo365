@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  Alert,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Skeleton from '@thevsstech/react-native-skeleton';
@@ -469,6 +470,87 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               </Text>
             </TouchableOpacity>
           </View>
+          <Text
+            style={{
+              marginTop: 10,
+              marginBottom: 5,
+              marginHorizontal: 15,
+              color: 'rgba(246, 36, 89, 1)',
+              textAlign: 'center',
+              borderRadius: 5,
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              padding: 2,
+            }}>
+            Xác nhận đã chuyển khoản thành công
+          </Text>
+          <TouchableOpacity
+            style={{
+              height: 50,
+              backgroundColor: '#fff',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 10,
+              marginBottom: 15,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+
+              elevation: 5,
+              marginHorizontal: 60,
+              borderRadius: 8,
+              marginTop: 5,
+              flexDirection: 'column',
+            }}
+            onPress={() => {
+              Alert.alert(
+                'Thông báo',
+                'Vui lòng xác nhận tạo yêu cầu đăng ký gói học',
+                [
+                  {
+                    text: 'Hủy',
+                    onPress: () => null,
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'XÁC NHẬN',
+                    onPress: () => {
+                      setVisible(false);
+                      ToastAndroid.showWithGravityAndOffset(
+                        'Đăng ký thành công. Vui lòng chờ hệ thống xác nhận',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        100,
+                      );
+                    },
+                  },
+                ],
+              );
+            }}>
+            <Text
+              style={{
+                marginTop: 10,
+                marginBottom: 5,
+                marginHorizontal: 15,
+                // color: 'rgba(246, 36, 89, 1)',
+                color: '#000',
+                textAlign: 'center',
+                borderRadius: 5,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                padding: 2,
+                textTransform: 'uppercase',
+              }}>
+              Xác nhận
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </Modal>

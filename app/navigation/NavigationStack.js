@@ -42,11 +42,12 @@ import { GrammarSelection } from '../screens/GrammarSelection';
 import { Grammar } from '../screens/Grammar';
 import Alphabet from '../screens/Alphabet';
 import News from '../screens/News';
-import More from '../screens/More';
+import { More } from '../screens/More';
 import _ from 'lodash';
 import { NewsDetail } from '../screens/News/detail';
 import { Chat } from '../screens/Chat';
 import Rooms from '../screens/ChatRoom';
+import { Services } from '../screens/More/services';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -185,6 +186,7 @@ function MoreStackScreen() {
         },
       }}>
       <MoreStack.Screen name="More" component={More} />
+      <MoreStack.Screen name="Services" component={Services} />
     </MoreStack.Navigator>
   );
 }

@@ -1,4 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
+import 'react-native-get-random-values';
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -7,26 +8,18 @@ import {
   ToastAndroid,
   Text,
   TouchableOpacity,
-  FlatList,
-  ScrollView,
   Dimensions,
   Alert,
   ActivityIndicator,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Badge } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
-import { apiConfig } from '../../api/config/apiConfig';
-import { authHeader } from '../../api/authHeader';
-import DebounceInput from '../../components/DebounceInput';
+import firestore from '@react-native-firebase/firestore';
 import { useDispatch } from 'react-redux';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
 import { userActions } from '../../actions/userActions';
-import AsyncStorage from '@react-native-community/async-storage';
+import { nanoid } from 'nanoid';
+const LENGTH_OF_CODE = 8;
 const windowWidth = Dimensions.get('window').width;
 
 const alertFeatureUnavailable = () => {
@@ -38,14 +31,12 @@ const alertFeatureUnavailable = () => {
     100,
   );
 };
-export const More = ({ navigation }) => {
-  const [exiting, setExiting] = useState(false);
-  const dispatch = useDispatch();
+export const Services = ({ navigation }) => {
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: '#E8EAEF', paddingBottom: 15 }}>
       <View styles={styles.container}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => alertFeatureUnavailable()}
           style={{
             height: 60,
@@ -75,9 +66,7 @@ export const More = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Services');
-          }}
+          // onPress={() => navigateToItem()}
           style={{
             height: 60,
             width: windowWidth,
@@ -191,99 +180,7 @@ export const More = ({ navigation }) => {
             }}>
             Chuyển đổi thiết bị đăng nhập
           </Text>
-        </TouchableOpacity>
-        {!exiting && (
-          <TouchableOpacity
-            onPress={() => {
-              Alert.alert('Thông báo', 'Bạn muốn đăng xuất khỏi tài khoản?', [
-                {
-                  text: 'Hủy',
-                  onPress: () => null,
-                  style: 'cancel',
-                },
-                {
-                  text: 'ĐĂNG XUẤT',
-                  onPress: () => {
-                    setExiting(true);
-                    const logout = async () => {
-                      try {
-                        GoogleSignin.configure({
-                          androidClientId:
-                            '401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com',
-                        });
-                        try {
-                          await GoogleSignin.signInSilently();
-                          try {
-                            await GoogleSignin.revokeAccess();
-                            await GoogleSignin.signOut();
-                          } catch (error) {
-                            // console.error(error);
-                          }
-                        } catch (error) {
-                          if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-                            // user has not signed in yet
-                          } else {
-                            // some other error
-                          }
-                        }
-                      } catch (e) {
-                        // console.log(e);
-                      }
-                      dispatch(userActions.socialLoginFailed());
-                      AsyncStorage.removeItem('user');
-                      AsyncStorage.removeItem('tokens');
-                      navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'StartScreen' }],
-                      });
-                      ToastAndroid.showWithGravityAndOffset(
-                        'Đăng xuất thành công',
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        100,
-                      );
-                    };
-                    logout();
-                  },
-                },
-              ]);
-            }}
-            style={{
-              height: 60,
-              width: windowWidth,
-              backgroundColor: '#fff',
-              marginTop: 5,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 5,
-            }}>
-            <MaterialCommunityIcons
-              name="logout"
-              size={26}
-              style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
-              color="rgba(219, 10, 91, 1)"
-            />
-            <Text
-              style={{
-                width: windowWidth - 76,
-                margin: 10,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                color: '#000',
-              }}>
-              Đăng xuất
-            </Text>
-          </TouchableOpacity>
-        )}
-        {exiting && (
-          <ActivityIndicator
-            size="large"
-            style={{ textAlign: 'center', marginTop: 10, marginBottom: 10 }}
-          />
-        )}
+        </TouchableOpacity> */}
       </View>
     </SafeAreaView>
   );
@@ -292,6 +189,5 @@ export const More = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 10,
   },
 });

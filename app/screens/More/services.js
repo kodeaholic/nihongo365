@@ -28,9 +28,24 @@ import {
   COLORS,
   STATUS,
 } from '../../constants/payment.constants';
+import { getCurrentTime, getPostedTimeFromMillis } from '../../helpers/time';
 const LENGTH_OF_CODE = 8;
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const getStatusLabel = status => {
+  switch (status) {
+    case STATUS.NEW.value:
+      return STATUS.NEW.buttonTitle;
+    case STATUS.FREE.value:
+      return STATUS.FREE.buttonTitle;
+    case STATUS.PENDING.value:
+      return STATUS.PENDING.buttonTitle;
+    case STATUS.CANCELLED.value:
+      return STATUS.CANCELLED.buttonTitle;
+    case STATUS.SUCCESS.value:
+      return STATUS.SUCCESS.buttonTitle;
+  }
+};
 const getButtonLabelFromStatus = (status, serviceName) => {
   switch (status) {
     case STATUS.NEW.value:
@@ -108,7 +123,7 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               textAlign: 'center',
               textTransform: 'uppercase',
               fontFamily: 'SF-Pro-Detail-Regular',
-              fontSize: 22,
+              fontSize: 15,
               height: 30,
               alignItems: 'center',
               justifyContent: 'center',
@@ -118,8 +133,7 @@ const RegisterModal = ({ service, setVisible, visible }) => {
             {service.status === STATUS.NEW.value ||
             service.status === STATUS.CANCELLED.value
               ? 'Đăng ký ' + SERVICES[service.serviceName].label
-              : 'Nihongo365 cảm ơn bạn đã đăng ký ' +
-                SERVICES[service.serviceName].label}
+              : 'Cảm ơn bạn đã đăng ký ' + SERVICES[service.serviceName].label}
           </Text>
           <Text
             onPress={() => {
@@ -148,430 +162,722 @@ const RegisterModal = ({ service, setVisible, visible }) => {
         </View>
         <ScrollView
           style={{ backgroundColor: '#fff', borderRadius: 10, marginTop: 10 }}>
-          <Text
-            style={{
-              marginTop: 10,
-              marginBottom: 5,
-              marginHorizontal: 15,
-              color: 'rgba(246, 36, 89, 1)',
-              textAlign: 'center',
-              borderRadius: 5,
-              fontFamily: 'SF-Pro-Detail-Regular',
-              fontSize: 15,
-              fontWeight: 'normal',
-              padding: 2,
-            }}>
-            Vui lòng chuyển khoản tới số tài khoản dưới đây
-          </Text>
-          <View
-            onPress={() => {}}
-            style={{
-              height: 60,
-              backgroundColor: '#fff',
-              marginTop: 0, // first
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              padding: 0,
-            }}>
-            <MaterialCommunityIcons
-              name="currency-usd"
-              size={26}
-              style={{
-                marginLeft: 0,
-                width: 46,
-                textAlign: 'center',
-              }}
-              color="rgba(0, 181, 204, 1)"
-            />
-            <TouchableOpacity
-              style={{
-                height: 60,
-                width: windowWidth - 126,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onPress={() => {
-                Clipboard.setString(service.price + '');
-                ToastAndroid.showWithGravityAndOffset(
-                  'Đã sao chép số tiền chuyển khoản',
-                  ToastAndroid.SHORT,
-                  ToastAndroid.TOP,
-                  0,
-                  100,
-                );
-              }}>
+          {(service.status === STATUS.NEW.value ||
+            service.status === STATUS.CANCELLED.value) && (
+            <>
               <Text
                 style={{
-                  backgroundColor: 'rgba(0, 181, 204, 1)',
-                  width: 120,
-                  height: 35,
-                  margin: 0,
+                  marginTop: 10,
+                  marginBottom: 5,
+                  marginHorizontal: 15,
+                  color: 'rgba(246, 36, 89, 1)',
+                  textAlign: 'center',
+                  borderRadius: 5,
                   fontFamily: 'SF-Pro-Detail-Regular',
                   fontSize: 15,
                   fontWeight: 'normal',
-                  color: '#fff',
-                  textAlign: 'center',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  alignContent: 'center',
-                  paddingVertical: 7,
-                  borderRadius: 10,
+                  padding: 2,
                 }}>
-                {service.priceTag}
+                Vui lòng chuyển khoản tới số tài khoản dưới đây
               </Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            onPress={() => {}}
-            style={{
-              height: 60,
-              backgroundColor: '#fff',
-              marginTop: 0, // first
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              padding: 0,
-            }}>
-            <MaterialCommunityIcons
-              name="bank-outline"
-              size={26}
-              style={{
-                marginLeft: 0,
-                width: 46,
-                textAlign: 'center',
-              }}
-              color="rgba(241, 130, 141,1)"
-            />
-            <Text
-              style={{
-                width: windowWidth - 126,
-                margin: 0,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                color: '#000',
-                textAlign: 'center',
-              }}>
-              {TARGET_BANK_ACCOUNT.TPBANK.bankName}
-            </Text>
-          </View>
-          <View
-            onPress={() => {}}
-            style={{
-              height: 60,
-              backgroundColor: '#fff',
-              marginTop: 0, // first
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              padding: 0,
-            }}>
-            <MaterialCommunityIcons
-              name="source-branch"
-              size={26}
-              style={{
-                marginLeft: 0,
-                width: 46,
-                textAlign: 'center',
-              }}
-              color="rgba(241, 90, 34, 1)"
-            />
-            <Text
-              style={{
-                width: windowWidth - 126,
-                margin: 0,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                color: '#000',
-                textAlign: 'center',
-              }}>
-              {TARGET_BANK_ACCOUNT.TPBANK.branch} (Chi nhánh)
-            </Text>
-          </View>
-          <View
-            onPress={() => {}}
-            style={{
-              height: 60,
-              backgroundColor: '#fff',
-              marginTop: 0, // first
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              padding: 0,
-            }}>
-            <MaterialCommunityIcons
-              name="tag-text-outline"
-              size={26}
-              style={{
-                marginLeft: 0,
-                width: 46,
-                textAlign: 'center',
-              }}
-              color="rgba(63, 195, 128, 1)"
-            />
-            <Text
-              style={{
-                width: windowWidth - 126,
-                margin: 0,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                color: '#000',
-                textAlign: 'center',
-              }}>
-              {TARGET_BANK_ACCOUNT.TPBANK.ownerName} (Tên người nhận)
-            </Text>
-          </View>
-          <View
-            onPress={() => {}}
-            style={{
-              height: 60,
-              backgroundColor: '#fff',
-              marginTop: 0,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              padding: 0,
-            }}>
-            <MaterialCommunityIcons
-              name="account"
-              size={26}
-              style={{
-                marginLeft: 0,
-                width: 46,
-                textAlign: 'center',
-              }}
-              color="rgba(246, 36, 89, 1)"
-            />
-            <TouchableOpacity
-              style={{
-                height: 60,
-                width: windowWidth - 126,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onPress={() => {
-                Clipboard.setString(TARGET_BANK_ACCOUNT.TPBANK.ownerAccount);
-                ToastAndroid.showWithGravityAndOffset(
-                  'Đã sao chép số tài khoản',
-                  ToastAndroid.SHORT,
-                  ToastAndroid.TOP,
-                  0,
-                  100,
-                );
-              }}>
-              <Text
+              <View
+                onPress={() => {}}
                 style={{
-                  backgroundColor: 'rgba(246, 36, 89, 1)',
-                  width: 120,
-                  height: 35,
-                  margin: 0,
-                  fontFamily: 'SF-Pro-Detail-Regular',
-                  fontSize: 15,
-                  fontWeight: 'normal',
-                  color: '#fff',
-                  textAlign: 'center',
+                  height: 60,
+                  backgroundColor: '#fff',
+                  marginTop: 0, // first
+                  flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  alignContent: 'center',
-                  paddingVertical: 7,
-                  borderRadius: 10,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  padding: 0,
                 }}>
-                {TARGET_BANK_ACCOUNT.TPBANK.ownerAccount}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={{
-              marginTop: 10,
-              marginBottom: 5,
-              marginHorizontal: 15,
-              color: 'rgba(246, 36, 89, 1)',
-              textAlign: 'center',
-              borderRadius: 5,
-              fontFamily: 'SF-Pro-Detail-Regular',
-              fontSize: 15,
-              fontWeight: 'normal',
-              padding: 2,
-            }}>
-            Nội dung chuyển khoản
-          </Text>
-          <View
-            onPress={() => {}}
-            style={{
-              height: 60,
-              backgroundColor: '#fff',
-              marginTop: 0,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              padding: 0,
-            }}>
-            <MaterialCommunityIcons
-              name="content-paste"
-              size={26}
-              style={{
-                marginLeft: 0,
-                width: 46,
-                textAlign: 'center',
-              }}
-              color="#5cdb5e"
-            />
-            <TouchableOpacity
-              style={{
-                height: 60,
-                width: windowWidth - 126,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+                <MaterialCommunityIcons
+                  name="currency-usd"
+                  size={26}
+                  style={{
+                    marginLeft: 0,
+                    width: 46,
+                    textAlign: 'center',
+                  }}
+                  color="rgba(0, 181, 204, 1)"
+                />
+                <TouchableOpacity
+                  style={{
+                    height: 60,
+                    width: windowWidth - 126,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => {
+                    Clipboard.setString(service.price + '');
+                    ToastAndroid.showWithGravityAndOffset(
+                      'Đã sao chép số tiền chuyển khoản',
+                      ToastAndroid.SHORT,
+                      ToastAndroid.TOP,
+                      0,
+                      100,
+                    );
+                  }}>
+                  <Text
+                    style={{
+                      backgroundColor: 'rgba(0, 181, 204, 1)',
+                      width: 120,
+                      height: 35,
+                      margin: 0,
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      fontSize: 15,
+                      fontWeight: 'normal',
+                      color: '#fff',
+                      textAlign: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                      paddingVertical: 7,
+                      borderRadius: 10,
+                    }}>
+                    {service.priceTag}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View
+                onPress={() => {}}
+                style={{
+                  height: 60,
+                  backgroundColor: '#fff',
+                  marginTop: 0, // first
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  padding: 0,
+                }}>
+                <MaterialCommunityIcons
+                  name="bank-outline"
+                  size={26}
+                  style={{
+                    marginLeft: 0,
+                    width: 46,
+                    textAlign: 'center',
+                  }}
+                  color="rgba(241, 130, 141,1)"
+                />
+                <Text
+                  style={{
+                    width: windowWidth - 126,
+                    margin: 0,
+                    fontFamily: 'SF-Pro-Detail-Regular',
+                    fontSize: 15,
+                    fontWeight: 'normal',
+                    color: '#000',
+                    textAlign: 'center',
+                  }}>
+                  {TARGET_BANK_ACCOUNT.TPBANK.bankName}
+                </Text>
+              </View>
+              <View
+                onPress={() => {}}
+                style={{
+                  height: 60,
+                  backgroundColor: '#fff',
+                  marginTop: 0, // first
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  padding: 0,
+                }}>
+                <MaterialCommunityIcons
+                  name="source-branch"
+                  size={26}
+                  style={{
+                    marginLeft: 0,
+                    width: 46,
+                    textAlign: 'center',
+                  }}
+                  color="rgba(241, 90, 34, 1)"
+                />
+                <Text
+                  style={{
+                    width: windowWidth - 126,
+                    margin: 0,
+                    fontFamily: 'SF-Pro-Detail-Regular',
+                    fontSize: 15,
+                    fontWeight: 'normal',
+                    color: '#000',
+                    textAlign: 'center',
+                  }}>
+                  {TARGET_BANK_ACCOUNT.TPBANK.branch} (Chi nhánh)
+                </Text>
+              </View>
+              <View
+                onPress={() => {}}
+                style={{
+                  height: 60,
+                  backgroundColor: '#fff',
+                  marginTop: 0, // first
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  padding: 0,
+                }}>
+                <MaterialCommunityIcons
+                  name="tag-text-outline"
+                  size={26}
+                  style={{
+                    marginLeft: 0,
+                    width: 46,
+                    textAlign: 'center',
+                  }}
+                  color="rgba(63, 195, 128, 1)"
+                />
+                <Text
+                  style={{
+                    width: windowWidth - 126,
+                    margin: 0,
+                    fontFamily: 'SF-Pro-Detail-Regular',
+                    fontSize: 15,
+                    fontWeight: 'normal',
+                    color: '#000',
+                    textAlign: 'center',
+                  }}>
+                  {TARGET_BANK_ACCOUNT.TPBANK.ownerName} (Tên người nhận)
+                </Text>
+              </View>
+              <View
+                onPress={() => {}}
+                style={{
+                  height: 60,
+                  backgroundColor: '#fff',
+                  marginTop: 0,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  padding: 0,
+                }}>
+                <MaterialCommunityIcons
+                  name="account"
+                  size={26}
+                  style={{
+                    marginLeft: 0,
+                    width: 46,
+                    textAlign: 'center',
+                  }}
+                  color="rgba(246, 36, 89, 1)"
+                />
+                <TouchableOpacity
+                  style={{
+                    height: 60,
+                    width: windowWidth - 126,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => {
+                    Clipboard.setString(
+                      TARGET_BANK_ACCOUNT.TPBANK.ownerAccount,
+                    );
+                    ToastAndroid.showWithGravityAndOffset(
+                      'Đã sao chép số tài khoản',
+                      ToastAndroid.SHORT,
+                      ToastAndroid.TOP,
+                      0,
+                      100,
+                    );
+                  }}>
+                  <Text
+                    style={{
+                      backgroundColor: 'rgba(246, 36, 89, 1)',
+                      width: 120,
+                      height: 35,
+                      margin: 0,
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      fontSize: 15,
+                      fontWeight: 'normal',
+                      color: '#fff',
+                      textAlign: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                      paddingVertical: 7,
+                      borderRadius: 10,
+                    }}>
+                    {TARGET_BANK_ACCOUNT.TPBANK.ownerAccount}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               <Text
                 style={{
-                  backgroundColor: '#5cdb5e',
-                  minWidth: 120,
-                  height: 35,
-                  margin: 0,
+                  marginTop: 10,
+                  marginBottom: 5,
+                  marginHorizontal: 15,
+                  color: 'rgba(246, 36, 89, 1)',
+                  textAlign: 'center',
+                  borderRadius: 5,
                   fontFamily: 'SF-Pro-Detail-Regular',
                   fontSize: 15,
                   fontWeight: 'normal',
-                  color: '#fff',
-                  textAlign: 'center',
+                  padding: 2,
+                }}>
+                Nội dung chuyển khoản
+              </Text>
+              <View
+                onPress={() => {}}
+                style={{
+                  height: 60,
+                  backgroundColor: '#fff',
+                  marginTop: 0,
+                  flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  alignContent: 'center',
-                  paddingVertical: 7,
-                  borderRadius: 10,
-                  paddingHorizontal: 10,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  padding: 0,
+                }}>
+                <MaterialCommunityIcons
+                  name="content-paste"
+                  size={26}
+                  style={{
+                    marginLeft: 0,
+                    width: 46,
+                    textAlign: 'center',
+                  }}
+                  color="#5cdb5e"
+                />
+                <TouchableOpacity
+                  style={{
+                    height: 60,
+                    width: windowWidth - 126,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      backgroundColor: '#5cdb5e',
+                      minWidth: 120,
+                      height: 35,
+                      margin: 0,
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      fontSize: 15,
+                      fontWeight: 'normal',
+                      color: '#fff',
+                      textAlign: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                      paddingVertical: 7,
+                      borderRadius: 10,
+                      paddingHorizontal: 10,
+                    }}
+                    onPress={() => {
+                      Clipboard.setString(userName + ' ' + service.serviceName);
+                      ToastAndroid.showWithGravityAndOffset(
+                        'Đã sao chép nội dung chuyển khoản',
+                        ToastAndroid.SHORT,
+                        ToastAndroid.TOP,
+                        0,
+                        100,
+                      );
+                    }}>
+                    {userName + ' ' + service.serviceName}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Text
+                style={{
+                  marginTop: 10,
+                  marginBottom: 5,
+                  marginHorizontal: 15,
+                  color: 'rgba(246, 36, 89, 1)',
+                  textAlign: 'center',
+                  borderRadius: 5,
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 15,
+                  fontWeight: 'normal',
+                  padding: 2,
+                }}>
+                Xác nhận đã chuyển khoản thành công
+              </Text>
+              <TouchableOpacity
+                style={{
+                  height: 50,
+                  backgroundColor: '#fff',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 10,
+                  marginBottom: 15,
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+
+                  elevation: 5,
+                  marginHorizontal: 60,
+                  borderRadius: 8,
+                  marginTop: 5,
+                  flexDirection: 'column',
                 }}
                 onPress={() => {
-                  Clipboard.setString(userName + ' ' + service.serviceName);
-                  ToastAndroid.showWithGravityAndOffset(
-                    'Đã sao chép nội dung chuyển khoản',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP,
-                    0,
-                    100,
-                  );
-                }}>
-                {userName + ' ' + service.serviceName}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={{
-              marginTop: 10,
-              marginBottom: 5,
-              marginHorizontal: 15,
-              color: 'rgba(246, 36, 89, 1)',
-              textAlign: 'center',
-              borderRadius: 5,
-              fontFamily: 'SF-Pro-Detail-Regular',
-              fontSize: 15,
-              fontWeight: 'normal',
-              padding: 2,
-            }}>
-            Xác nhận đã chuyển khoản thành công
-          </Text>
-          <TouchableOpacity
-            style={{
-              height: 50,
-              backgroundColor: '#fff',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 10,
-              marginBottom: 15,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-
-              elevation: 5,
-              marginHorizontal: 60,
-              borderRadius: 8,
-              marginTop: 5,
-              flexDirection: 'column',
-            }}
-            onPress={() => {
-              Alert.alert(
-                'Thông báo',
-                'Vui lòng xác nhận tạo yêu cầu đăng ký gói học',
-                [
-                  {
-                    text: 'Hủy',
-                    onPress: () => null,
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'XÁC NHẬN',
-                    onPress: () => {
-                      let newServiceRecord = { ...service };
-                      newServiceRecord.status = STATUS.PENDING.value;
-                      try {
-                        firestore()
-                          .collection('services')
-                          .doc(user.id)
-                          .collection('SERVICES')
-                          .doc(service.serviceName)
-                          .set(newServiceRecord)
-                          .then(() => {
+                  Alert.alert(
+                    'Thông báo',
+                    'Vui lòng xác nhận tạo yêu cầu đăng ký gói học',
+                    [
+                      {
+                        text: 'Hủy',
+                        onPress: () => null,
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'XÁC NHẬN',
+                        onPress: () => {
+                          let newServiceRecord = { ...service };
+                          newServiceRecord.status = STATUS.PENDING.value;
+                          try {
+                            firestore()
+                              .collection('services')
+                              .doc(user.id)
+                              .collection('SERVICES')
+                              .doc(service.serviceName)
+                              .set(newServiceRecord)
+                              .then(() => {
+                                setVisible(false);
+                                ToastAndroid.showWithGravityAndOffset(
+                                  'Đăng ký thành công. Vui lòng chờ hệ thống xác nhận',
+                                  ToastAndroid.LONG,
+                                  ToastAndroid.TOP,
+                                  0,
+                                  100,
+                                );
+                              });
+                          } catch (e) {
                             setVisible(false);
                             ToastAndroid.showWithGravityAndOffset(
-                              'Đăng ký thành công. Vui lòng chờ hệ thống xác nhận',
+                              'Có lỗi xảy ra trong quá trình đăng ký. Vui lòng liên hệ admin hoặc tạo lại đơn đăng ký',
                               ToastAndroid.LONG,
                               ToastAndroid.TOP,
                               0,
                               100,
                             );
-                          });
-                      } catch (e) {
-                        setVisible(false);
-                        ToastAndroid.showWithGravityAndOffset(
-                          'Có lỗi xảy ra trong quá trình đăng ký. Vui lòng liên hệ admin hoặc tạo lại đơn đăng ký',
-                          ToastAndroid.LONG,
-                          ToastAndroid.TOP,
-                          0,
-                          100,
-                        );
-                      }
-                    },
-                  },
-                ],
-              );
-            }}>
-            <Text
-              style={{
-                marginTop: 10,
-                marginBottom: 5,
-                marginHorizontal: 15,
-                // color: 'rgba(246, 36, 89, 1)',
-                color: '#000',
-                textAlign: 'center',
-                borderRadius: 5,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                padding: 2,
-                textTransform: 'uppercase',
-              }}>
-              Xác nhận
-            </Text>
-          </TouchableOpacity>
+                          }
+                        },
+                      },
+                    ],
+                  );
+                }}>
+                <Text
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 5,
+                    marginHorizontal: 15,
+                    // color: 'rgba(246, 36, 89, 1)',
+                    color: '#000',
+                    textAlign: 'center',
+                    borderRadius: 5,
+                    fontFamily: 'SF-Pro-Detail-Regular',
+                    fontSize: 15,
+                    fontWeight: 'normal',
+                    padding: 2,
+                    textTransform: 'uppercase',
+                  }}>
+                  Xác nhận
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
+          {service.status !== STATUS.NEW.value &&
+            service.status !== STATUS.CANCELLED.value && (
+              <>
+                <Text
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 5,
+                    marginHorizontal: 15,
+                    color: 'rgba(246, 36, 89, 1)',
+                    textAlign: 'center',
+                    borderRadius: 5,
+                    fontFamily: 'SF-Pro-Detail-Regular',
+                    fontSize: 15,
+                    fontWeight: 'normal',
+                    padding: 2,
+                  }}>
+                  Thông tin đơn đăng ký{' '}
+                  {SERVICES[service.serviceName].label.toUpperCase()}
+                </Text>
+                <View
+                  onPress={() => {}}
+                  style={{
+                    height: 60,
+                    backgroundColor: '#fff',
+                    marginTop: 0, // first
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 0,
+                  }}>
+                  <MaterialCommunityIcons
+                    name="currency-usd"
+                    size={26}
+                    style={{
+                      marginLeft: 0,
+                      width: 46,
+                      textAlign: 'center',
+                    }}
+                    color="rgba(0, 181, 204, 1)"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      height: 60,
+                      width: windowWidth - 126,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    onPress={() => {}}>
+                    <Text
+                      style={{
+                        backgroundColor: 'rgba(0, 181, 204, 1)',
+                        width: 120,
+                        height: 35,
+                        margin: 0,
+                        fontFamily: 'SF-Pro-Detail-Regular',
+                        fontSize: 15,
+                        fontWeight: 'normal',
+                        color: '#fff',
+                        textAlign: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                        paddingVertical: 7,
+                        borderRadius: 10,
+                      }}>
+                      {service.priceTag}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  onPress={() => {}}
+                  style={{
+                    height: 60,
+                    backgroundColor: '#fff',
+                    marginTop: 0, // first
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 0,
+                  }}>
+                  <MaterialCommunityIcons
+                    name="bank-outline"
+                    size={26}
+                    style={{
+                      marginLeft: 0,
+                      width: 46,
+                      textAlign: 'center',
+                    }}
+                    color="rgba(241, 130, 141,1)"
+                  />
+                  <Text
+                    style={{
+                      width: windowWidth - 126,
+                      margin: 0,
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      fontSize: 15,
+                      fontWeight: 'normal',
+                      color: '#000',
+                      textAlign: 'center',
+                    }}>
+                    {TARGET_BANK_ACCOUNT.TPBANK.bankName}
+                  </Text>
+                </View>
+                <View
+                  onPress={() => {}}
+                  style={{
+                    height: 60,
+                    backgroundColor: '#fff',
+                    marginTop: 0, // first
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 0,
+                  }}>
+                  <MaterialCommunityIcons
+                    name="tag-text-outline"
+                    size={26}
+                    style={{
+                      marginLeft: 0,
+                      width: 46,
+                      textAlign: 'center',
+                    }}
+                    color="rgba(63, 195, 128, 1)"
+                  />
+                  <Text
+                    style={{
+                      width: windowWidth - 126,
+                      margin: 0,
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      fontSize: 15,
+                      fontWeight: 'normal',
+                      color: '#000',
+                      textAlign: 'center',
+                    }}>
+                    {TARGET_BANK_ACCOUNT.TPBANK.ownerName} (Tên người nhận)
+                  </Text>
+                </View>
+                <View
+                  onPress={() => {}}
+                  style={{
+                    height: 60,
+                    backgroundColor: '#fff',
+                    marginTop: 0,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 0,
+                  }}>
+                  <MaterialCommunityIcons
+                    name="account"
+                    size={26}
+                    style={{
+                      marginLeft: 0,
+                      width: 46,
+                      textAlign: 'center',
+                    }}
+                    color="rgba(246, 36, 89, 1)"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      height: 60,
+                      width: windowWidth - 126,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    onPress={() => {}}>
+                    <Text
+                      style={{
+                        backgroundColor: 'rgba(246, 36, 89, 1)',
+                        width: 120,
+                        height: 35,
+                        margin: 0,
+                        fontFamily: 'SF-Pro-Detail-Regular',
+                        fontSize: 15,
+                        fontWeight: 'normal',
+                        color: '#fff',
+                        textAlign: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                        paddingVertical: 7,
+                        borderRadius: 10,
+                      }}>
+                      {TARGET_BANK_ACCOUNT.TPBANK.ownerAccount}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  onPress={() => {}}
+                  style={{
+                    height: 60,
+                    backgroundColor: '#fff',
+                    marginTop: 0, // first
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 0,
+                  }}>
+                  <MaterialCommunityIcons
+                    name="clock-time-three-outline"
+                    size={26}
+                    style={{
+                      marginLeft: 0,
+                      width: 46,
+                      textAlign: 'center',
+                    }}
+                    color="rgba(241, 130, 141,1)"
+                  />
+                  <Text
+                    style={{
+                      width: windowWidth - 126,
+                      margin: 0,
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      fontSize: 15,
+                      fontWeight: 'normal',
+                      color: '#000',
+                      textAlign: 'center',
+                    }}>
+                    {getCurrentTime(service.createdAt)}
+                  </Text>
+                </View>
+                <View
+                  onPress={() => {}}
+                  style={{
+                    height: 60,
+                    backgroundColor: '#fff',
+                    marginTop: 0, // first
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 0,
+                  }}>
+                  <MaterialCommunityIcons
+                    name="check-circle-outline"
+                    size={26}
+                    style={{
+                      marginLeft: 0,
+                      width: 46,
+                      textAlign: 'center',
+                    }}
+                    color="rgba(63, 195, 128, 1)"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      height: 60,
+                      width: windowWidth - 126,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    onPress={() => {}}>
+                    <Text
+                      style={{
+                        backgroundColor: 'rgba(63, 195, 128, 1)',
+                        width: 120,
+                        height: 35,
+                        margin: 0,
+                        fontFamily: 'SF-Pro-Detail-Regular',
+                        fontSize: 15,
+                        fontWeight: 'normal',
+                        color: '#fff',
+                        textAlign: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                        paddingVertical: 7,
+                        borderRadius: 10,
+                      }}>
+                      {getStatusLabel(service.status)}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
         </ScrollView>
       </View>
     </Modal>
@@ -615,6 +921,9 @@ export const Services = ({ navigation }) => {
     if (modalVisible) {
     }
   }, [modalVisible]);
+  useEffect(() => {
+    console.log(selectedService);
+  }, [selectedService]);
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: '#fff', paddingBottom: 15 }}>
@@ -664,8 +973,8 @@ export const Services = ({ navigation }) => {
               key={'service-' + index}
               onPress={() => {
                 if (label !== 'N5') {
-                  setModalVisible(true);
                   setSelectedService(registeredService);
+                  setModalVisible(true);
                 }
               }}
               style={{

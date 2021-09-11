@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '../../actions/userActions';
 import { nanoid } from 'nanoid';
 import Modal from 'react-native-modal';
+import Clipboard from '@react-native-community/clipboard';
 import {
   TARGET_BANK_ACCOUNT,
   SERVICES,
@@ -49,6 +50,7 @@ const getButtonLabelFromStatus = (status, serviceName) => {
 };
 
 const RegisterModal = ({ service, setVisible, visible }) => {
+  console.log(service);
   const user = useSelector(state => state.userReducer.user);
   const userName = user.email.split('@')[0];
   return (
@@ -171,28 +173,55 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               justifyContent: 'center',
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
+              padding: 0,
             }}>
             <MaterialCommunityIcons
               name="currency-usd"
               size={26}
               style={{
-                marginLeft: 10,
+                marginLeft: 0,
                 width: 46,
                 textAlign: 'center',
               }}
               color="rgba(0, 181, 204, 1)"
             />
-            <Text
+            <TouchableOpacity
               style={{
-                width: windowWidth - 96,
-                margin: 10,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                color: '#000',
+                height: 60,
+                width: windowWidth - 126,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() => {
+                Clipboard.setString(service.price + '');
+                ToastAndroid.showWithGravityAndOffset(
+                  'Đã sao chép số tiền chuyển khoản',
+                  ToastAndroid.SHORT,
+                  ToastAndroid.TOP,
+                  0,
+                  100,
+                );
               }}>
-              {service.priceTag}
-            </Text>
+              <Text
+                style={{
+                  backgroundColor: 'rgba(0, 181, 204, 1)',
+                  width: 120,
+                  height: 35,
+                  margin: 0,
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 15,
+                  fontWeight: 'normal',
+                  color: '#fff',
+                  textAlign: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  paddingVertical: 7,
+                  borderRadius: 10,
+                }}>
+                {service.priceTag}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View
             onPress={() => {}}
@@ -205,12 +234,13 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               justifyContent: 'center',
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
+              padding: 0,
             }}>
             <MaterialCommunityIcons
               name="bank-outline"
               size={26}
               style={{
-                marginLeft: 10,
+                marginLeft: 0,
                 width: 46,
                 textAlign: 'center',
               }}
@@ -218,12 +248,13 @@ const RegisterModal = ({ service, setVisible, visible }) => {
             />
             <Text
               style={{
-                width: windowWidth - 96,
-                margin: 10,
+                width: windowWidth - 126,
+                margin: 0,
                 fontFamily: 'SF-Pro-Detail-Regular',
                 fontSize: 15,
                 fontWeight: 'normal',
                 color: '#000',
+                textAlign: 'center',
               }}>
               {TARGET_BANK_ACCOUNT.TPBANK.bankName}
             </Text>
@@ -239,12 +270,13 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               justifyContent: 'center',
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
+              padding: 0,
             }}>
             <MaterialCommunityIcons
               name="source-branch"
               size={26}
               style={{
-                marginLeft: 10,
+                marginLeft: 0,
                 width: 46,
                 textAlign: 'center',
               }}
@@ -252,12 +284,13 @@ const RegisterModal = ({ service, setVisible, visible }) => {
             />
             <Text
               style={{
-                width: windowWidth - 96,
-                margin: 10,
+                width: windowWidth - 126,
+                margin: 0,
                 fontFamily: 'SF-Pro-Detail-Regular',
                 fontSize: 15,
                 fontWeight: 'normal',
                 color: '#000',
+                textAlign: 'center',
               }}>
               {TARGET_BANK_ACCOUNT.TPBANK.branch} (Chi nhánh)
             </Text>
@@ -273,12 +306,13 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               justifyContent: 'center',
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
+              padding: 0,
             }}>
             <MaterialCommunityIcons
               name="tag-text-outline"
               size={26}
               style={{
-                marginLeft: 10,
+                marginLeft: 0,
                 width: 46,
                 textAlign: 'center',
               }}
@@ -286,12 +320,13 @@ const RegisterModal = ({ service, setVisible, visible }) => {
             />
             <Text
               style={{
-                width: windowWidth - 96,
-                margin: 10,
+                width: windowWidth - 126,
+                margin: 0,
                 fontFamily: 'SF-Pro-Detail-Regular',
                 fontSize: 15,
                 fontWeight: 'normal',
                 color: '#000',
+                textAlign: 'center',
               }}>
               {TARGET_BANK_ACCOUNT.TPBANK.ownerName} (Tên người nhận)
             </Text>
@@ -307,28 +342,55 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               justifyContent: 'center',
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
+              padding: 0,
             }}>
             <MaterialCommunityIcons
               name="account"
               size={26}
               style={{
-                marginLeft: 10,
+                marginLeft: 0,
                 width: 46,
                 textAlign: 'center',
               }}
               color="rgba(246, 36, 89, 1)"
             />
-            <Text
+            <TouchableOpacity
               style={{
-                width: windowWidth - 96,
-                margin: 10,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                color: '#000',
+                height: 60,
+                width: windowWidth - 126,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() => {
+                Clipboard.setString(TARGET_BANK_ACCOUNT.TPBANK.ownerAccount);
+                ToastAndroid.showWithGravityAndOffset(
+                  'Đã sao chép số tài khoản',
+                  ToastAndroid.SHORT,
+                  ToastAndroid.TOP,
+                  0,
+                  100,
+                );
               }}>
-              {TARGET_BANK_ACCOUNT.TPBANK.ownerAccount}
-            </Text>
+              <Text
+                style={{
+                  backgroundColor: 'rgba(246, 36, 89, 1)',
+                  width: 120,
+                  height: 35,
+                  margin: 0,
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 15,
+                  fontWeight: 'normal',
+                  color: '#fff',
+                  textAlign: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  paddingVertical: 7,
+                  borderRadius: 10,
+                }}>
+                {TARGET_BANK_ACCOUNT.TPBANK.ownerAccount}
+              </Text>
+            </TouchableOpacity>
           </View>
           <Text
             style={{
@@ -356,28 +418,56 @@ const RegisterModal = ({ service, setVisible, visible }) => {
               justifyContent: 'center',
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
+              padding: 0,
             }}>
             <MaterialCommunityIcons
               name="content-paste"
               size={26}
               style={{
-                marginLeft: 10,
+                marginLeft: 0,
                 width: 46,
                 textAlign: 'center',
               }}
               color="#5cdb5e"
             />
-            <Text
+            <TouchableOpacity
               style={{
-                width: windowWidth - 96,
-                margin: 10,
-                fontFamily: 'SF-Pro-Detail-Regular',
-                fontSize: 15,
-                fontWeight: 'normal',
-                color: '#000',
+                height: 60,
+                width: windowWidth - 126,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
-              {userName + ' ' + service.serviceName}
-            </Text>
+              <Text
+                style={{
+                  backgroundColor: '#5cdb5e',
+                  minWidth: 120,
+                  height: 35,
+                  margin: 0,
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 15,
+                  fontWeight: 'normal',
+                  color: '#fff',
+                  textAlign: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  paddingVertical: 7,
+                  borderRadius: 10,
+                  paddingHorizontal: 10,
+                }}
+                onPress={() => {
+                  Clipboard.setString(userName + ' ' + service.serviceName);
+                  ToastAndroid.showWithGravityAndOffset(
+                    'Đã sao chép nội dung chuyển khoản',
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP,
+                    0,
+                    100,
+                  );
+                }}>
+                {userName + ' ' + service.serviceName}
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>

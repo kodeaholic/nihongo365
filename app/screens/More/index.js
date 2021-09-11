@@ -20,7 +20,7 @@ import _ from 'lodash';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import DebounceInput from '../../components/DebounceInput';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GoogleSignin,
   statusCodes,
@@ -41,39 +41,42 @@ const alertFeatureUnavailable = () => {
 export const More = ({ navigation }) => {
   const [exiting, setExiting] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector(state => state.userReducer.user);
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: '#E8EAEF', paddingBottom: 15 }}>
       <View styles={styles.container}>
-        <TouchableOpacity
-          onPress={() => alertFeatureUnavailable()}
-          style={{
-            height: 60,
-            width: windowWidth,
-            backgroundColor: '#fff',
-            marginTop: 0, // first
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <MaterialCommunityIcons
-            name="chart-timeline"
-            size={26}
-            style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
-            color="rgba(0, 181, 204, 1)"
-          />
-          <Text
+        {user.role !== 'admin' && (
+          <TouchableOpacity
+            onPress={() => alertFeatureUnavailable()}
             style={{
-              width: windowWidth - 76,
-              margin: 10,
-              fontFamily: 'SF-Pro-Detail-Regular',
-              fontSize: 15,
-              fontWeight: 'normal',
-              color: '#000',
+              height: 60,
+              width: windowWidth,
+              backgroundColor: '#fff',
+              marginTop: 0, // first
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-            Nhật ký học
-          </Text>
-        </TouchableOpacity>
+            <MaterialCommunityIcons
+              name="chart-timeline"
+              size={26}
+              style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+              color="rgba(0, 181, 204, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 76,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              Nhật ký học
+            </Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('Services');
@@ -102,7 +105,7 @@ export const More = ({ navigation }) => {
               fontWeight: 'normal',
               color: '#000',
             }}>
-            Đăng ký gói học
+            {user.role === 'admin' ? 'Đơn đăng ký gói học' : 'Đăng ký gói học'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -131,7 +134,9 @@ export const More = ({ navigation }) => {
               fontWeight: 'normal',
               color: '#000',
             }}>
-            Đăng ký học offline
+            {user.role === 'admin'
+              ? 'Đơn đăng ký học offline'
+              : 'Đăng ký học offline'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -160,38 +165,42 @@ export const More = ({ navigation }) => {
               fontWeight: 'normal',
               color: '#000',
             }}>
-            Tư vấn du học và XKLĐ
+            {user.role === 'admin'
+              ? 'Đơn đăng ký tư vấn du học và XKLĐ'
+              : 'Tư vấn du học và XKLĐ'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => alertFeatureUnavailable()}
-          style={{
-            height: 60,
-            width: windowWidth,
-            backgroundColor: '#fff',
-            marginTop: 5,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <MaterialCommunityIcons
-            name="tablet-cellphone"
-            size={26}
-            style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
-            color="rgba(165, 55, 253, 1)"
-          />
-          <Text
+        {user.role !== 'admin' && (
+          <TouchableOpacity
+            onPress={() => alertFeatureUnavailable()}
             style={{
-              width: windowWidth - 76,
-              margin: 10,
-              fontFamily: 'SF-Pro-Detail-Regular',
-              fontSize: 15,
-              fontWeight: 'normal',
-              color: '#000',
+              height: 60,
+              width: windowWidth,
+              backgroundColor: '#fff',
+              marginTop: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-            Chuyển đổi thiết bị đăng nhập
-          </Text>
-        </TouchableOpacity>
+            <MaterialCommunityIcons
+              name="tablet-cellphone"
+              size={26}
+              style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+              color="rgba(165, 55, 253, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 76,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              Chuyển đổi thiết bị đăng nhập
+            </Text>
+          </TouchableOpacity>
+        )}
         {!exiting && (
           <TouchableOpacity
             onPress={() => {

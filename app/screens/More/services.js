@@ -520,14 +520,35 @@ const RegisterModal = ({ service, setVisible, visible }) => {
                   {
                     text: 'XÁC NHẬN',
                     onPress: () => {
-                      setVisible(false);
-                      ToastAndroid.showWithGravityAndOffset(
-                        'Đăng ký thành công. Vui lòng chờ hệ thống xác nhận',
-                        ToastAndroid.LONG,
-                        ToastAndroid.TOP,
-                        0,
-                        100,
-                      );
+                      let newServiceRecord = { ...service };
+                      newServiceRecord.status = STATUS.PENDING.value;
+                      try {
+                        firestore()
+                          .collection('services')
+                          .doc(user.id)
+                          .collection('SERVICES')
+                          .doc(service.serviceName)
+                          .set(newServiceRecord)
+                          .then(() => {
+                            setVisible(false);
+                            ToastAndroid.showWithGravityAndOffset(
+                              'Đăng ký thành công. Vui lòng chờ hệ thống xác nhận',
+                              ToastAndroid.LONG,
+                              ToastAndroid.TOP,
+                              0,
+                              100,
+                            );
+                          });
+                      } catch (e) {
+                        setVisible(false);
+                        ToastAndroid.showWithGravityAndOffset(
+                          'Có lỗi xảy ra trong quá trình đăng ký. Vui lòng liên hệ admin hoặc tạo lại đơn đăng ký',
+                          ToastAndroid.LONG,
+                          ToastAndroid.TOP,
+                          0,
+                          100,
+                        );
+                      }
                     },
                   },
                 ],
@@ -571,7 +592,7 @@ export const Services = ({ navigation }) => {
           .collection('services')
           .doc(user.id)
           .collection('SERVICES')
-          .orderBy('updatedTime', 'desc')
+          //.orderBy('updatedTime', 'desc')
           .onSnapshot(querySnapshot => {
             items = querySnapshot.docs.map(msg => {
               let item = {
@@ -581,6 +602,7 @@ export const Services = ({ navigation }) => {
               // console.log(item);
               return item;
             });
+            console.log(items);
             setServices(items);
           });
       } catch (e) {

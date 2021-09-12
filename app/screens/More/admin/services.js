@@ -910,116 +910,120 @@ const RegisterModal = ({ service, setVisible, visible }) => {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <Text
-                style={{
-                  marginTop: 10,
-                  marginBottom: 5,
-                  marginHorizontal: 15,
-                  color: 'rgba(246, 36, 89, 1)',
-                  textAlign: 'center',
-                  borderRadius: 5,
-                  fontFamily: 'SF-Pro-Detail-Regular',
-                  fontSize: 15,
-                  fontWeight: 'normal',
-                  padding: 2,
-                }}>
-                Admin xác nhận đã nhận chuyển khoản
-              </Text>
-              <TouchableOpacity
-                style={{
-                  height: 50,
-                  backgroundColor: '#fff',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: 10,
-                  marginBottom: 15,
-                  shadowColor: '#000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 2,
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3.84,
-
-                  elevation: 5,
-                  marginHorizontal: 60,
-                  borderRadius: 8,
-                  marginTop: 5,
-                  flexDirection: 'column',
-                }}
-                onPress={() => {
-                  Alert.alert(
-                    'Thông báo',
-                    'Vui lòng xác nhận bạn đã nhận chuyển khoản',
-                    [
-                      {
-                        text: 'Hủy',
-                        onPress: () => null,
-                        style: 'cancel',
+              {service.status === STATUS.PENDING.value && (
+                <>
+                  <Text
+                    style={{
+                      marginTop: 10,
+                      marginBottom: 5,
+                      marginHorizontal: 15,
+                      color: 'rgba(246, 36, 89, 1)',
+                      textAlign: 'center',
+                      borderRadius: 5,
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      fontSize: 15,
+                      fontWeight: 'normal',
+                      padding: 2,
+                    }}>
+                    Admin xác nhận đã nhận chuyển khoản
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      height: 50,
+                      backgroundColor: '#fff',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 10,
+                      marginBottom: 15,
+                      shadowColor: '#000',
+                      shadowOffset: {
+                        width: 0,
+                        height: 2,
                       },
-                      {
-                        text: 'XÁC NHẬN',
-                        onPress: () => {
-                          let newServiceRecord = { ...service };
-                          newServiceRecord.status = STATUS.SUCCESS.value;
-                          newServiceRecord.updatedAt = Date.now();
-                          //   console.log(newServiceRecord);
-                          try {
-                            firestore()
-                              .collection('services')
-                              .doc(service.userId)
-                              .collection('SERVICES')
-                              .doc(service.id)
-                              .set(
-                                {
-                                  status: STATUS.SUCCESS.value,
-                                  updatedAt: Date.now(),
-                                },
-                                { merge: true },
-                              )
-                              .then(async () => {
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+
+                      elevation: 5,
+                      marginHorizontal: 60,
+                      borderRadius: 8,
+                      marginTop: 5,
+                      flexDirection: 'column',
+                    }}
+                    onPress={() => {
+                      Alert.alert(
+                        'Thông báo',
+                        'Vui lòng xác nhận bạn đã nhận chuyển khoản',
+                        [
+                          {
+                            text: 'Hủy',
+                            onPress: () => null,
+                            style: 'cancel',
+                          },
+                          {
+                            text: 'XÁC NHẬN',
+                            onPress: () => {
+                              let newServiceRecord = { ...service };
+                              newServiceRecord.status = STATUS.SUCCESS.value;
+                              newServiceRecord.updatedAt = Date.now();
+                              //   console.log(newServiceRecord);
+                              try {
+                                firestore()
+                                  .collection('services')
+                                  .doc(service.userId)
+                                  .collection('SERVICES')
+                                  .doc(service.id)
+                                  .set(
+                                    {
+                                      status: STATUS.SUCCESS.value,
+                                      updatedAt: Date.now(),
+                                    },
+                                    { merge: true },
+                                  )
+                                  .then(async () => {
+                                    setVisible(false);
+                                    ToastAndroid.showWithGravityAndOffset(
+                                      'Xác nhận thành công',
+                                      ToastAndroid.LONG,
+                                      ToastAndroid.TOP,
+                                      0,
+                                      100,
+                                    );
+                                  });
+                              } catch (e) {
                                 setVisible(false);
                                 ToastAndroid.showWithGravityAndOffset(
-                                  'Xác nhận thành công',
+                                  'Có lỗi xảy ra trong quá trình xác nhận. Vui lòng liên hệ developer',
                                   ToastAndroid.LONG,
                                   ToastAndroid.TOP,
                                   0,
                                   100,
                                 );
-                              });
-                          } catch (e) {
-                            setVisible(false);
-                            ToastAndroid.showWithGravityAndOffset(
-                              'Có lỗi xảy ra trong quá trình xác nhận. Vui lòng liên hệ developer',
-                              ToastAndroid.LONG,
-                              ToastAndroid.TOP,
-                              0,
-                              100,
-                            );
-                          }
-                        },
-                      },
-                    ],
-                  );
-                }}>
-                <Text
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 5,
-                    marginHorizontal: 15,
-                    // color: 'rgba(246, 36, 89, 1)',
-                    color: '#000',
-                    textAlign: 'center',
-                    borderRadius: 5,
-                    fontFamily: 'SF-Pro-Detail-Regular',
-                    fontSize: 15,
-                    fontWeight: 'normal',
-                    padding: 2,
-                    textTransform: 'uppercase',
-                  }}>
-                  Xác nhận
-                </Text>
-              </TouchableOpacity>
+                              }
+                            },
+                          },
+                        ],
+                      );
+                    }}>
+                    <Text
+                      style={{
+                        marginTop: 10,
+                        marginBottom: 5,
+                        marginHorizontal: 15,
+                        // color: 'rgba(246, 36, 89, 1)',
+                        color: '#000',
+                        textAlign: 'center',
+                        borderRadius: 5,
+                        fontFamily: 'SF-Pro-Detail-Regular',
+                        fontSize: 15,
+                        fontWeight: 'normal',
+                        padding: 2,
+                        textTransform: 'uppercase',
+                      }}>
+                      Xác nhận
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </>
           )}
         </ScrollView>
@@ -1071,6 +1075,9 @@ export const AdminServices = ({ route, navigation }) => {
                         serviceRecord.createdAt > Date.now() - 86400000 * 10 // only get data in 10 recent days
                       ) {
                         newList.push(serviceRecord);
+                      } else {
+                        // update
+                        newList[index] = serviceRecord;
                       }
                     });
                     newList = _.sortBy(newList, ['createdAt']);

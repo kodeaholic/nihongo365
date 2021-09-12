@@ -14,7 +14,6 @@ import { AudioPlayer } from '../../components/audio-player';
 import _ from 'lodash';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-import firestore from '@react-native-firebase/firestore';
 import { STATUS } from '../../constants/payment.constants';
 import { RegisterPopup } from '../../components/registerPopup';
 export const VocabLesson = ({ navigation }) => {
@@ -27,38 +26,7 @@ export const VocabLesson = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const [popupVisible, setPopupVisible] = useState(false);
-  const user = useSelector(state => state.userReducer.user);
-  const [service, setService] = useState(''); // fetch from fire-store
-  useEffect(() => {
-    if (selectedLevel !== 'N5') {
-      async function getDoc() {
-        let docRef;
-        if (user && user.id) {
-          try {
-            docRef = firestore()
-              .collection('services')
-              .doc(user.id)
-              .collection('SERVICES')
-              .doc(selectedLevel);
-            let doc = await docRef.get();
-            doc = doc.data();
-            if (_.isEmpty(doc) || doc.status !== STATUS.SUCCESS.value) {
-              setPopupVisible(true);
-              setService(selectedLevel);
-            } else {
-              setPopupVisible(false);
-              setService('');
-            }
-          } catch (e) {
-            setPopupVisible(true);
-            setService(selectedLevel);
-          }
-        }
-      }
-      getDoc();
-    }
-  }, [user, selectedLevel]);
+  const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -174,13 +142,6 @@ export const VocabLesson = ({ navigation }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-        {!_.isEmpty(service) && popupVisible && (
-          <RegisterPopup
-            service={service}
-            visible={popupVisible}
-            setVisible={setPopupVisible}
-          />
-        )}
         {!loading && (
           <FlatList
             data={vocabs}

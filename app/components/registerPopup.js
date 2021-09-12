@@ -7,6 +7,7 @@ import {
   Modal,
   ScrollView,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -22,8 +23,8 @@ export const RegisterPopup = ({ service, setVisible, visible }) => {
       isVisible={visible}
       animationIn="bounceInLeft"
       animationOut="bounceOutLeft"
-      animationInTiming={0}
-      animationOutTiming={0}
+      animationInTiming={1500}
+      animationOutTiming={1500}
       onBackButtonPress={() => {
         // if (visible) {
         //   setVisible(false);
@@ -93,7 +94,23 @@ export const RegisterPopup = ({ service, setVisible, visible }) => {
             }}
             onPress={() => {
               setVisible(false);
-              navigation.goBack();
+              ToastAndroid.showWithGravityAndOffset(
+                'Bạn đang xem tài liệu có tính phí',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100,
+              );
+              setTimeout(() => {
+                navigation.goBack();
+                ToastAndroid.showWithGravityAndOffset(
+                  `🤗 bạn ơi nhanh tay đăng ký ${service} 🤗\n😍 Học và thi không giới hạn 😍`,
+                  ToastAndroid.LONG,
+                  ToastAndroid.TOP,
+                  0,
+                  100,
+                );
+              }, 10000);
             }}>
             <Text
               style={{

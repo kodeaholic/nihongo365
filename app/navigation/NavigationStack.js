@@ -1,7 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 // import { StyleSheet, View } from 'react-native';
-import { View } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+import { Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import DeviceInfo from 'react-native-device-info';
@@ -41,9 +42,13 @@ import { GrammarSelection } from '../screens/GrammarSelection';
 import { Grammar } from '../screens/Grammar';
 import Alphabet from '../screens/Alphabet';
 import News from '../screens/News';
-import More from '../screens/More';
+import { More } from '../screens/More';
 import _ from 'lodash';
 import { NewsDetail } from '../screens/News/detail';
+import { Chat } from '../screens/Chat';
+import Rooms from '../screens/ChatRoom';
+import { Services } from '../screens/More/services';
+import { AdminServices } from '../screens/More/admin/services';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -55,6 +60,7 @@ function LearnStackScreen() {
       screenOptions={{
         header: ({ scene }) => {
           let { headerProps } = scene.descriptor.options;
+          headerProps = { ...headerProps, enableLogoutButton: false };
           return <Header {...headerProps} />;
         },
       }}>
@@ -122,6 +128,7 @@ function DictionaryStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
+          headerProps = { ...headerProps, enableLogoutButton: false };
           Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
@@ -145,6 +152,7 @@ function NewsStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
+          headerProps = { ...headerProps, enableLogoutButton: false };
           // Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
@@ -169,11 +177,18 @@ function MoreStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
-          Object.assign(headerProps, { disableBackButton: true });
+          Object.assign(headerProps, {
+            disableBackButton: true,
+            // renderCenterImage: true,
+            enableLogoutButton: false,
+            screen: 'MORE',
+          });
           return <Header {...headerProps} />;
         },
       }}>
       <MoreStack.Screen name="More" component={More} />
+      <MoreStack.Screen name="Services" component={Services} />
+      <MoreStack.Screen name="AdminServices" component={AdminServices} />
     </MoreStack.Navigator>
   );
 }
@@ -192,12 +207,42 @@ function AlphabetStackScreen() {
           if (_.isEmpty(headerProps)) {
             headerProps = {};
           }
+          headerProps = { ...headerProps, enableLogoutButton: false };
           Object.assign(headerProps, { disableBackButton: true });
           return <Header {...headerProps} />;
         },
       }}>
       <AlphabetStack.Screen name="Alphabet" component={Alphabet} />
     </AlphabetStack.Navigator>
+  );
+}
+
+const ChatStack = createStackNavigator();
+function ChatStackScreen() {
+  const stackProps = DeviceInfo.isTablet()
+    ? { headerMode: 'none' }
+    : { headerMode: 'none' };
+  return (
+    <ChatStack.Navigator
+      {...stackProps}
+      // screenOptions={{
+      //   header: ({ scene }) => {
+      //     let { headerProps } = scene.descriptor.options;
+      //     if (_.isEmpty(headerProps)) {
+      //       headerProps = {};
+      //     }
+      //     Object.assign(headerProps, {
+      //       disableBackButton: true,
+      //       title: 'Nihongo365 Chat',
+      //       leftAction: undefined,
+      //     });
+      //     return <Header {...headerProps} />;
+      //   },
+      // }}
+    >
+      <ChatStack.Screen name="ChatRooms" component={Rooms} />
+      <ChatStack.Screen name="Chat" component={Chat} />
+    </ChatStack.Navigator>
   );
 }
 
@@ -212,6 +257,21 @@ if (DeviceInfo.isTablet()) {
 }
 
 function MainStackScreen() {
+  React.useEffect(() => {
+    // console.log(Date.now());
+    (async () => {
+      if (Platform.OS === 'android') {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+          // console.log('Authorization status:', authStatus);
+        }
+      }
+    })();
+  }, []);
   return (
     <React.Fragment>
       <Tab.Navigator
@@ -238,13 +298,13 @@ function MainStackScreen() {
           }}
         />
         <Tab.Screen
-          name="Từ điển"
-          component={DictionaryStackScreen}
+          name="Chat"
+          component={ChatStackScreen}
           options={{
             showIcon: true,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
-                name="google-translate"
+                name="chat-outline"
                 color={color}
                 size={26}
               />
@@ -291,13 +351,27 @@ function MainStackScreen() {
           }}
         />
         <Tab.Screen
-          name="Khác"
+          name="Từ điển"
+          component={DictionaryStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="google-translate"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Cá nhân"
           component={MoreStackScreen}
           options={{
             showIcon: true,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
-                name="reorder-horizontal"
+                name="account-circle-outline"
                 color={color}
                 size={26}
               />

@@ -154,7 +154,11 @@ const Alphabet = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.opacityButton, styles.frolyBackground]}
+                style={[
+                  styles.opacityButton,
+                  styles.frolyBackground,
+                  { marginBottom: 5 },
+                ]}
                 onPress={() => {
                   setScreen(SCREEN.DETAIL);
                   setType(TYPES.CONTRACTED_KATAKANA);
@@ -207,7 +211,7 @@ const Alphabet = ({ navigation }) => {
             <>
               <View style={{ height: '100%', flex: 1 }}>
                 <FlatGrid
-                  itemDimension={50}
+                  itemDimension={(windowWidth - 70) / 5}
                   data={items}
                   style={styles.gridView}
                   spacing={10}
@@ -255,7 +259,9 @@ const Alphabet = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   opacityButton: {
-    margin: 5,
+    marginTop: 5,
+    marginLeft: 5,
+    marginRight: 5,
     backgroundColor: '#F5FCFF',
     flex: 1,
     borderRadius: 2,

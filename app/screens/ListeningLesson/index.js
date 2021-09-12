@@ -2,18 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { Button, Text, Card, Divider, Badge } from 'react-native-paper';
-import { Header } from '../../components/commonHeader';
 import { useSelector } from 'react-redux';
-import {
-  SafeAreaView,
-  ScrollView,
-  AppState,
-  TouchableOpacity,
-} from 'react-native';
+import { SafeAreaView, ScrollView, AppState } from 'react-native';
 import { ActivityIndicator } from 'react-native';
-import HTML from 'react-native-render-html';
-import RenderHtml from 'react-native-render-html';
-import HTMLView from 'react-native-htmlview';
 import { WebView } from 'react-native-webview';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -21,6 +12,9 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import { AudioPlayer } from '../../components/audio-player';
+import firestore from '@react-native-firebase/firestore';
+import { STATUS } from '../../constants/payment.constants';
+import { RegisterPopup } from '../../components/registerPopup';
 const Sound = require('react-native-sound');
 export const ListeningLesson = ({ navigation }) => {
   const selectedListeningLesson = useSelector(
@@ -41,6 +35,39 @@ export const ListeningLesson = ({ navigation }) => {
   const [count, setCount] = useState(0);
   const [answered, setAnswered] = useState(0);
   const [displayScript, setDisplayScript] = useState(false);
+  /* popup */
+  const [popupVisible, setPopupVisible] = useState(false);
+  const user = useSelector(state => state.userReducer.user);
+  const [service, setService] = useState(selectedLevel); // fetch from fire-store
+  useEffect(() => {
+    if (selectedLevel !== 'N5') {
+      async function getDoc() {
+        let docRef;
+        if (user && user.id) {
+          try {
+            docRef = firestore()
+              .collection('services')
+              .doc(user.id)
+              .collection('SERVICES')
+              .doc(selectedLevel);
+            let doc = await docRef.get();
+            doc = doc.data();
+            if (_.isEmpty(doc) || doc.status !== STATUS.SUCCESS.value) {
+              setPopupVisible(true);
+              setService(selectedLevel);
+            } else {
+              setPopupVisible(false);
+              setService('');
+            }
+          } catch (e) {
+            setPopupVisible(true);
+            setService(selectedLevel);
+          }
+        }
+      }
+      getDoc();
+    }
+  }, [user, selectedLevel]);
   const falseColor = '#f00';
   const trueColor = '#5cdb5e';
   const normalColor = '#000';
@@ -188,16 +215,13 @@ export const ListeningLesson = ({ navigation }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
-        {/* {selectedListeningLesson.board.title !== undefined && selectedLevel && (
-          <Header
-            title={`Luyện nghe ${selectedLevel}`}
-            subtitle={`${selectedListeningLesson.board.title}`}
+        {!_.isEmpty(service) && popupVisible && (
+          <RegisterPopup
+            service={service}
+            visible={popupVisible}
+            setVisible={setPopupVisible}
           />
         )}
-        {!selectedLevel ||
-          (!selectedListeningLesson.board.title && (
-            <Header title={'Luyện nghe'} />
-          ))} */}
         {loading && (
           <>
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />

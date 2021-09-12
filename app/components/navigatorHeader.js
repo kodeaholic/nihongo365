@@ -1,11 +1,27 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import { StyleSheet, BackHandler, Alert, ToastAndroid } from 'react-native';
+import {
+  StyleSheet,
+  BackHandler,
+  Alert,
+  ToastAndroid,
+  Text,
+  Image,
+  View,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import _ from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
+import { userActions } from '../actions/userActions';
+import { getCurrentTime, getPostTimeFromCreatedAt } from '../helpers/time';
 export const Header = props => {
+  const user = useSelector(state => state.userReducer.user);
   const confirmExit = text => {
     Alert.alert('Thông báo', `${text}`, [
       {
@@ -23,6 +39,7 @@ export const Header = props => {
     customStyles,
     enableLogoutButton = true,
     leftAction = {},
+    screen = '',
   } = props;
   const navigation = useNavigation();
   const _goBack = () => {
@@ -32,8 +49,35 @@ export const Header = props => {
       confirmExit('Bạn muốn thoát ứng dụng?');
     }
   };
+  const dispatch = useDispatch();
+  let contentProps = {
+    titleStyle: styles.title,
+    title: title,
+  };
+  if (!_.isEmpty(subtitle)) {
+    contentProps = {
+      ...contentProps,
+      subtitle: subtitle,
+      subtitleStyle: styles.subTitle,
+      titleStyle: [styles.title, { marginTop: 5 }],
+    };
+  }
+  if (screen === 'MORE') {
+    contentProps = {
+      ...contentProps,
+      title: user.name,
+    };
+    // console.log(user);
+  }
   return (
-    <Appbar.Header style={[styles.header, customStyles]}>
+    <Appbar.Header
+      style={[
+        styles.header,
+        customStyles,
+        // screen === 'MORE'
+        //   ? { alignItems: 'center', justifyContent: 'center' }
+        //   : {},
+      ]}>
       {!disableBackButton && (
         <Appbar.BackAction color="#fff" onPress={_goBack} />
       )}
@@ -44,15 +88,61 @@ export const Header = props => {
           onPress={() => leftAction.action && leftAction.action(true)}
         />
       )}
-      {subtitle && (
-        <Appbar.Content
-          titleStyle={styles.title}
-          title={title}
-          subtitle={subtitle}
-          subtitleStyle={styles.subTitle}
-        />
+      {screen !== 'MORE' && <Appbar.Content {...contentProps} />}
+      {screen === 'MORE' && (
+        <>
+          <Image
+            style={{
+              width: 52,
+              height: 52,
+              padding: 0,
+              margin: 0,
+              borderRadius: 52 / 2,
+              backgroundColor: '#fff',
+              borderWidth: 2,
+              borderColor: 'rgba(63, 195, 128, 1)',
+              marginLeft: 2,
+            }}
+            source={
+              user.photo
+                ? { uri: user.photo }
+                : require('../assets/default_avatar.png')
+            }
+            resizeMethod="auto"
+          />
+
+          {!_.isEmpty(user.name) && (
+            <View
+              style={{ marginLeft: 5, padding: 2, marginTop: 0, height: 56 }}>
+              <Text
+                style={{
+                  flex: 1,
+                  color: '#fff',
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 17,
+                  fontWeight: 'normal',
+                  textAlign: 'left',
+                  marginTop: 0,
+                }}>
+                {user.name}
+              </Text>
+              <Text
+                style={{
+                  paddingTop: 9,
+                  flex: 1,
+                  color: '#fff',
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 11,
+                  fontWeight: 'normal',
+                  textAlign: 'left',
+                  marginTop: 0,
+                }}>
+                Gia nhập: {getPostTimeFromCreatedAt(user.createdAt)}
+              </Text>
+            </View>
+          )}
+        </>
       )}
-      {!subtitle && <Appbar.Content titleStyle={styles.title} title={title} />}
       {enableLogoutButton && (
         <Appbar.Action
           color="#fff"
@@ -68,15 +158,30 @@ export const Header = props => {
                 text: 'ĐĂNG XUẤT',
                 onPress: () => {
                   const logout = async () => {
-                    const isSignedIn = await GoogleSignin.isSignedIn();
-                    if (isSignedIn) {
+                    try {
+                      GoogleSignin.configure({
+                        androidClientId:
+                          '401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com',
+                      });
                       try {
-                        await GoogleSignin.revokeAccess();
-                        await GoogleSignin.signOut();
+                        await GoogleSignin.signInSilently();
+                        try {
+                          await GoogleSignin.revokeAccess();
+                          await GoogleSignin.signOut();
+                        } catch (error) {
+                          // console.error(error);
+                        }
                       } catch (error) {
-                        console.error(error);
+                        if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+                          // user has not signed in yet
+                        } else {
+                          // some other error
+                        }
                       }
+                    } catch (e) {
+                      // console.log(e);
                     }
+                    dispatch(userActions.socialLoginFailed());
                     AsyncStorage.removeItem('user');
                     AsyncStorage.removeItem('tokens');
                     navigation.reset({
@@ -106,6 +211,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#5cdb5e',
     textAlign: 'center',
+    height: 56,
   },
   backButton: {},
   title: { color: '#fff', marginLeft: -4 },

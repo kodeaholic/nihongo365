@@ -19,10 +19,6 @@ import { htmlEntityDecode } from '../../helpers/htmlentities';
 import _ from 'lodash';
 import { WebView } from 'react-native-webview';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-import {
-  ScrollableTabView,
-  ScrollableTabBar,
-} from '@summerkiflain/react-native-scrollable-tabview';
 import { BOARD_TYPE } from '../../constants/board';
 import * as programActions from '../../actions/programActions';
 import ScrollingButtonMenu from 'react-native-scroll-menu';

@@ -9,441 +9,303 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Dimensions,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Badge } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
-import { Dimensions } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import DebounceInput from '../../components/DebounceInput';
-export default function More({ navigation }) {
-  useEffect(() => {
-    navigation.setOptions({ headerProps: { title: 'Menu mở rộng' } });
-  }, [navigation]);
-  const [keyWord, setKeyWord] = useState('');
-  const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState([]);
-  const [selected, setSelected] = useState('dictionary');
-  useEffect(() => {
-    function clean(object) {
-      const obj = Object.assign({}, object);
-      const result = {};
-      for (var propName in obj) {
-        if (obj[propName].length > 0) {
-          result[propName] = obj[propName];
-        }
-      }
-      return result;
-    }
-    async function search(key) {
-      const headers = await authHeader();
-      const requestOptions = {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ search: key }),
-      };
-      let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/search`;
-      try {
-        setSearching(true);
-        const response = await fetch(url, requestOptions);
-        const data = await response.json();
-        if (data.code) {
-          setSearching(false);
-          ToastAndroid.showWithGravityAndOffset(
-            'Có lỗi tìm kiếm. Vui lòng thử lại sau ít phút',
-            ToastAndroid.SHORT,
-            ToastAndroid.TOP,
-            0,
-            100,
-          );
-        } else {
-          //   console.log(htmlEntityDecode(data.quiz[0].question));
-          let res = clean(data.results);
-          /* Filter for empty */
-          if (_.isEmpty(res)) {
-            setSearching(false);
-            ToastAndroid.showWithGravityAndOffset(
-              'Không tìm thấy kết quả tương tự',
-              ToastAndroid.LONG,
-              ToastAndroid.TOP,
-              0,
-              100,
-            );
-          } else {
-            setResults(res);
-            setSearching(false);
-            if (res.dictionary) {
-              setSelected('dictionary');
-            } else if (res.vocabs) {
-              setSelected('vocabs');
-            } else {
-              setSelected('cards');
-            }
-          }
-        }
-      } catch (error) {
-        setSearching(false);
-        return error;
-      }
-    }
-    if (keyWord.length) {
-      // console.log(keyWord);
-      search(keyWord);
-    } else {
-      setSearching(false);
-      setResults({});
-    }
-  }, [keyWord]);
-  const windowWidth = Dimensions.get('window').width;
-  const getItemLabel = item => {
-    switch (selected) {
-      case 'dictionary':
-        return item.phrase;
-      case 'vocabs':
-        return item.extractedVocab;
-      case 'cards':
-        return item.letter;
-      default:
-        return '';
-    }
-  };
-  const getItemMeaning = item => {
-    switch (selected) {
-      case 'dictionary':
-        return item.meaning;
-      case 'vocabs':
-        return item.vocabMeaning;
-      case 'cards':
-        return item.meaning;
-      default:
-        return '';
-    }
-  };
-  const renderListItem = (item, index) => {
-    return (
-      <View style={styles.listItem} key={item.id}>
-        <Text>{getItemLabel(item)}</Text>
-      </View>
-    );
-  };
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import { userActions } from '../../actions/userActions';
+import AsyncStorage from '@react-native-community/async-storage';
+const windowWidth = Dimensions.get('window').width;
+
+const alertFeatureUnavailable = () => {
+  ToastAndroid.showWithGravityAndOffset(
+    'Tính năng đang được phát triển. Vui lòng thử lại sau',
+    ToastAndroid.LONG,
+    ToastAndroid.TOP,
+    0,
+    100,
+  );
+};
+export const More = ({ navigation }) => {
+  const [exiting, setExiting] = useState(false);
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.userReducer.user);
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: '#FFFFFF', paddingBottom: 15 }}>
+      style={{ flex: 1, backgroundColor: '#E8EAEF', paddingBottom: 15 }}>
       <View styles={styles.container}>
-        {searching && (
-          <Skeleton speed={1000}>
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 36,
-                },
-              ]}>
-              <View
-                style={[
-                  {
-                    width: (windowWidth - 32) / 3,
-                    height: 36,
-                    borderRadius: 50,
-                    marginRight: 10,
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  {
-                    width: (windowWidth - 32) / 3,
-                    height: 36,
-                    borderRadius: 50,
-                    marginRight: 10,
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  {
-                    width: (windowWidth - 32) / 3,
-                    height: 36,
-                    borderRadius: 50,
-                    marginRight: 0,
-                  },
-                ]}
-              />
-            </View>
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
+        {user.role !== 'admin' && (
+          <TouchableOpacity
+            onPress={() => alertFeatureUnavailable()}
+            style={{
+              height: 60,
+              width: windowWidth,
+              backgroundColor: '#fff',
+              marginTop: 0, // first
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <MaterialCommunityIcons
+              name="chart-timeline"
+              size={26}
+              style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+              color="rgba(0, 181, 204, 1)"
             />
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.skeletonRow,
-                {
-                  marginTop: 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 80,
-                  width: windowWidth - 16,
-                  borderRadius: 10,
-                },
-              ]}
-            />
-          </Skeleton>
+            <Text
+              style={{
+                width: windowWidth - 76,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              Nhật ký học
+            </Text>
+          </TouchableOpacity>
         )}
-        {!searching && !_.isEmpty(results) && (
-          <View style={styles.buttonGroup}>
-            {true && (
-              <TouchableOpacity
-                disabled={
-                  selected === 'dictionary' ||
-                  !_.get(results, 'dictionary.length')
-                }
-                onPress={() => setSelected('dictionary')}
-                style={[
-                  styles.buttonGroupItem,
-                  selected === 'dictionary' ? styles.buttonActive : {},
-                ]}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    selected === 'dictionary'
-                      ? styles.textActivie
-                      : styles.textNormal,
-                  ]}>
-                  Từ điển
-                </Text>
-                {_.get(results, 'dictionary.length') && (
-                  <Badge
-                    style={[
-                      selected === 'dictionary'
-                        ? styles.badgeActive
-                        : styles.badge,
-                    ]}>
-                    {_.get(results, 'dictionary.length')}
-                  </Badge>
-                )}
-              </TouchableOpacity>
-            )}
-            {true && (
-              <TouchableOpacity
-                onPress={() => setSelected('vocabs')}
-                disabled={
-                  selected === 'vocabs' || !_.get(results, 'vocabs.length')
-                }
-                style={[
-                  styles.buttonGroupItem,
-                  selected === 'vocabs' ? styles.buttonActive : {},
-                ]}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    selected === 'vocabs'
-                      ? styles.textActivie
-                      : styles.textNormal,
-                  ]}>
-                  Từ vựng
-                </Text>
-                {_.get(results, 'vocabs.length') && (
-                  <Badge
-                    style={[
-                      selected === 'vocabs' ? styles.badgeActive : styles.badge,
-                    ]}>
-                    {_.get(results, 'vocabs.length')}
-                  </Badge>
-                )}
-              </TouchableOpacity>
-            )}
-            {true && (
-              <TouchableOpacity
-                onPress={() => setSelected('cards')}
-                disabled={
-                  selected === 'cards' || !_.get(results, 'cards.length')
-                }
-                style={[
-                  styles.buttonGroupItem,
-                  styles.buttonGroupItem_lastChild,
-                  selected === 'cards' ? styles.buttonActive : {},
-                ]}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    selected === 'cards'
-                      ? styles.textActivie
-                      : styles.textNormal,
-                  ]}>
-                  Chữ Hán
-                </Text>
-                {_.get(results, 'cards.length') && (
-                  <Badge
-                    style={[
-                      selected === 'cards' ? styles.badgeActive : styles.badge,
-                    ]}>
-                    {_.get(results, 'cards.length')}
-                  </Badge>
-                )}
-              </TouchableOpacity>
-            )}
-          </View>
+        <TouchableOpacity
+          onPress={() => {
+            if (user.role !== 'admin') {
+              navigation.navigate('Services');
+            }
+            if (user.role === 'admin') {
+              navigation.navigate('AdminServices');
+            }
+          }}
+          style={{
+            height: 60,
+            width: windowWidth,
+            backgroundColor: '#fff',
+            marginTop: 5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <MaterialCommunityIcons
+            name="gift-outline"
+            size={26}
+            style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+            color="rgba(241, 130, 141,1)"
+          />
+          <Text
+            style={{
+              width: windowWidth - 76,
+              margin: 10,
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              color: '#000',
+            }}>
+            {user.role === 'admin' ? 'Đơn đăng ký gói học' : 'Đăng ký gói học'}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => alertFeatureUnavailable()}
+          style={{
+            height: 60,
+            width: windowWidth,
+            backgroundColor: '#fff',
+            marginTop: 5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <MaterialCommunityIcons
+            name="account-box"
+            size={26}
+            style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+            color="rgba(63, 195, 128, 1)"
+          />
+          <Text
+            style={{
+              width: windowWidth - 76,
+              margin: 10,
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              color: '#000',
+            }}>
+            {user.role === 'admin'
+              ? 'Đơn đăng ký học offline'
+              : 'Đăng ký học offline'}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => alertFeatureUnavailable()}
+          style={{
+            height: 60,
+            width: windowWidth,
+            backgroundColor: '#fff',
+            marginTop: 5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <MaterialCommunityIcons
+            name="airplane"
+            size={26}
+            style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+            color="rgba(241, 90, 34, 1)"
+          />
+          <Text
+            style={{
+              width: windowWidth - 76,
+              margin: 10,
+              fontFamily: 'SF-Pro-Detail-Regular',
+              fontSize: 15,
+              fontWeight: 'normal',
+              color: '#000',
+            }}>
+            {user.role === 'admin'
+              ? 'Đơn đăng ký tư vấn du học và XKLĐ'
+              : 'Tư vấn du học và XKLĐ'}
+          </Text>
+        </TouchableOpacity>
+        {user.role !== 'admin' && (
+          <TouchableOpacity
+            onPress={() => alertFeatureUnavailable()}
+            style={{
+              height: 60,
+              width: windowWidth,
+              backgroundColor: '#fff',
+              marginTop: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <MaterialCommunityIcons
+              name="tablet-cellphone"
+              size={26}
+              style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+              color="rgba(165, 55, 253, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 76,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              Chuyển đổi thiết bị đăng nhập
+            </Text>
+          </TouchableOpacity>
         )}
-        {!searching && !_.isEmpty(results[selected]) && (
-          <FlatList
-            data={results[selected]}
-            renderItem={({ item, index }) => {
-              return (
-                <View style={styles.listItem}>
-                  <Text style={[styles.japaneseText]}>
-                    {getItemLabel(item)}
-                  </Text>
-                  <Text style={[styles.japaneseText]}>
-                    {getItemMeaning(item)}
-                  </Text>
-                </View>
-              );
+        {!exiting && (
+          <TouchableOpacity
+            onPress={() => {
+              Alert.alert('Thông báo', 'Bạn muốn đăng xuất khỏi tài khoản?', [
+                {
+                  text: 'Hủy',
+                  onPress: () => null,
+                  style: 'cancel',
+                },
+                {
+                  text: 'ĐĂNG XUẤT',
+                  onPress: () => {
+                    setExiting(true);
+                    const logout = async () => {
+                      try {
+                        GoogleSignin.configure({
+                          androidClientId:
+                            '401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com',
+                        });
+                        try {
+                          await GoogleSignin.signInSilently();
+                          try {
+                            await GoogleSignin.revokeAccess();
+                            await GoogleSignin.signOut();
+                          } catch (error) {
+                            // console.error(error);
+                          }
+                        } catch (error) {
+                          if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+                            // user has not signed in yet
+                          } else {
+                            // some other error
+                          }
+                        }
+                      } catch (e) {
+                        // console.log(e);
+                      }
+                      dispatch(userActions.socialLoginFailed());
+                      AsyncStorage.removeItem('user');
+                      AsyncStorage.removeItem('tokens');
+                      navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'StartScreen' }],
+                      });
+                      ToastAndroid.showWithGravityAndOffset(
+                        'Đăng xuất thành công',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        100,
+                      );
+                    };
+                    logout();
+                  },
+                },
+              ]);
             }}
-            keyExtractor={(item, index) => {
-              return item.id;
-            }}
+            style={{
+              height: 60,
+              width: windowWidth,
+              backgroundColor: '#fff',
+              marginTop: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 5,
+            }}>
+            <MaterialCommunityIcons
+              name="logout"
+              size={26}
+              style={{ marginLeft: 10, width: 46, textAlign: 'center' }}
+              color="rgba(219, 10, 91, 1)"
+            />
+            <Text
+              style={{
+                width: windowWidth - 76,
+                margin: 10,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                fontSize: 15,
+                fontWeight: 'normal',
+                color: '#000',
+              }}>
+              Đăng xuất
+            </Text>
+          </TouchableOpacity>
+        )}
+        {exiting && (
+          <ActivityIndicator
+            size="large"
+            style={{ textAlign: 'center', marginTop: 10, marginBottom: 10 }}
           />
         )}
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  skeletonRow: {
-    // marginLeft: 8,
-    // marginRight: 8,
-    // // paddingLeft: 8,
-    // // paddingRight: 8,
-  },
-  buttonGroup: {
-    flexDirection: 'row',
-    alignContent: 'stretch',
-    margin: 8,
-    height: 36,
-  },
-  buttonGroupItem: {
-    flex: 1,
-    height: 36,
-    marginRight: 10,
-    borderRadius: 20,
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'baseline',
-    backgroundColor: '#f0f2f5',
-    flexDirection: 'row',
-    paddingTop: 6,
-  },
-  buttonGroupItem_lastChild: {
-    marginRight: 0,
-  },
-  buttonText: {
-    backgroundColor: '#f0f2f5',
-    fontSize: 16,
-    marginRight: 5,
-  },
-  buttonActive: {
-    backgroundColor: '#5cdb5e',
-    color: '#ffffff',
-  },
-  textActivie: {
-    backgroundColor: 'transparent',
-    color: '#ffffff',
-  },
-  textNormal: {
-    backgroundColor: 'transparent',
-    color: '#000000',
-  },
-  badgeActive: {
-    backgroundColor: '#ffffff',
-    color: '#5cdb5e',
-  },
-  badge: {
-    backgroundColor: '#f0f2f5',
-    color: '#000000',
-    borderWidth: 1,
-    borderColor: '#000000',
-  },
-  buttonGroupSkeleton: {
-    flexDirection: 'row',
-    alignContent: 'stretch',
-    margin: 8,
-    height: 36,
-  },
-  buttonGroupItemSkeleton: {
-    flex: 1,
-    height: 36,
-    marginRight: 10,
-    borderRadius: 20,
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'baseline',
-    flexDirection: 'row',
-    paddingTop: 7,
-  },
-  listItem: {
-    // borderWidth: 1,
-    minHeight: 68,
-    margin: 8,
-    borderRadius: 10,
-    padding: 10,
-    fontFamily: 'KosugiMaru-Regular',
-    backgroundColor: '#f0f2f5',
-  },
-  japaneseText: {
-    margin: 10,
-    fontFamily: 'KosugiMaru-Regular',
-    fontSize: 16,
+    paddingVertical: 10,
   },
 });

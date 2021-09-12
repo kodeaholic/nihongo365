@@ -1,22 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid, FlatList } from 'react-native';
-import { Button, Text, Chip, Card, Divider, Badge } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { Header } from '../../components/commonHeader';
-import { useSelector, useDispatch } from 'react-redux';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { Text, Card, Divider } from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 // import * as programActions from '../../actions/programActions';
 // import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
-// import HTML from 'react-native-render-html';
 import { AudioPlayer } from '../../components/audio-player';
 // import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
 import _ from 'lodash';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import AutoHeightWebView from 'react-native-autoheight-webview';
+import { STATUS } from '../../constants/payment.constants';
+import { RegisterPopup } from '../../components/registerPopup';
 export const VocabLesson = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
@@ -27,6 +26,7 @@ export const VocabLesson = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -141,14 +141,7 @@ export const VocabLesson = ({ navigation }) => {
   }, [navigation, selectedLevel, selectedVocabLesson]);
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
-        {/* <Header
-          title={`Học từ vựng ${selectedLevel}`}
-          subtitle={`${selectedVocabLesson.chapterName} - ${
-            selectedVocabLesson.chapterDescription
-          } - ${selectedVocabLesson.name}`}
-        /> */}
-        {/* <ScrollView style={{ flex: 1 }}> */}
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         {!loading && (
           <FlatList
             data={vocabs}
@@ -161,8 +154,7 @@ export const VocabLesson = ({ navigation }) => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           </>
         )}
-        {/* </ScrollView> */}
-        {selectedVocabLesson.audioSrc && (
+        {!_.isEmpty(selectedVocabLesson.audioSrc) && service.length === 0 && (
           <View
             style={{
               // position: 'absolute',

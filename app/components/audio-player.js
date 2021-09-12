@@ -120,13 +120,13 @@ export const AudioPlayer = props => {
               setDuration(soundPlayer.getDuration());
               setDisplayDuration(true);
             } else {
-              ToastAndroid.showWithGravityAndOffset(
-                'Vấn đề mạng, không lấy được thời gian kết thúc file audio. Vui lòng bấm và đợi nghe cho đến hết bài học',
-                200,
-                ToastAndroid.TOP,
-                0,
-                100,
-              );
+              // ToastAndroid.showWithGravityAndOffset(
+              //   'Vấn đề mạng, không lấy được thời gian kết thúc file audio. Vui lòng bấm và đợi nghe cho đến hết bài học',
+              //   200,
+              //   ToastAndroid.TOP,
+              //   0,
+              //   100,
+              // );
               setDuration(1000);
               setDisplayDuration(false);
             }

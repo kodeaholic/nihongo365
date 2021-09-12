@@ -9,6 +9,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useSelector } from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+import { STATUS } from '../../constants/payment.constants';
+import { RegisterPopup } from '../../components/registerPopup';
+import _ from 'lodash';
 const ActivityIndicatorElement = () => {
   return (
     <View style={styles.activityIndicatorStyle}>
@@ -36,8 +40,48 @@ export const DialogLesson = ({ route, navigation }) => {
       },
     });
   }, [navigation, selectedDialogLesson, selectedLevel]);
+  /* popup */
+  const [popupVisible, setPopupVisible] = useState(false);
+  const user = useSelector(state => state.userReducer.user);
+  const [service, setService] = useState(selectedLevel); // fetch from fire-store
+  useEffect(() => {
+    if (selectedLevel !== 'N5') {
+      async function getDoc() {
+        let docRef;
+        if (user && user.id) {
+          try {
+            docRef = firestore()
+              .collection('services')
+              .doc(user.id)
+              .collection('SERVICES')
+              .doc(selectedLevel);
+            let doc = await docRef.get();
+            doc = doc.data();
+            if (_.isEmpty(doc) || doc.status !== STATUS.SUCCESS.value) {
+              setPopupVisible(true);
+              setService(selectedLevel);
+            } else {
+              setPopupVisible(false);
+              setService('');
+            }
+          } catch (e) {
+            setPopupVisible(true);
+            setService(selectedLevel);
+          }
+        }
+      }
+      getDoc();
+    }
+  }, [user, selectedLevel]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      {!_.isEmpty(service) && popupVisible && (
+        <RegisterPopup
+          service={service}
+          visible={popupVisible}
+          setVisible={setPopupVisible}
+        />
+      )}
       <View style={styles.container}>
         <WebView
           style={{ flex: 1 }}

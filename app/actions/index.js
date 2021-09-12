@@ -4,6 +4,6 @@ import * as navigationActions from './navigationActions';
 
 export const ActionCreators = Object.assign(
   {},
-  loginActions,
+  // loginActions,
   navigationActions,
 );

@@ -95,7 +95,7 @@ export const ChuHanBoardSelection = ({ navigation }) => {
               return (
                 <List.Accordion
                   key={`${board.id}-board`}
-                  title={`${board.title}: ${getLetters(board)}`}
+                  title={`${board.title}`}
                   left={props => <List.Icon {...props} icon="folder" />}
                   titleEllipsizeMode="tail">
                   <List.Item

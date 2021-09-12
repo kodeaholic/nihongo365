@@ -280,7 +280,7 @@ function MainStackScreen() {
         sceneAnimationEnabled={true}
         activeColor="#00aea2"
         inactiveColor="#95a5a6"
-        barStyle={{ backgroundColor: '#ffff' }}
+        barStyle={{ backgroundColor: '#fff', height: 56 }}
         {...tabBarProps}
         tabBarOptions={{ showLabel: true, labelPosition: 'below-icon' }}>
         <Tab.Screen

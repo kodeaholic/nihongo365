@@ -10,12 +10,15 @@ import { authHeader } from '../../api/authHeader';
 import * as programActions from '../../actions/programActions';
 import _ from 'lodash';
 import Skeleton from '@thevsstech/react-native-skeleton';
+import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+const windowHeight = Dimensions.get('window').height;
 export const TrialTestSelection = ({ navigation }) => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     if (!_.isEmpty(selectedLevel)) {
       setIsLoading(true);
@@ -76,12 +79,21 @@ export const TrialTestSelection = ({ navigation }) => {
   const windowWidth = Dimensions.get('window').width;
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#e5dfd7' }}>
         {true && (
           <>
-            <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
+            <ScrollView
+              style={{
+                backgroundColor: '#e5dfd7',
+                height: windowHeight,
+                paddingBottom: 50,
+              }}>
               {!isLoading && (
-                <View style={{ height: '100%', flex: 1 }}>
+                <View
+                  style={{
+                    flex: 1,
+                    paddingBottom: 50,
+                  }}>
                   {items.map(item => {
                     const navigateToTrial = () => {
                       dispatch(
@@ -352,6 +364,33 @@ export const TrialTestSelection = ({ navigation }) => {
                 </Skeleton>
               )}
             </ScrollView>
+            <View
+              style={{
+                height: 'auto',
+                alignItems: 'center',
+                justifyContent: 'center',
+                elevation: 3,
+                shadowRadius: 0,
+                width: 320,
+                marginHorizontal: windowWidth / 2 - 160,
+                zIndex: 3,
+                position: 'absolute',
+                bottom: 0,
+              }}>
+              <BannerAd
+                unitId={TestIds.BANNER}
+                size={BannerAdSize.BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: false,
+                }}
+                onAdLoaded={() => {
+                  setAdLoaded(true);
+                }}
+                onAdFailedToLoad={error => {
+                  // console.error('Advert failed to load: ', error);
+                }}
+              />
+            </View>
           </>
         )}
       </SafeAreaView>

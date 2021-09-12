@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
 import { Button, Text, Chip } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
@@ -13,6 +13,9 @@ import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import { BOARD_TYPE } from '../../constants/board';
 import _ from 'lodash';
+import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 const getLetters = board => {
   let letters = [];
   if (board.cards && board.cards.length) {
@@ -28,6 +31,7 @@ export const ChuHanBoardSelection = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     async function getBoards() {
       const headers = await authHeader();
@@ -67,9 +71,14 @@ export const ChuHanBoardSelection = ({ navigation }) => {
   const dispatch = useDispatch();
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#e5dfd7' }}>
         {/* <Header title={`Học chữ Hán ${selectedLevel}`} /> */}
-        <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
+        <ScrollView
+          style={{
+            backgroundColor: '#e5dfd7',
+            height: windowHeight,
+            paddingBottom: 50,
+          }}>
           {!isLoading &&
             boards.map(board => {
               const navigateToChuHanLesson = (type = BOARD_TYPE.THEORY) => {
@@ -125,6 +134,33 @@ export const ChuHanBoardSelection = ({ navigation }) => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           )}
         </ScrollView>
+        <View
+          style={{
+            height: 'auto',
+            alignItems: 'center',
+            justifyContent: 'center',
+            elevation: 3,
+            shadowRadius: 0,
+            width: 320,
+            marginHorizontal: windowWidth / 2 - 160,
+            zIndex: 3,
+            position: 'absolute',
+            bottom: 0,
+          }}>
+          <BannerAd
+            unitId={TestIds.BANNER}
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: false,
+            }}
+            onAdLoaded={() => {
+              setAdLoaded(true);
+            }}
+            onAdFailedToLoad={error => {
+              // console.error('Advert failed to load: ', error);
+            }}
+          />
+        </View>
       </SafeAreaView>
     </>
   );

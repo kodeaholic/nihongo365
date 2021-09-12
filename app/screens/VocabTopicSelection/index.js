@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
 import { Button, Text, Chip } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../../components/commonHeader';
@@ -11,6 +11,9 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
+import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 export const VocabTopicSelection = ({ navigation }) => {
   const [topics, setTopics] = useState([]);
   const [chapters, setChapters] = useState([]);
@@ -19,6 +22,7 @@ export const VocabTopicSelection = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     async function getTopics() {
       const headers = await authHeader();
@@ -127,9 +131,15 @@ export const VocabTopicSelection = ({ navigation }) => {
   };
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#e5dfd7' }}>
         {/* <Header title={`Học từ vựng ${selectedLevel}`} /> */}
-        <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
+        <ScrollView
+          style={{
+            backgroundColor: '#e5dfd7',
+            height: windowHeight,
+            paddingBottom: 50,
+            // marginBottom: 50,
+          }}>
           {!isLoading &&
             topics.map(topic => {
               return (
@@ -157,6 +167,33 @@ export const VocabTopicSelection = ({ navigation }) => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           )}
         </ScrollView>
+        <View
+          style={{
+            height: 'auto',
+            alignItems: 'center',
+            justifyContent: 'center',
+            elevation: 3,
+            shadowRadius: 0,
+            width: 320,
+            marginHorizontal: windowWidth / 2 - 160,
+            zIndex: 3,
+            position: 'absolute',
+            bottom: 0,
+          }}>
+          <BannerAd
+            unitId={TestIds.BANNER}
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: false,
+            }}
+            onAdLoaded={() => {
+              setAdLoaded(true);
+            }}
+            onAdFailedToLoad={error => {
+              // console.error('Advert failed to load: ', error);
+            }}
+          />
+        </View>
       </SafeAreaView>
     </>
   );

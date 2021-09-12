@@ -29,6 +29,7 @@ import {
   STATUS,
 } from '../../constants/payment.constants';
 import { getCurrentTime, getPostedTimeFromMillis } from '../../helpers/time';
+import { RANDOM_STR } from '../../helpers/random';
 const LENGTH_OF_CODE = 8;
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -66,9 +67,14 @@ const getButtonLabelFromStatus = (status, serviceName) => {
 };
 
 const RegisterModal = ({ service, setVisible, visible }) => {
-  console.log(service);
+  //   console.log(service);
   const user = useSelector(state => state.userReducer.user);
   const userName = user.email.split('@')[0];
+  const [transferMessage] = useState(
+    !_.isEmpty(service.transferMessage)
+      ? service.transferMessage
+      : userName + ' ' + service.serviceName,
+  );
   return (
     <Modal
       isVisible={visible}
@@ -476,7 +482,7 @@ const RegisterModal = ({ service, setVisible, visible }) => {
                       paddingHorizontal: 10,
                     }}
                     onPress={() => {
-                      Clipboard.setString(userName + ' ' + service.serviceName);
+                      Clipboard.setString(transferMessage);
                       ToastAndroid.showWithGravityAndOffset(
                         'Đã sao chép nội dung chuyển khoản',
                         ToastAndroid.SHORT,
@@ -485,7 +491,7 @@ const RegisterModal = ({ service, setVisible, visible }) => {
                         100,
                       );
                     }}>
-                    {userName + ' ' + service.serviceName}
+                    {transferMessage}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -541,6 +547,7 @@ const RegisterModal = ({ service, setVisible, visible }) => {
                         onPress: () => {
                           let newServiceRecord = { ...service };
                           newServiceRecord.status = STATUS.PENDING.value;
+                          newServiceRecord.transferMessage = transferMessage;
                           try {
                             firestore()
                               .collection('services')
@@ -549,14 +556,27 @@ const RegisterModal = ({ service, setVisible, visible }) => {
                               .doc(service.serviceName)
                               .set(newServiceRecord)
                               .then(() => {
-                                setVisible(false);
-                                ToastAndroid.showWithGravityAndOffset(
-                                  'Đăng ký thành công. Vui lòng chờ hệ thống xác nhận',
-                                  ToastAndroid.LONG,
-                                  ToastAndroid.TOP,
-                                  0,
-                                  100,
-                                );
+                                firestore()
+                                  .collection('services')
+                                  .doc(user.id)
+                                  .set(
+                                    {
+                                      updatedAt: Date.now(),
+                                      userId: user.id,
+                                      userName: user.name,
+                                    },
+                                    { merge: true },
+                                  )
+                                  .then(() => {
+                                    setVisible(false);
+                                    ToastAndroid.showWithGravityAndOffset(
+                                      'Đăng ký thành công. Vui lòng chờ hệ thống xác nhận',
+                                      ToastAndroid.LONG,
+                                      ToastAndroid.TOP,
+                                      0,
+                                      100,
+                                    );
+                                  });
                               });
                           } catch (e) {
                             setVisible(false);
@@ -876,6 +896,68 @@ const RegisterModal = ({ service, setVisible, visible }) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
+                <View
+                  onPress={() => {}}
+                  style={{
+                    height: 60,
+                    backgroundColor: '#fff',
+                    marginTop: 0,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    padding: 0,
+                  }}>
+                  <MaterialCommunityIcons
+                    name="content-paste"
+                    size={26}
+                    style={{
+                      marginLeft: 0,
+                      width: 46,
+                      textAlign: 'center',
+                    }}
+                    color="#5cdb5e"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      height: 60,
+                      width: windowWidth - 126,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        backgroundColor: '#5cdb5e',
+                        minWidth: 120,
+                        height: 35,
+                        margin: 0,
+                        fontFamily: 'SF-Pro-Detail-Regular',
+                        fontSize: 15,
+                        fontWeight: 'normal',
+                        color: '#fff',
+                        textAlign: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                        paddingVertical: 7,
+                        borderRadius: 10,
+                        paddingHorizontal: 10,
+                      }}
+                      onPress={() => {
+                        Clipboard.setString(service.transferMessage);
+                        ToastAndroid.showWithGravityAndOffset(
+                          'Đã sao chép nội dung chuyển khoản',
+                          ToastAndroid.SHORT,
+                          ToastAndroid.TOP,
+                          0,
+                          100,
+                        );
+                      }}>
+                      {service.transferMessage}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </>
             )}
         </ScrollView>
@@ -908,7 +990,7 @@ export const Services = ({ navigation }) => {
               // console.log(item);
               return item;
             });
-            console.log(items);
+            // console.log(items);
             setServices(items);
           });
       } catch (e) {
@@ -922,7 +1004,7 @@ export const Services = ({ navigation }) => {
     }
   }, [modalVisible]);
   useEffect(() => {
-    console.log(selectedService);
+    // console.log(selectedService);
   }, [selectedService]);
   return (
     <SafeAreaView

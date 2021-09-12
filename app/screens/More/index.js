@@ -82,6 +82,9 @@ export const More = ({ navigation }) => {
             if (user.role !== 'admin') {
               navigation.navigate('Services');
             }
+            if (user.role === 'admin') {
+              navigation.navigate('AdminServices');
+            }
           }}
           style={{
             height: 60,

@@ -48,6 +48,7 @@ import { NewsDetail } from '../screens/News/detail';
 import { Chat } from '../screens/Chat';
 import Rooms from '../screens/ChatRoom';
 import { Services } from '../screens/More/services';
+import { AdminServices } from '../screens/More/admin/services';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -187,6 +188,7 @@ function MoreStackScreen() {
       }}>
       <MoreStack.Screen name="More" component={More} />
       <MoreStack.Screen name="Services" component={Services} />
+      <MoreStack.Screen name="AdminServices" component={AdminServices} />
     </MoreStack.Navigator>
   );
 }

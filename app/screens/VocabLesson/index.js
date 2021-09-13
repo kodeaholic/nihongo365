@@ -26,7 +26,6 @@ export const VocabLesson = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -154,7 +153,7 @@ export const VocabLesson = ({ navigation }) => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           </>
         )}
-        {!_.isEmpty(selectedVocabLesson.audioSrc) && service.length === 0 && (
+        {!_.isEmpty(selectedVocabLesson.audioSrc) && (
           <View
             style={{
               // position: 'absolute',

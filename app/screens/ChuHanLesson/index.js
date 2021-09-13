@@ -14,6 +14,7 @@ import {
   Dimensions,
   ActivityIndicator,
   BackHandler,
+  TouchableOpacity,
 } from 'react-native';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import _ from 'lodash';
@@ -277,45 +278,76 @@ export const ChuHanLesson = ({ navigation }) => {
     );
   };
   const ChuHanWebView = ({ card }) => {
-    const [src] = useState(card.svgSrc);
-    // const [enabledJavascript, setEnabledJavascript] = useState(true);
-    // useEffect(() => {
-    //   if (!_.isEmpty(src)) {
-    //     const backAction = () => {
-    //       setEnabledJavascript(false);
-    //     };
-    //     const backHandler = BackHandler.addEventListener(
-    //       'hardwareBackPress',
-    //       backAction,
-    //     );
-    //     navigation.addListener('beforeRemove', e => {
-    //       setEnabledJavascript(false);
-    //     });
-    //     return () => {
-    //       backHandler.remove();
-    //       navigation.removeListener('beforeRemove');
-    //     };
-    //   }
-    // });
+    const [originalSrc] = useState(card.svgSrc);
+    const [src, setSrc] = useState(card.svgSrc);
+    const [clickable, setClickable] = useState(true);
+    useEffect(() => {
+      if (_.isEmpty(src)) {
+        setClickable(false);
+      } else {
+        setClickable(true);
+      }
+    }, [src]);
     return (
       <>
         <View
           style={{
             minHeight: 200,
             height: 'auto',
+            // borderWidth: 1,
           }}>
-          <WebView
-            // injectJavaScript={myInjectedJs}
-            // injectedJavaScript={myInjectedJs}
-            style={{
-              minHeight: 200,
-              height: 'auto',
-            }}
-            source={{
-              uri: src,
-            }}
-          />
+          {!_.isEmpty(src) && (
+            <WebView
+              // injectJavaScript={myInjectedJs}
+              // injectedJavaScript={myInjectedJs}
+              style={{
+                minHeight: 200,
+                height: 'auto',
+              }}
+              source={{
+                uri: src,
+              }}
+            />
+          )}
         </View>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            height: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 5,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              setSrc(currentSrc => {
+                setTimeout(() => {
+                  setSrc(originalSrc);
+                }, 500);
+                return '';
+              });
+            }}
+            disabled={!clickable}
+            style={{
+              borderWidth: 0.5,
+              height: 35,
+              borderRadius: 5,
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 60,
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontFamily: 'SF-Pro-Detail-Regular',
+                color: '#000',
+                backgroundColor: '#fff',
+              }}>
+              Viết lại
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View
           style={{
             flex: 5,
@@ -386,24 +418,25 @@ export const ChuHanLesson = ({ navigation }) => {
               <ScrollView
                 style={{
                   flex: 1,
-                  backgroundColor: '#dbd4c8',
+                  backgroundColor: '#fff',
                   paddingBottom: 10,
                   borderBottomWidth: 0.5,
                 }}>
                 {!_.isEmpty(selectedCard) && (
                   <GestureRecognizer
-                    onSwipeUp={() => {
-                      moveCard(+1);
-                    }}
-                    onSwipeDown={() => {
-                      moveCard(-1);
-                    }}
-                    onSwipeLeft={() => {
-                      moveCard(+1);
-                    }}
-                    onSwipeRight={() => {
-                      moveCard(-1);
-                    }}>
+                  // onSwipeUp={() => {
+                  //   moveCard(+1);
+                  // }}
+                  // onSwipeDown={() => {
+                  //   moveCard(-1);
+                  // }}
+                  // onSwipeLeft={() => {
+                  //   moveCard(+1);
+                  // }}
+                  // onSwipeRight={() => {
+                  //   moveCard(-1);
+                  // }}
+                  >
                     <Card style={styles.card} key={selectedCard.id}>
                       <ChuHanWebView card={selectedCard} />
                       {!_.isEmpty(selectedCard.note) && (
@@ -486,7 +519,7 @@ export const ChuHanLesson = ({ navigation }) => {
                               margin: 5,
                             }}
                             source={{
-                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                              html: `<div style="background-color: #fff; margin: 0px; padding: 0px;">${htmlEntityDecode(
                                 selectedCard.onTextExample,
                               )}</div>`,
                             }}
@@ -536,7 +569,7 @@ export const ChuHanLesson = ({ navigation }) => {
                               margin: 5,
                             }}
                             source={{
-                              html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
+                              html: `<div style="background-color: #fff; margin: 0px; padding: 0px;">${htmlEntityDecode(
                                 selectedCard.kunTextExample,
                               )}</div>`,
                             }}
@@ -575,7 +608,7 @@ export const ChuHanLesson = ({ navigation }) => {
                   textAlign: 'center',
                   fontFamily: 'SF-Pro-Detail-Regular',
                   //borderBottomWidth: 0.5,
-                  backgroundColor: '#dbd4c8',
+                  backgroundColor: '#fff',
                   color: '#000',
                 }}>
                 Bài tập củng cố
@@ -644,7 +677,7 @@ const styles = StyleSheet.create({
   },
   card: {
     margin: 0,
-    backgroundColor: '#dbd4c8',
+    backgroundColor: '#fff',
     flex: 1,
   },
 });

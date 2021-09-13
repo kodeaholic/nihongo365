@@ -140,57 +140,44 @@ export const VocabTopicSelection = ({ navigation }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#e5dfd7' }}>
-        {/* <Header title={`Học từ vựng ${selectedLevel}`} /> */}
-        <ScrollView
-          style={{
-            backgroundColor: '#e5dfd7',
-            height: windowHeight,
-            paddingBottom: 50,
-            // marginBottom: 50,
-          }}>
-          {!isLoading &&
-            topics.map(topic => {
-              return (
-                <Topic
-                  key={topic.id}
-                  item={topic}
-                  listOfChapters={chapters.filter(
-                    item => item.topic === topic.id,
-                  )}
-                />
-              );
-            })}
-          {!isLoading && topics.length === 0 && (
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'SF-Pro-Display-Regular',
-                  textAlign: 'center',
-                }}>
-                Chưa có chủ đề nào được tạo
-              </Text>
-            </View>
-          )}
-          {isLoading && (
-            <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-          )}
-        </ScrollView>
         <View
           style={{
-            height: 'auto',
-            alignItems: 'center',
-            justifyContent: 'center',
-            elevation: 3,
-            shadowRadius: 0,
-            width: 320,
-            marginHorizontal: windowWidth / 2 - 160,
-            zIndex: 3,
-            position: 'absolute',
-            bottom: 0,
+            backgroundColor: '#e5dfd7',
+            height: windowHeight - 56 * 2 - 70,
           }}>
+          <ScrollView>
+            {!isLoading &&
+              topics.map(topic => {
+                return (
+                  <Topic
+                    key={topic.id}
+                    item={topic}
+                    listOfChapters={chapters.filter(
+                      item => item.topic === topic.id,
+                    )}
+                  />
+                );
+              })}
+            {!isLoading && topics.length === 0 && (
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'SF-Pro-Display-Regular',
+                    textAlign: 'center',
+                  }}>
+                  Chưa có chủ đề nào được tạo
+                </Text>
+              </View>
+            )}
+            {isLoading && (
+              <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+            )}
+          </ScrollView>
+        </View>
+        <View style={{ height: 70 }}>
           <BannerAd
             unitId={TestIds.BANNER}
-            size={BannerAdSize.BANNER}
+            size={BannerAdSize.SMART_BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly: false,
             }}

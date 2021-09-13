@@ -17,21 +17,18 @@ import {
 // import Modal from 'react-native-modal';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
-import { Dimensions, Platform } from 'react-native';
-import {
-  getPostedTimeFromMillis,
-  getPostTimeFromCreatedAt,
-} from '../../helpers/time';
+import { Dimensions } from 'react-native';
 // import DebounceInput from '../../components/DebounceInput';
-import * as programActions from '../../actions/programActions';
 import { useDispatch, useSelector } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import { ROOM_TYPES } from '../../constants/chat.constants';
 const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+// const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
 import { isIphoneX } from '../../lib/isIphoneX';
 import { RANDOM_STR } from '../../helpers/random';
+import { FAB } from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const isIPX = isIphoneX();
 const TimeCounter = ({ time }) => {
   const [timeInMillis, setTimeInMillis] = useState(Date.now());
@@ -110,13 +107,11 @@ const Rooms = ({ navigation }) => {
   useEffect(() => {
     setLoading(true);
     setRefreshing(false);
-    // navigation.setOptions({
-    //   headerProps: {
-    //     title: 'Nihongo365 Chat',
-    //     disableBackButton: true,
-    //     leftAction: undefined,
-    //   },
-    // });
+    navigation.setOptions({
+      headerProps: {
+        title: 'Nihongo365 Chat',
+      },
+    });
     const isAdmin = _.get(user, 'role') === 'admin';
     const unsubscribe = firestore()
       .collection('rooms')
@@ -205,7 +200,7 @@ const Rooms = ({ navigation }) => {
      * unsubscribe listener
      */
     return () => unsubscribe();
-  }, [user, refresh]);
+  }, [user, refresh, navigation]);
 
   const renderImage = room => {
     const isAdmin = user.role === 'admin';
@@ -290,15 +285,9 @@ const Rooms = ({ navigation }) => {
               const { lastMessage } = item;
               const length = items.length;
               const navigateToItem = () => {
-                // dispatch(
-                //   programActions.newsArticleSelected({
-                //     selectedNewsArticle: {
-                //       item,
-                //     },
-                //   }),
-                // );
                 navigation.navigate('Chat', {
                   roomId: item.id,
+                  roomInfo: { name: item.name, type: item.type, id: item.id },
                 });
               };
               return (
@@ -401,6 +390,19 @@ const Rooms = ({ navigation }) => {
           />
         )}
       </View>
+      <FAB
+        style={styles.fab}
+        onPress={() => {
+          navigation.navigate('Room');
+        }}
+        icon={({ size, color }) => (
+          <MaterialCommunityIcons
+            name="tooltip-plus-outline"
+            color="#fff"
+            size={24}
+          />
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -510,6 +512,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: '#EAF8D2',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 5,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(219, 10, 91, 1)',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 6.65,
+
+    elevation: 8,
+    textAlign: 'center',
+    alignContent: 'center',
   },
 });
 

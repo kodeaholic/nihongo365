@@ -40,7 +40,7 @@ const renderMessageTime = time => (
 );
 export const Chat = ({ route, navigation }) => {
   const user = useSelector(state => state.userReducer.user);
-  const { roomId } = route.params;
+  const { roomId, roomInfo } = route.params;
   const [userProfile, setUserProfile] = useState(undefined);
   const [loading, setLoading] = useState(false);
   // const defaultMessages = [
@@ -149,6 +149,15 @@ export const Chat = ({ route, navigation }) => {
   // ];
   const [messages, setMessages] = useState([]);
   useEffect(() => {
+    const getRoomName = (info = {}) => {
+      switch (info.type) {
+        case ROOM_TYPES.MEVSADMIN:
+          return user.role === 'user' ? 'Admin' : info.name;
+      }
+    };
+    /** Update header */
+    const title = getRoomName(roomInfo);
+    navigation.setOptions({ headerProps: { title, disableBackButton: true } });
     let unsubscribe;
     let items;
     if (!_.isEmpty(user) && !_.isEmpty(roomId)) {
@@ -193,7 +202,7 @@ export const Chat = ({ route, navigation }) => {
       navigation.navigate('ChatRooms');
     }
     return () => unsubscribe && unsubscribe();
-  }, [user, roomId, navigation]);
+  }, [user, roomId, roomInfo, navigation]);
   const sendMessage = (type, content, isInverted) => {
     // console.log(type, content, isInverted);
     const lastMessage = {

@@ -49,6 +49,7 @@ import { Chat } from '../screens/Chat';
 import Rooms from '../screens/ChatRoom';
 import { Services } from '../screens/More/services';
 import { AdminServices } from '../screens/More/admin/services';
+import { Room } from '../screens/ChatRoom/room';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -221,27 +222,28 @@ const ChatStack = createStackNavigator();
 function ChatStackScreen() {
   const stackProps = DeviceInfo.isTablet()
     ? { headerMode: 'none' }
-    : { headerMode: 'none' };
+    : { headerMode: 'float' };
   return (
     <ChatStack.Navigator
       {...stackProps}
-      // screenOptions={{
-      //   header: ({ scene }) => {
-      //     let { headerProps } = scene.descriptor.options;
-      //     if (_.isEmpty(headerProps)) {
-      //       headerProps = {};
-      //     }
-      //     Object.assign(headerProps, {
-      //       disableBackButton: true,
-      //       title: 'Nihongo365 Chat',
-      //       leftAction: undefined,
-      //     });
-      //     return <Header {...headerProps} />;
-      //   },
-      // }}
-    >
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          if (_.isEmpty(headerProps)) {
+            headerProps = {};
+          }
+          Object.assign(headerProps, {
+            disableBackButton: true,
+            //leftAction: undefined,
+            enableLogoutButton: false,
+            centerTitle: true,
+          });
+          return <Header {...headerProps} />;
+        },
+      }}>
       <ChatStack.Screen name="ChatRooms" component={Rooms} />
       <ChatStack.Screen name="Chat" component={Chat} />
+      <ChatStack.Screen name="Room" component={Room} />
     </ChatStack.Navigator>
   );
 }

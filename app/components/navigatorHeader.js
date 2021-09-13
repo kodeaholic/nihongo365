@@ -40,6 +40,7 @@ export const Header = props => {
     enableLogoutButton = true,
     leftAction = {},
     screen = '',
+    centerTitle = false,
   } = props;
   const navigation = useNavigation();
   const _goBack = () => {
@@ -51,7 +52,9 @@ export const Header = props => {
   };
   const dispatch = useDispatch();
   let contentProps = {
-    titleStyle: styles.title,
+    titleStyle: !centerTitle
+      ? styles.title
+      : { color: '#fff', textAlign: 'center', alignItems: 'center' },
     title: title,
   };
   if (!_.isEmpty(subtitle)) {

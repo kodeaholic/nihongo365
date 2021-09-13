@@ -263,6 +263,7 @@ export const Chat = ({ route, navigation }) => {
           showUserName={true}
           isIPhoneX={isIPX}
           renderMessageTime={renderMessageTime}
+          usePopView={false}
         />
       )}
     </>

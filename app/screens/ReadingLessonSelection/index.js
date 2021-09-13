@@ -79,6 +79,10 @@ export const ReadingLessonSelection = ({ navigation }) => {
               return (
                 <List.Item
                   title={`${board.title}`}
+                  titleStyle={{
+                    fontFamily: 'SF-Pro-Detail-Regular',
+                    color: '#000',
+                  }}
                   key={board.id}
                   titleEllipsizeMode="tail"
                   left={props => <List.Icon {...props} icon="folder" />}

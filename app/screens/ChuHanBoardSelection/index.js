@@ -96,10 +96,12 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                 <List.Accordion
                   key={`${board.id}-board`}
                   title={`${board.title}`}
+                  titleStyle={{ color: '#000' }}
                   left={props => <List.Icon {...props} icon="folder" />}
                   titleEllipsizeMode="tail">
                   <List.Item
                     title={'Lý thuyết'}
+                    titleStyle={{ color: '#000' }}
                     key={`${board.id}-theory`}
                     titleEllipsizeMode="tail"
                     onPress={() => {
@@ -109,6 +111,7 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                   {!_.isEmpty(board.quiz) && board.quiz.length && (
                     <List.Item
                       title={'Bài tập củng cố'}
+                      titleStyle={{ color: '#000' }}
                       key={`${board.id}-excercise`}
                       titleEllipsizeMode="tail"
                       onPress={() => {

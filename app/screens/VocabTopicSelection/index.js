@@ -68,6 +68,10 @@ export const VocabTopicSelection = ({ navigation }) => {
     return (
       <List.Accordion
         title={`${data.name} - ${data.description}`}
+        titleStyle={{
+          fontFamily: 'SF-Pro-Detail-Regular',
+          color: '#000',
+        }}
         id={data.id}
         left={() => <List.Icon {...props} icon="folder" />}>
         {listOfLessons.map(lesson => {
@@ -93,6 +97,10 @@ export const VocabTopicSelection = ({ navigation }) => {
           return (
             <List.Item
               title={`${lesson.name} - ${lesson.meaning}`}
+              titleStyle={{
+                fontFamily: 'SF-Pro-Detail-Regular',
+                color: '#000',
+              }}
               key={lesson.id}
               titleEllipsizeMode="tail"
               onPress={navigateToVocabLesson}
@@ -210,10 +218,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 8,
     fontSize: 20,
+    fontFamily: 'SF-Pro-Detail-Regular',
+    color: '#000',
   },
   description: {
     margin: 8,
     fontSize: 20,
+    fontFamily: 'SF-Pro-Detail-Regular',
+    color: '#000',
   },
   //   container: {
   //     flex: 1,

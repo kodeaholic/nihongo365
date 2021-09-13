@@ -110,6 +110,10 @@ export const TrialTestSelection = ({ navigation }) => {
                     return (
                       <List.Item
                         title={`${item.title}`}
+                        titleStyle={{
+                          fontFamily: 'SF-Pro-Detail-Regular',
+                          color: '#000',
+                        }}
                         key={item.id}
                         titleEllipsizeMode="tail"
                         left={props => <List.Icon {...props} icon="folder" />}
@@ -121,246 +125,24 @@ export const TrialTestSelection = ({ navigation }) => {
               )}
               {isLoading && (
                 <Skeleton speed={1000}>
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
-                  <View
-                    style={[
-                      styles.skeletonRow,
-                      {
-                        marginTop: 10,
-                        marginLeft: 8,
-                        marginRight: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        height: 40,
-                        width: windowWidth - 16,
-                        borderRadius: 3,
-                      },
-                    ]}
-                  />
+                  {[...Array(16).keys()].map((item, index) => (
+                    <View
+                      key={'skeleton-' + index}
+                      style={[
+                        styles.skeletonRow,
+                        {
+                          marginTop: 10,
+                          marginLeft: 8,
+                          marginRight: 8,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          height: 40,
+                          width: windowWidth - 16,
+                          borderRadius: 3,
+                        },
+                      ]}
+                    />
+                  ))}
                 </Skeleton>
               )}
             </ScrollView>

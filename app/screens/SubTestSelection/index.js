@@ -158,6 +158,10 @@ export const SubTestSelection = ({ navigation }) => {
                     return (
                       <List.Item
                         title={`${item.title}`}
+                        titleStyle={{
+                          fontFamily: 'SF-Pro-Detail-Regular',
+                          color: '#000',
+                        }}
                         key={item.id}
                         titleEllipsizeMode="tail"
                         left={props => <List.Icon {...props} icon="folder" />}

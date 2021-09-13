@@ -242,7 +242,7 @@ const Rooms = ({ navigation }) => {
           } else {
             return (
               <Image
-                source={require('../../assets/girl.png')}
+                source={require('../../assets/default_avatar.png')}
                 style={styles.roomAvatar}
                 resizeMethod="auto"
               />

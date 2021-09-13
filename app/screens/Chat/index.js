@@ -171,7 +171,9 @@ export const Chat = ({ route, navigation }) => {
       } else {
         setUserProfile({
           id: user.id,
-          avatar: user.photo,
+          avatar: user.photo
+            ? user.photo
+            : require('../../assets/default_avatar.png'),
         });
       }
       unsubscribe = firestore()

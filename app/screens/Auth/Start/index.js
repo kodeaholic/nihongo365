@@ -107,7 +107,7 @@ export default function StartScreen({ navigation }) {
                 .collection('USERS')
                 .doc(user.id)
                 .get();
-              if (_.isEmpty(res)) {
+              if (_.isEmpty(res.data())) {
                 //chưa đăng nhập bao giờ
                 await firestore()
                   .collection('USERS')

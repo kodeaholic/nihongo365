@@ -56,9 +56,11 @@ export const ChuHanLesson = ({ navigation }) => {
   };
   const trueColor = '#5cdb5e';
   const falseColor = '#f00';
-  const menus = _.get(selectedChuHanLesson, 'board.cards').map(item => {
-    return { ...item, name: item.letter };
-  });
+  const menus = _.get(selectedChuHanLesson, 'board.cards').map(
+    (item, index) => {
+      return { ...item, name: item.letter, index: index };
+    },
+  );
   useEffect(() => {
     if (!_.isEmpty(selectedChuHanLesson)) {
       setLoading(false);
@@ -73,18 +75,18 @@ export const ChuHanLesson = ({ navigation }) => {
       navigation.setOptions({ headerProps: { title, subtitle } });
     }
   }, [navigation, selectedChuHanLesson, selectedLevel]);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    // component will unmount
-    return () => {
-      console.log('cleaned up');
-      dispatch(
-        programActions.chuHanLessonSelected({
-          selectedChuHanLesson: {},
-        }),
-      );
-    };
-  }, [dispatch]);
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   // component will unmount
+  //   return () => {
+  //     console.log('cleaned up');
+  //     dispatch(
+  //       programActions.chuHanLessonSelected({
+  //         selectedChuHanLesson: {},
+  //       }),
+  //     );
+  //   };
+  // }, [dispatch]);
   const renderQuizItem = ({ item, index }) => {
     const quiz = item;
     const screenWidth = Dimensions.get('window').width;
@@ -111,7 +113,14 @@ export const ChuHanLesson = ({ navigation }) => {
               }}>
               {index + 1}
             </Badge>
-            <Text style={{ fontSize: 16 }}>{quiz.question}</Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'SF-Pro-Detail-Regular',
+                color: '#000',
+              }}>
+              {quiz.question}
+            </Text>
           </View>
           <View
             style={{
@@ -150,10 +159,16 @@ export const ChuHanLesson = ({ navigation }) => {
                     }}
                     labelStyle={
                       _.isEmpty(value['' + index])
-                        ? {}
+                        ? { fontFamily: 'SF-Pro-Detail-Regular', color: '#000' }
                         : quiz.answer === 'A'
-                        ? { color: trueColor }
-                        : { color: falseColor }
+                        ? {
+                            color: trueColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
+                        : {
+                            color: falseColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
                     }
                   />
                 </View>
@@ -168,10 +183,16 @@ export const ChuHanLesson = ({ navigation }) => {
                     }}
                     labelStyle={
                       _.isEmpty(value['' + index])
-                        ? {}
+                        ? { fontFamily: 'SF-Pro-Detail-Regular', color: '#000' }
                         : quiz.answer === 'B'
-                        ? { color: trueColor }
-                        : { color: falseColor }
+                        ? {
+                            color: trueColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
+                        : {
+                            color: falseColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
                     }
                   />
                 </View>
@@ -189,10 +210,16 @@ export const ChuHanLesson = ({ navigation }) => {
                     }}
                     labelStyle={
                       _.isEmpty(value['' + index])
-                        ? {}
+                        ? { fontFamily: 'SF-Pro-Detail-Regular', color: '#000' }
                         : quiz.answer === 'C'
-                        ? { color: trueColor }
-                        : { color: falseColor }
+                        ? {
+                            color: trueColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
+                        : {
+                            color: falseColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
                     }
                     color={
                       _.isEmpty(value['' + index])
@@ -214,10 +241,16 @@ export const ChuHanLesson = ({ navigation }) => {
                     }}
                     labelStyle={
                       _.isEmpty(value['' + index])
-                        ? {}
+                        ? { fontFamily: 'SF-Pro-Detail-Regular', color: '#000' }
                         : quiz.answer === 'D'
-                        ? { color: trueColor }
-                        : { color: falseColor }
+                        ? {
+                            color: trueColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
+                        : {
+                            color: falseColor,
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                          }
                     }
                   />
                 </View>
@@ -245,45 +278,44 @@ export const ChuHanLesson = ({ navigation }) => {
   };
   const ChuHanWebView = ({ card }) => {
     const [src] = useState(card.svgSrc);
-    const [enabledJavascript, setEnabledJavascript] = useState(true);
-    useEffect(() => {
-      if (!_.isEmpty(src)) {
-        const backAction = () => {
-          setEnabledJavascript(false);
-        };
-        const backHandler = BackHandler.addEventListener(
-          'hardwareBackPress',
-          backAction,
-        );
-        navigation.addListener('beforeRemove', e => {
-          setEnabledJavascript(false);
-        });
-        return () => {
-          backHandler.remove();
-          navigation.removeListener('beforeRemove');
-        };
-      }
-    });
+    // const [enabledJavascript, setEnabledJavascript] = useState(true);
+    // useEffect(() => {
+    //   if (!_.isEmpty(src)) {
+    //     const backAction = () => {
+    //       setEnabledJavascript(false);
+    //     };
+    //     const backHandler = BackHandler.addEventListener(
+    //       'hardwareBackPress',
+    //       backAction,
+    //     );
+    //     navigation.addListener('beforeRemove', e => {
+    //       setEnabledJavascript(false);
+    //     });
+    //     return () => {
+    //       backHandler.remove();
+    //       navigation.removeListener('beforeRemove');
+    //     };
+    //   }
+    // });
     return (
       <>
-        <WebView
+        <View
           style={{
             minHeight: 200,
             height: 'auto',
-          }}
-          source={{
-            uri: src,
-          }}
-          scalesPageToFit={true}
-          viewportContent={'width=device-width, user-scalable=no'}
-          injectedJavaScript={`
-            (function(){
-              setInterval(function(){document.location.reload(true)}, 16000);
-            })();
-          `}
-          javaScriptEnabled={enabledJavascript}
-          cacheEnabled={false}
-        />
+          }}>
+          <WebView
+            // injectJavaScript={myInjectedJs}
+            // injectedJavaScript={myInjectedJs}
+            style={{
+              minHeight: 200,
+              height: 'auto',
+            }}
+            source={{
+              uri: src,
+            }}
+          />
+        </View>
         <View
           style={{
             flex: 5,
@@ -298,6 +330,8 @@ export const ChuHanLesson = ({ navigation }) => {
             style={{
               fontSize: 18,
               textAlign: 'center',
+              fontFamily: 'SF-Pro-Detail-Regular',
+              color: '#000',
             }}>
             {card.meaning}
           </Text>
@@ -387,6 +421,8 @@ export const ChuHanLesson = ({ navigation }) => {
                                 marginRight: 5,
                                 marginLeft: 5,
                                 textAlign: 'center',
+                                fontFamily: 'SF-Pro-Detail-Regular',
+                                color: '#000',
                               }}>
                               Mẹo nhớ
                             </Text>
@@ -404,7 +440,8 @@ export const ChuHanLesson = ({ navigation }) => {
                                 fontSize: 18,
                                 marginRight: 5,
                                 marginLeft: 10,
-                                // textAlign: 'center',
+                                fontFamily: 'SF-Pro-Detail-Regular',
+                                color: '#000',
                               }}>
                               {selectedCard.note}
                             </Text>
@@ -423,6 +460,8 @@ export const ChuHanLesson = ({ navigation }) => {
                               marginRight: 5,
                               marginLeft: 5,
                               textAlign: 'center',
+                              fontFamily: 'SF-Pro-Detail-Regular',
+                              color: '#000',
                             }}>
                             On
                           </Text>
@@ -436,6 +475,7 @@ export const ChuHanLesson = ({ navigation }) => {
                             style={{
                               fontSize: 18,
                               margin: 5,
+                              fontFamily: 'SF-Pro-Detail-Regular',
                             }}>
                             {selectedCard.onText}
                           </Text>
@@ -469,6 +509,8 @@ export const ChuHanLesson = ({ navigation }) => {
                               marginRight: 5,
                               marginLeft: 5,
                               textAlign: 'center',
+                              fontFamily: 'SF-Pro-Detail-Regular',
+                              color: '#000',
                             }}>
                             Kun
                           </Text>
@@ -482,6 +524,8 @@ export const ChuHanLesson = ({ navigation }) => {
                             style={{
                               fontSize: 18,
                               margin: 5,
+                              fontFamily: 'SF-Pro-Detail-Regular',
+                              color: '#000',
                             }}>
                             {selectedCard.kunText}
                           </Text>
@@ -532,6 +576,7 @@ export const ChuHanLesson = ({ navigation }) => {
                   fontFamily: 'SF-Pro-Detail-Regular',
                   //borderBottomWidth: 0.5,
                   backgroundColor: '#dbd4c8',
+                  color: '#000',
                 }}>
                 Bài tập củng cố
               </Text>

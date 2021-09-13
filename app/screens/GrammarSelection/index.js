@@ -12,7 +12,7 @@ import {
 // import { Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { List } from 'react-native-paper';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import * as programActions from '../../actions/programActions';

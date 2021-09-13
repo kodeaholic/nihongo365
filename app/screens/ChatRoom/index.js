@@ -25,11 +25,8 @@ import { ROOM_TYPES } from '../../constants/chat.constants';
 const windowWidth = Dimensions.get('window').width;
 // const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
-import { isIphoneX } from '../../lib/isIphoneX';
-import { RANDOM_STR } from '../../helpers/random';
 import { FAB } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-const isIPX = isIphoneX();
 const TimeCounter = ({ time }) => {
   const [timeInMillis, setTimeInMillis] = useState(Date.now());
   useEffect(() => {
@@ -148,50 +145,6 @@ const Rooms = ({ navigation }) => {
             // console.log(item);
             return item;
           });
-        if (!isAdmin && rooms && rooms.length === 0) {
-          const time = Date.now();
-          const lastMessage = {
-            type: 'text',
-            content:
-              'Chào mừng bạn đã đến với Nihongo365! Hãy cùng Nihongo365 xây dựng nên cộng đồng người học tiếng Nhật nhé! Thân ái!',
-            targetId: 'ADMIN_ID', // ID of the person sent this message
-            chatInfo: {
-              // sender information
-              avatar: require('../../assets/logo.png'),
-              // id: 'ADMIN_ID',
-            },
-            renderTime: true,
-            sendStatus: 1,
-            time: time,
-            isIPhoneX: isIPX,
-          };
-          const newRoom = {
-            type: ROOM_TYPES.MEVSADMIN,
-            name: user.name,
-            avatar: user.photo,
-            lastMessage,
-          };
-          if (!isAdmin) {
-            newRoom.ownerId = user.id;
-            newRoom.ownerRef = firestore().doc('USERS/' + user.id);
-          }
-          try {
-            firestore()
-              .collection('rooms')
-              .add(newRoom)
-              .then(docRef => {
-                firestore()
-                  .collection('rooms')
-                  .doc(docRef.id)
-                  .collection('MESSAGES')
-                  .doc(time + RANDOM_STR(5))
-                  .set(lastMessage)
-                  .then(() => {});
-              });
-          } catch (e) {
-            // console.log(e);
-          }
-        }
         setItems(rooms);
         // console.log(rooms);
         setLoading(false);

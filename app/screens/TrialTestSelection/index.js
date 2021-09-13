@@ -1,6 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ToastAndroid,
+  Dimensions,
+  RefreshControl,
+  ActivityIndicator,
+  FlatList,
+} from 'react-native';
 // import { Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { List, FAB } from 'react-native-paper';
@@ -19,55 +27,84 @@ export const TrialTestSelection = ({ navigation }) => {
     state => state.programReducer.selectedLevel,
   );
   const [adLoaded, setAdLoaded] = useState(false);
-  useEffect(() => {
-    if (!_.isEmpty(selectedLevel)) {
-      setIsLoading(true);
-      async function getItems() {
-        const headers = await authHeader();
-        const requestOptions = {
-          method: 'GET',
-          headers: headers,
-        };
-        let url = `${apiConfig.baseUrl}${
-          apiConfig.apiEndpoint
-        }/trial-tests?level=${selectedLevel}&limit=1000`;
-        try {
-          setIsLoading(true);
-          const response = await fetch(url, requestOptions);
-          const data = await response.json();
-          if (data.code) {
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [page, setPage] = useState(1);
+
+  const fetchItems = async (filter, more = false) => {
+    let list = [];
+    const headers = await authHeader();
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/trial-tests?`;
+    if (_.get(filter, 'page')) {
+      url += `&page=${_.get(filter, 'page')}`;
+    }
+    if (_.get(filter, 'limit')) {
+      url += `&limit=${_.get(filter, 'limit')}`;
+    }
+    if (_.get(filter, 'level')) {
+      url += `&level=${_.get(filter, 'level')}`;
+    }
+    try {
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.code) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Kết nối mạng không ổn định',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+      } else {
+        list = data.results;
+        if (_.isEmpty(list)) {
+          const msg = 'Chưa có mục nào được tạo. Vui lòng quay lại sau';
+          if (!more) {
             ToastAndroid.showWithGravityAndOffset(
-              data.message,
+              msg,
               ToastAndroid.LONG,
               ToastAndroid.TOP,
               0,
               100,
             );
-          } else {
-            if (_.isEmpty(data.results)) {
-              ToastAndroid.showWithGravityAndOffset(
-                'Chưa có bài thi trong mục này, vui lòng quay lại sau',
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-                0,
-                100,
-              );
-            }
-            setItems(data.results);
           }
-          setIsLoading(false);
-        } catch (error) {
-          setIsLoading(false);
-          return error;
+        } else {
         }
       }
-      getItems();
+    } catch (error) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Kết nối mạng không ổn định',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+    }
+    return list;
+  };
 
+  // load data for the first time
+  useEffect(() => {
+    if (selectedLevel) {
       /** Update header */
       const title = `Thi thử ${selectedLevel}`;
       navigation.setOptions({
         headerProps: { title },
       });
+      setPage(prev => 1);
+      const loadData = async () => {
+        setIsLoading(true);
+        let filter = { limit: 20, level: selectedLevel, page: 1 };
+        const results = await fetchItems(filter);
+        setItems(results);
+        setIsLoading(false);
+      };
+      loadData();
     } else {
       const title = 'Thi thử ';
       navigation.setOptions({
@@ -75,6 +112,44 @@ export const TrialTestSelection = ({ navigation }) => {
       });
     }
   }, [navigation, selectedLevel]);
+
+  const loadMore = () => {
+    const load = async () => {
+      setLoadingMore(true);
+      let filter = { limit: 20, page: page + 1, level: selectedLevel };
+      let more = true;
+      const results = await fetchItems(filter, more);
+      const currentItems = [...items];
+      if (!_.isEmpty(results)) {
+        const newList = _.concat(currentItems, results);
+        setItems(newList);
+        setPage(page + 1);
+      }
+      setTimeout(() => {
+        setLoadingMore(false);
+      }, 2000);
+    };
+    load();
+  };
+
+  // refresh
+  const refresh = () => {
+    const load = async () => {
+      setRefreshing(true);
+      let filter = { limit: 20, page: 1, level: selectedLevel };
+      let more = true;
+      const results = await fetchItems(filter, more);
+      if (!_.isEmpty(results)) {
+        setItems(results);
+        setPage(1);
+        setScrolled(false); // re-init the list
+      }
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    };
+    load();
+  };
   const dispatch = useDispatch();
   const windowWidth = Dimensions.get('window').width;
   return (
@@ -82,46 +157,71 @@ export const TrialTestSelection = ({ navigation }) => {
       <SafeAreaView style={{ flex: 1, backgroundColor: '#e5dfd7' }}>
         {true && (
           <>
-            <ScrollView
+            <View
               style={{
                 backgroundColor: '#e5dfd7',
-                height: windowHeight,
-                paddingBottom: 50,
+                height: windowHeight - 56 * 2 - 70,
               }}>
-              {!isLoading && (
-                <View
-                  style={{
-                    flex: 1,
-                    paddingBottom: 50,
-                  }}>
-                  {items.map(item => {
-                    const navigateToTrial = () => {
-                      dispatch(
-                        programActions.trialTestSelected({
-                          trialTest: {
-                            item,
-                          },
-                        }),
+              {!isLoading && !_.isEmpty(items) && (
+                <>
+                  <FlatList
+                    data={items}
+                    renderItem={({ item, index }) => {
+                      const navigateToTrial = () => {
+                        dispatch(
+                          programActions.trialTestSelected({
+                            trialTest: {
+                              item,
+                            },
+                          }),
+                        );
+                        navigation.navigate('TrialTest', {
+                          itemId: item.id,
+                        });
+                      };
+                      return (
+                        <List.Item
+                          title={`${item.title}`}
+                          titleStyle={{
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                            color: '#000',
+                          }}
+                          key={item.id}
+                          titleEllipsizeMode="tail"
+                          left={props => <List.Icon {...props} icon="folder" />}
+                          onPress={navigateToTrial}
+                        />
                       );
-                      navigation.navigate('TrialTest', {
-                        itemId: item.id,
-                      });
-                    };
-                    return (
-                      <List.Item
-                        title={`${item.title}`}
-                        titleStyle={{
-                          fontFamily: 'SF-Pro-Detail-Regular',
-                          color: '#000',
-                        }}
-                        key={item.id}
-                        titleEllipsizeMode="tail"
-                        left={props => <List.Icon {...props} icon="folder" />}
-                        onPress={navigateToTrial}
+                    }}
+                    keyExtractor={(item, index) => {
+                      return item.id;
+                    }}
+                    ListFooterComponent={() => {
+                      return loadingMore ? (
+                        <ActivityIndicator
+                          size="small"
+                          style={{
+                            marginBottom: 20,
+                          }}
+                        />
+                      ) : null;
+                    }}
+                    onEndReachedThreshold={0.01}
+                    scrollEventThrottle={0} // 250
+                    onEndReached={info => {
+                      if (scrolled) {
+                        loadMore();
+                      }
+                    }}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={refresh}
                       />
-                    );
-                  })}
-                </View>
+                    }
+                    onScroll={() => setScrolled(true)}
+                  />
+                </>
               )}
               {isLoading && (
                 <Skeleton speed={1000}>
@@ -145,23 +245,11 @@ export const TrialTestSelection = ({ navigation }) => {
                   ))}
                 </Skeleton>
               )}
-            </ScrollView>
-            <View
-              style={{
-                height: 'auto',
-                alignItems: 'center',
-                justifyContent: 'center',
-                elevation: 3,
-                shadowRadius: 0,
-                width: 320,
-                marginHorizontal: windowWidth / 2 - 160,
-                zIndex: 3,
-                position: 'absolute',
-                bottom: 0,
-              }}>
+            </View>
+            <View style={{ height: 70 }}>
               <BannerAd
                 unitId={TestIds.BANNER}
-                size={BannerAdSize.BANNER}
+                size={BannerAdSize.SMART_BANNER}
                 requestOptions={{
                   requestNonPersonalizedAdsOnly: false,
                 }}

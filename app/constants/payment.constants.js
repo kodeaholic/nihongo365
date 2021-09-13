@@ -36,13 +36,13 @@ export const SERVICES = {
   //   label: 'VIP',
   //   priceTag: numberToCurrencyFormat(200000),
   // },
-  REMOVE_ADS: {
-    price: 50000,
-    label: 'Bỏ quảng cáo',
-    expirable: true,
-    priceTag: numberToCurrencyFormat(50000),
-    description: 'Loại bỏ hoàn toàn quảng cáo',
-  },
+  // REMOVE_ADS: {
+  //   price: 50000,
+  //   label: 'Bỏ quảng cáo',
+  //   expirable: true,
+  //   priceTag: numberToCurrencyFormat(50000),
+  //   description: 'Loại bỏ hoàn toàn quảng cáo',
+  // },
 };
 
 export const TARGET_BANK_ACCOUNT = {

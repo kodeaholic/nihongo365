@@ -1,32 +1,29 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid, FlatList } from 'react-native';
+import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
 import { Text, Card, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
-// import * as programActions from '../../actions/programActions';
-// import { furiganaHTML, rubyHtmlTransform } from '../../helpers/furigana';
 import { AudioPlayer } from '../../components/audio-player';
-// import { HeadlessAudioPlayer } from '../../components/headless-audio-player';
 import _ from 'lodash';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-import { STATUS } from '../../constants/payment.constants';
-import { RegisterPopup } from '../../components/registerPopup';
+import WebView from 'react-native-webview';
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 export const VocabLesson = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const selectedVocabLesson = useSelector(
     state => state.programReducer.selectedVocabLesson,
   );
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const [service, setService] = useState(selectedLevel); // fetch from fire-store
+  const [html, setHtml] = useState('');
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -139,22 +136,60 @@ export const VocabLesson = ({ navigation }) => {
     } - ${selectedVocabLesson.name}`;
     navigation.setOptions({ headerProps: { title, subtitle } });
   }, [navigation, selectedLevel, selectedVocabLesson]);
+  useEffect(() => {
+    if (vocabs && vocabs.length) {
+      let content = '';
+      vocabs.map(item => {
+        const { vocab, vocabMeaning, example, exampleMeaning } = item;
+        content += `
+            <div style="display: flex; flex-direction: row; width: ${windowWidth -
+              10}px;border-bottom: 0.5px solid #000; margin-left: 5px;">
+              <div style="width: ${(windowWidth - 10) / 3}px; margin: 5px;">
+                ${htmlEntityDecode(vocab)}
+                <div style="font-size: 15px;">${vocabMeaning}</div>
+              </div>
+              <div style="width: ${((windowWidth - 10) * 2) /
+                3}px;margin: 5px;">
+              ${htmlEntityDecode(example)}
+                <div style="font-size: 15px;">${exampleMeaning}</div>
+              </div>
+            </div>
+            `;
+      });
+      content = `<html lang="en" style="scroll-behavior: smooth;"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
+        10}px;margin:5px;height:auto}*{font-weight:normal;}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${content}</div><br/> </main></body></html>`;
+      setHtml(content);
+    }
+  }, [vocabs]);
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-        {!loading && (
-          <FlatList
+        {!loading && !_.isEmpty(html) && (
+          <>
+            <WebView
+              style={{
+                flex: 1,
+                backgroundColor: '#fff',
+                height: windowHeight - 60,
+                paddingBottom: 10,
+              }}
+              source={{
+                html: html,
+              }}
+            />
+            {/* <FlatList
             data={vocabs}
             renderItem={renderFlatListItem}
             keyExtractor={item => item.id}
-          />
+          /> */}
+          </>
         )}
         {loading && (
           <>
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           </>
         )}
-        {!_.isEmpty(selectedVocabLesson.audioSrc) && service.length === 0 && (
+        {!_.isEmpty(selectedVocabLesson.audioSrc) && (
           <View
             style={{
               // position: 'absolute',

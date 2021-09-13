@@ -211,13 +211,6 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                       size="small"
                       style={{
                         marginBottom: 20,
-                        // alignItems: 'center',
-                        // justifyContent: 'center',
-                        // textAlign: 'center',
-                        // position: 'absolute',
-                        // top: windowWidth / 2,
-                        // left: windowHeight / 2,
-                        // zIndex: 3,
                       }}
                     />
                   ) : null;
@@ -234,48 +227,6 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                 }
                 onScroll={() => setScrolled(true)}
               />
-              {/* {boards.map(board => {
-                const navigateToChuHanLesson = (type = BOARD_TYPE.THEORY) => {
-                  dispatch(
-                    programActions.chuHanLessonSelected({
-                      selectedChuHanLesson: {
-                        board,
-                        type,
-                      },
-                    }),
-                  );
-                  navigation.navigate('ChuHanLesson');
-                };
-                return (
-                  <List.Accordion
-                    key={`${board.id}-board`}
-                    title={`${board.title}`}
-                    titleStyle={{ color: '#000' }}
-                    left={props => <List.Icon {...props} icon="folder" />}
-                    titleEllipsizeMode="tail">
-                    <List.Item
-                      title={'Lý thuyết'}
-                      titleStyle={{ color: '#000' }}
-                      key={`${board.id}-theory`}
-                      titleEllipsizeMode="tail"
-                      onPress={() => {
-                        navigateToChuHanLesson(BOARD_TYPE.THEORY);
-                      }}
-                    />
-                    {!_.isEmpty(board.quiz) && board.quiz.length && (
-                      <List.Item
-                        title={'Bài tập củng cố'}
-                        titleStyle={{ color: '#000' }}
-                        key={`${board.id}-excercise`}
-                        titleEllipsizeMode="tail"
-                        onPress={() => {
-                          navigateToChuHanLesson(BOARD_TYPE.EXERCISE);
-                        }}
-                      />
-                    )}
-                  </List.Accordion>
-                );
-              })} */}
             </>
           )}
           {!isLoading && items.length === 0 && (

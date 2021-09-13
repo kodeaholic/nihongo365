@@ -6,6 +6,9 @@ import {
   ToastAndroid,
   TouchableOpacity,
   Dimensions,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,11 +16,12 @@ import { List, FAB } from 'react-native-paper';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
-import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import _ from 'lodash';
 import { getTestTypeName, TEST_TYPES } from '../../constants/test';
 import Skeleton from '@thevsstech/react-native-skeleton';
+import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+const windowHeight = Dimensions.get('window').height;
 export const SubTestSelection = ({ navigation }) => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,57 +30,97 @@ export const SubTestSelection = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  useEffect(() => {
-    if (selectedTestType > 0 && !_.isEmpty(selectedLevel)) {
-      setIsLoading(true);
-      async function getItems() {
-        const headers = await authHeader();
-        const requestOptions = {
-          method: 'GET',
-          headers: headers,
-        };
-        let url = `${apiConfig.baseUrl}${
-          apiConfig.apiEndpoint
-        }/sub-tests?level=${selectedLevel}&limit=1000&type=${selectedTestType}`;
-        try {
-          setIsLoading(true);
-          const response = await fetch(url, requestOptions);
-          const data = await response.json();
-          if (data.code) {
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [page, setPage] = useState(1);
+
+  const fetchItems = async (filter, more = false) => {
+    let list = [];
+    const headers = await authHeader();
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/sub-tests?`;
+    if (_.get(filter, 'page')) {
+      url += `&page=${_.get(filter, 'page')}`;
+    }
+    if (_.get(filter, 'limit')) {
+      url += `&limit=${_.get(filter, 'limit')}`;
+    }
+    if (_.get(filter, 'level')) {
+      url += `&level=${_.get(filter, 'level')}`;
+    }
+    if (_.get(filter, 'type')) {
+      url += `&type=${_.get(filter, 'type')}`;
+    }
+    console.log(url);
+    try {
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.code) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Kết nối mạng không ổn định',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+      } else {
+        list = data.results;
+        if (_.isEmpty(list)) {
+          const msg = 'Chưa có mục nào được tạo. Vui lòng quay lại sau';
+          if (!more) {
             ToastAndroid.showWithGravityAndOffset(
-              data.message,
+              msg,
               ToastAndroid.LONG,
               ToastAndroid.TOP,
               0,
               100,
             );
-          } else {
-            if (_.isEmpty(data.results)) {
-              ToastAndroid.showWithGravityAndOffset(
-                'Chưa có bài thi trong mục này, vui lòng quay lại sau',
-                ToastAndroid.LONG,
-                ToastAndroid.TOP,
-                0,
-                100,
-              );
-            }
-            setItems(data.results);
           }
-          setIsLoading(false);
-        } catch (error) {
-          setIsLoading(false);
-          return error;
+        } else {
         }
-        setFabVisible(true);
       }
-      getItems();
+    } catch (error) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Kết nối mạng không ổn định',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+    }
+    return list;
+  };
 
+  // load data for the first time
+  useEffect(() => {
+    if (selectedTestType > 0 && !_.isEmpty(selectedLevel)) {
       /** Update header */
       const title = `Luyện thi ${selectedLevel}`;
       const subtitle = getTestTypeName(selectedTestType);
       navigation.setOptions({
         headerProps: { title, subtitle },
       });
+      setScrolled(false); // reset if switch type
+      setPage(prev => 1);
+      const loadData = async () => {
+        setIsLoading(true);
+        let filter = {
+          limit: 20,
+          level: selectedLevel,
+          page: 1,
+          type: selectedTestType,
+        };
+        const results = await fetchItems(filter);
+        setItems(results);
+        setIsLoading(false);
+        setFabVisible(true);
+      };
+      loadData();
     } else {
       const title = `Luyện thi ${selectedLevel}`;
       navigation.setOptions({
@@ -84,11 +128,117 @@ export const SubTestSelection = ({ navigation }) => {
       });
     }
   }, [navigation, selectedLevel, selectedTestType]);
+
+  const loadMore = () => {
+    const load = async () => {
+      setLoadingMore(true);
+      let filter = {
+        limit: 20,
+        page: page + 1,
+        level: selectedLevel,
+        type: selectedTestType,
+      };
+      let more = true;
+      const results = await fetchItems(filter, more);
+      const currentItems = [...items];
+      if (!_.isEmpty(results)) {
+        const newList = _.concat(currentItems, results);
+        setItems(newList);
+        setPage(page + 1);
+      }
+      setTimeout(() => {
+        setLoadingMore(false);
+      }, 2000);
+    };
+    load();
+  };
+
+  // refresh
+  const refresh = () => {
+    const load = async () => {
+      setRefreshing(true);
+      let filter = {
+        limit: 20,
+        page: 1,
+        level: selectedLevel,
+        type: selectedTestType,
+      };
+      let more = true;
+      const results = await fetchItems(filter, more);
+      if (!_.isEmpty(results)) {
+        setItems(results);
+        setPage(1);
+        setScrolled(false); // re-init the list
+      }
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    };
+    load();
+  };
+  // useEffect(() => {
+  //   if (selectedTestType > 0 && !_.isEmpty(selectedLevel)) {
+  //     setIsLoading(true);
+  //     async function getItems() {
+  //       const headers = await authHeader();
+  //       const requestOptions = {
+  //         method: 'GET',
+  //         headers: headers,
+  //       };
+  //       let url = `${apiConfig.baseUrl}${
+  //         apiConfig.apiEndpoint
+  //       }/sub-tests?level=${selectedLevel}&limit=1000&type=${selectedTestType}`;
+  //       try {
+  //         setIsLoading(true);
+  //         const response = await fetch(url, requestOptions);
+  //         const data = await response.json();
+  //         if (data.code) {
+  //           ToastAndroid.showWithGravityAndOffset(
+  //             data.message,
+  //             ToastAndroid.LONG,
+  //             ToastAndroid.TOP,
+  //             0,
+  //             100,
+  //           );
+  //         } else {
+  //           if (_.isEmpty(data.results)) {
+  //             ToastAndroid.showWithGravityAndOffset(
+  //               'Chưa có bài thi trong mục này, vui lòng quay lại sau',
+  //               ToastAndroid.LONG,
+  //               ToastAndroid.TOP,
+  //               0,
+  //               100,
+  //             );
+  //           }
+  //           setItems(data.results);
+  //         }
+  //         setIsLoading(false);
+  //       } catch (error) {
+  //         setIsLoading(false);
+  //         return error;
+  //       }
+  //       setFabVisible(true);
+  //     }
+  //     getItems();
+
+  //     /** Update header */
+  //     const title = `Luyện thi ${selectedLevel}`;
+  //     const subtitle = getTestTypeName(selectedTestType);
+  //     navigation.setOptions({
+  //       headerProps: { title, subtitle },
+  //     });
+  //   } else {
+  //     const title = `Luyện thi ${selectedLevel}`;
+  //     navigation.setOptions({
+  //       headerProps: { title },
+  //     });
+  //   }
+  // }, [navigation, selectedLevel, selectedTestType]);
   const dispatch = useDispatch();
   const windowWidth = Dimensions.get('window').width;
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#e5dfd7' }}>
         {selectedTestType === 0 && (
           <>
             <View style={{ height: '100%', flex: 1 }}>
@@ -138,38 +288,72 @@ export const SubTestSelection = ({ navigation }) => {
         )}
         {selectedTestType > 0 && (
           <>
-            <ScrollView style={{ backgroundColor: '#e5dfd7' }}>
-              {!isLoading && (
-                <View style={{ height: '100%', flex: 1 }}>
-                  {items.map(item => {
-                    const navigateToSubTest = () => {
-                      dispatch(
-                        programActions.subTestSelected({
-                          subTest: {
-                            item,
-                          },
-                        }),
+            <View
+              style={{
+                backgroundColor: '#e5dfd7',
+                height: windowHeight - 56 * 2 - 70,
+              }}>
+              {!isLoading && !_.isEmpty(items) && (
+                <>
+                  <FlatList
+                    data={items}
+                    renderItem={({ item, index }) => {
+                      const navigateToSubTest = () => {
+                        dispatch(
+                          programActions.subTestSelected({
+                            subTest: {
+                              item,
+                            },
+                          }),
+                        );
+                        navigation.navigate('SubTest', {
+                          itemId: item.id,
+                          itemType: item.type,
+                        });
+                      };
+                      return (
+                        <List.Item
+                          title={`${item.title}`}
+                          titleStyle={{
+                            fontFamily: 'SF-Pro-Detail-Regular',
+                            color: '#000',
+                          }}
+                          key={item.id}
+                          titleEllipsizeMode="tail"
+                          left={props => <List.Icon {...props} icon="folder" />}
+                          onPress={navigateToSubTest}
+                        />
                       );
-                      navigation.navigate('SubTest', {
-                        itemId: item.id,
-                        itemType: item.type,
-                      });
-                    };
-                    return (
-                      <List.Item
-                        title={`${item.title}`}
-                        titleStyle={{
-                          fontFamily: 'SF-Pro-Detail-Regular',
-                          color: '#000',
-                        }}
-                        key={item.id}
-                        titleEllipsizeMode="tail"
-                        left={props => <List.Icon {...props} icon="folder" />}
-                        onPress={navigateToSubTest}
+                    }}
+                    keyExtractor={(item, index) => {
+                      return item.id;
+                    }}
+                    ListFooterComponent={() => {
+                      return loadingMore ? (
+                        <ActivityIndicator
+                          size="small"
+                          style={{
+                            marginBottom: 20,
+                          }}
+                        />
+                      ) : null;
+                    }}
+                    onEndReachedThreshold={0.01}
+                    scrollEventThrottle={0} // 250
+                    onEndReached={info => {
+                      if (scrolled) {
+                        loadMore();
+                      }
+                    }}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={refresh}
                       />
-                    );
-                  })}
-                </View>
+                    }
+                    onScroll={() => setScrolled(true)}
+                  />
+                </>
               )}
               {isLoading && (
                 <Skeleton speed={1000}>
@@ -193,7 +377,7 @@ export const SubTestSelection = ({ navigation }) => {
                   ))}
                 </Skeleton>
               )}
-            </ScrollView>
+            </View>
             {fabVisible && (
               <FAB
                 style={styles.fab}
@@ -205,6 +389,21 @@ export const SubTestSelection = ({ navigation }) => {
                 label="phần thi khác"
               />
             )}
+            <View style={{ height: 70 }}>
+              <BannerAd
+                unitId={TestIds.BANNER}
+                size={BannerAdSize.SMART_BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: false,
+                }}
+                onAdLoaded={() => {
+                  setAdLoaded(true);
+                }}
+                onAdFailedToLoad={error => {
+                  // console.error('Advert failed to load: ', error);
+                }}
+              />
+            </View>
           </>
         )}
       </SafeAreaView>
@@ -270,11 +469,11 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   fab: {
-    width: 180,
+    width: 150,
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 10,
+    bottom: 40,
     padding: 0,
     backgroundColor: 'rgba(219, 10, 91, 1)',
     shadowColor: '#000',

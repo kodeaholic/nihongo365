@@ -300,6 +300,20 @@ function MainStackScreen() {
           }}
         />
         <Tab.Screen
+          name="Từ điển"
+          component={DictionaryStackScreen}
+          options={{
+            showIcon: true,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="google-translate"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
           name="Chat"
           component={ChatStackScreen}
           options={{
@@ -352,20 +366,7 @@ function MainStackScreen() {
             ),
           }}
         />
-        <Tab.Screen
-          name="Từ điển"
-          component={DictionaryStackScreen}
-          options={{
-            showIcon: true,
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                name="google-translate"
-                color={color}
-                size={26}
-              />
-            ),
-          }}
-        />
+
         <Tab.Screen
           name="Cá nhân"
           component={MoreStackScreen}

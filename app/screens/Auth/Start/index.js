@@ -124,8 +124,8 @@ export default function StartScreen({ navigation }) {
                   const time = Date.now();
                   const lastMessage = {
                     type: 'text',
-                    content:
-                      'Chào mừng bạn đã đến với Nihongo365! Hãy cùng Nihongo365 xây dựng nên cộng đồng người học tiếng Nhật nhé! Thân ái!',
+                    content: `Chào mừng bạn đã đến với Nihongo365 !
+Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng theo thời gian. Mong rằng sẽ là cánh tay đắc lực cùng bạn chinh phục tiếng Nhật một cách hiệu quả nhất. Hãy để lại ý kiến đóng góp của bạn bằng cách trả lời tin nhắn này. Trân trọng !`,
                     targetId: 'ADMIN_ID', // ID of the person sent this message
                     chatInfo: {
                       // sender information

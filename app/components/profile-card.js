@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Avatar, Card, IconButton, Chip } from 'react-native-paper';
+import { Avatar, Card, Chip } from 'react-native-paper';
 
 export default function profileCard({
   authorName,

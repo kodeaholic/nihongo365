@@ -24,6 +24,8 @@ import { BOARD_TYPE } from '../../constants/board';
 import * as programActions from '../../actions/programActions';
 import ScrollingButtonMenu from 'react-native-scroll-menu';
 import GestureRecognizer from 'react-native-swipe-gestures';
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 export const ChuHanLesson = ({ navigation }) => {
   const selectedChuHanLesson = useSelector(
     state => state.programReducer.selectedChuHanLesson,
@@ -292,9 +294,30 @@ export const ChuHanLesson = ({ navigation }) => {
       <>
         <View
           style={{
+            flex: 5,
+            marginRight: 5,
+            marginLeft: 5,
+            textAlign: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: 10,
+            height: 30,
+          }}>
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: 'center',
+              fontFamily: 'SF-Pro-Detail-Regular',
+              color: '#000',
+            }}>
+            {card.meaning}
+          </Text>
+        </View>
+        <View
+          style={{
             minHeight: 200,
-            height: 'auto',
-            // borderWidth: 1,
+            height: 200,
           }}>
           {!_.isEmpty(src) && (
             <WebView
@@ -347,27 +370,6 @@ export const ChuHanLesson = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
-
-        <View
-          style={{
-            flex: 5,
-            marginRight: 5,
-            marginLeft: 5,
-            textAlign: 'center',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: 18,
-              textAlign: 'center',
-              fontFamily: 'SF-Pro-Detail-Regular',
-              color: '#000',
-            }}>
-            {card.meaning}
-          </Text>
-        </View>
       </>
     );
   };
@@ -390,10 +392,8 @@ export const ChuHanLesson = ({ navigation }) => {
                   paddingLeft: 0,
                   paddingRight: 2,
                   backgroundColor: '#fff',
-                  // borderWidth: 1,
                   justifyContent: 'center',
                   alignContent: 'center',
-                  //alignItems: 'center',
                 }}>
                 <ScrollingButtonMenu
                   items={menus}
@@ -423,167 +423,84 @@ export const ChuHanLesson = ({ navigation }) => {
                   borderBottomWidth: 0.5,
                 }}>
                 {!_.isEmpty(selectedCard) && (
-                  <GestureRecognizer
-                  // onSwipeUp={() => {
-                  //   moveCard(+1);
-                  // }}
-                  // onSwipeDown={() => {
-                  //   moveCard(-1);
-                  // }}
-                  // onSwipeLeft={() => {
-                  //   moveCard(+1);
-                  // }}
-                  // onSwipeRight={() => {
-                  //   moveCard(-1);
-                  // }}
-                  >
-                    <Card style={styles.card} key={selectedCard.id}>
-                      <ChuHanWebView card={selectedCard} />
-                      {!_.isEmpty(selectedCard.note) && (
-                        <View style={styles.parentView}>
-                          <View
-                            style={{
-                              flex: 1.5,
-                              marginRight: 0,
-                              marginLeft: 0,
-                              height: 'auto',
-                            }}>
-                            <Text
-                              style={{
-                                fontSize: 18,
-                                marginRight: 5,
-                                marginLeft: 5,
-                                textAlign: 'center',
-                                fontFamily: 'SF-Pro-Detail-Regular',
-                                color: '#000',
-                              }}>
-                              Mẹo nhớ
-                            </Text>
-                          </View>
-                          <View
-                            style={{
-                              flex: 5,
-                              marginRight: 0,
-                              marginLeft: 0,
-                              height: 'auto',
-                              borderLeftWidth: 0.5,
-                            }}>
-                            <Text
-                              style={{
-                                fontSize: 18,
-                                marginRight: 5,
-                                marginLeft: 10,
-                                fontFamily: 'SF-Pro-Detail-Regular',
-                                color: '#000',
-                              }}>
-                              {selectedCard.note}
-                            </Text>
-                          </View>
-                        </View>
-                      )}
-                      <Divider />
-                      <View style={styles.parentView}>
-                        <View
-                          style={{
-                            flex: 1.5,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              marginRight: 5,
-                              marginLeft: 5,
-                              textAlign: 'center',
-                              fontFamily: 'SF-Pro-Detail-Regular',
-                              color: '#000',
-                            }}>
-                            On
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            flex: 5,
-                            borderLeftWidth: 0.5,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              margin: 5,
-                              fontFamily: 'SF-Pro-Detail-Regular',
-                            }}>
-                            {selectedCard.onText}
-                          </Text>
-                          <AutoHeightWebView
-                            style={{
-                              minHeight: 150,
-                              height: 'auto',
-                              margin: 5,
-                            }}
-                            source={{
-                              html: `<div style="background-color: #fff; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                selectedCard.onTextExample,
-                              )}</div>`,
-                            }}
-                            scalesPageToFit={true}
-                            viewportContent={
-                              'width=device-width, user-scalable=no'
-                            }
-                          />
-                        </View>
-                      </View>
-                      <Divider />
-                      <View style={styles.parentView}>
-                        <View
-                          style={{
-                            flex: 1.5,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              marginRight: 5,
-                              marginLeft: 5,
-                              textAlign: 'center',
-                              fontFamily: 'SF-Pro-Detail-Regular',
-                              color: '#000',
-                            }}>
-                            Kun
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            flex: 5,
-                            borderLeftWidth: 0.5,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              margin: 5,
-                              fontFamily: 'SF-Pro-Detail-Regular',
-                              color: '#000',
-                            }}>
-                            {selectedCard.kunText}
-                          </Text>
-                          <AutoHeightWebView
-                            style={{
-                              minHeight: 150,
-                              height: 'auto',
-                              margin: 5,
-                            }}
-                            source={{
-                              html: `<div style="background-color: #fff; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                selectedCard.kunTextExample,
-                              )}</div>`,
-                            }}
-                            scalesPageToFit={true}
-                            viewportContent={
-                              'width=device-width, user-scalable=no'
-                            }
-                          />
-                        </View>
-                        <Divider />
-                      </View>
-                      <Divider />
-                    </Card>
-                  </GestureRecognizer>
+                  <>
+                    {/* <GestureRecognizer
+                      onSwipeUp={() => {
+                        moveCard(+1);
+                      }}
+                      onSwipeDown={() => {
+                        moveCard(-1);
+                      }}
+                      onSwipeLeft={() => {
+                        moveCard(+1);
+                      }}
+                      onSwipeRight={() => {
+                        moveCard(-1);
+                      }}>
+                      <Card style={styles.card} key={selectedCard.id} />
+                    </GestureRecognizer> */}
+                    <ChuHanWebView card={selectedCard} />
+                    <WebView
+                      style={{
+                        flex: 1,
+                        backgroundColor: '#fff',
+                        paddingBottom: 10,
+                        minHeight: windowHeight - 200 - 30,
+                        maxHeight: windowHeight,
+                      }}
+                      source={{
+                        html: `<html lang="en" style="scroll-behavior: smooth;"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
+                          10}px;margin:5px;height:auto}*{font-weight:normal;}</style></head><body cz-shortcut-listen="true" style="background-color: #fff;"> <main><div class="content">
+                            <div style="display: flex; flex-direction: row; width: ${windowWidth -
+                              10}px; margin-left: 5px;">
+              <div style="width: ${(windowWidth - 10) /
+                3}px; margin: 5px;text-align: center;">
+                <span style="background-color: rgba(219, 10, 91, 1); color: #fff; border-radius: 5px;padding: 5px;">Mẹo nhớ</span>
+              </div>
+              <div style="width: ${((windowWidth - 10) * 2) /
+                3}px;margin: 5px;text-align: center;">
+                <span style="background-color: rgba(219, 10, 91, 1); color: #fff; border-radius: 5px;padding: 5px;">${selectedCard.note ||
+                  ''}</span>
+              </div>
+            </div>
+            <hr style="border: 0.5px solid #000;margin-left: 10px; margin-right: 10px; background: linear-gradient(
+              130deg
+              ,#ff7a18,#af002d 41.07%,#319197 76.05%); height: 2px;border-radius: 5px;"/>
+                            <div style="display: flex; flex-direction: row; width: ${windowWidth -
+                              10}px; margin-left: 5px;">
+              <div style="width: ${(windowWidth - 10) /
+                3}px; margin: 5px;text-align: center;">
+                <span style="background-color: rgba(0, 181, 204, 1); color: #fff; border-radius: 5px;padding: 5px;">On</span>
+              </div>
+              <div style="width: ${((windowWidth - 10) * 2) /
+                3}px;margin: 5px;text-align: center;">
+                <span style="background-color: rgba(0, 181, 204, 1); color: #fff; border-radius: 5px;padding: 5px;">${
+                  selectedCard.onText
+                }</span>
+              ${htmlEntityDecode(selectedCard.onTextExample)}
+              </div>
+            </div>
+            <hr style="border: 0.5px solid #000;margin-left: 10px; margin-right: 10px; background: linear-gradient(
+              130deg
+              ,#ff7a18,#af002d 41.07%,#319197 76.05%); height: 2px;border-radius: 5px;"/>
+            <div style="display: flex; flex-direction: row; width: ${windowWidth -
+              10}px; margin-left: 5px;">
+              <div style="width: ${(windowWidth - 10) /
+                3}px; margin: 5px;text-align: center;">
+                <span style="background-color: rgba(63, 195, 128, 1); color: #fff; border-radius: 5px;padding: 5px;">Kun</span>
+              </div>
+              <div style="width: ${((windowWidth - 10) * 2) /
+                3}px;margin: 5px;text-align: center;">
+                <span style="background-color: rgba(63, 195, 128, 1); color: #fff; border-radius: 5px;padding: 5px;">${
+                  selectedCard.kunText
+                }</span>
+              ${htmlEntityDecode(selectedCard.kunTextExample)}
+              </div>
+            </div>
+        </div><br/> </main></body></html>`,
+                      }}
+                    />
+                  </>
                 )}
               </ScrollView>
             </>

@@ -23,6 +23,10 @@ import deviceInfoModule from 'react-native-device-info';
 firestore().settings({
   ignoreUndefinedProperties: true,
 });
+import { isIphoneX } from '../../../lib/isIphoneX';
+import { ROOM_TYPES } from '../../../constants/chat.constants';
+import { RANDOM_STR } from '../../../helpers/random';
+const isIPX = isIphoneX();
 export default function StartScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState({});
@@ -107,7 +111,7 @@ export default function StartScreen({ navigation }) {
                 .collection('USERS')
                 .doc(user.id)
                 .get();
-              if (_.isEmpty(res)) {
+              if (_.isEmpty(res.data())) {
                 //chưa đăng nhập bao giờ
                 await firestore()
                   .collection('USERS')
@@ -116,6 +120,49 @@ export default function StartScreen({ navigation }) {
                     ...clone,
                     device: { id: uniqueId, platform: Platform.OS },
                   });
+                if (user.role === 'user') {
+                  const time = Date.now();
+                  const lastMessage = {
+                    type: 'text',
+                    content: `Chào mừng bạn đã đến với Nihongo365 !
+Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng theo thời gian. Mong rằng sẽ là cánh tay đắc lực cùng bạn chinh phục tiếng Nhật một cách hiệu quả nhất. Hãy để lại ý kiến đóng góp của bạn bằng cách trả lời tin nhắn này. Trân trọng !`,
+                    targetId: 'ADMIN_ID', // ID of the person sent this message
+                    chatInfo: {
+                      // sender information
+                      avatar: require('../../../assets/logo.png'),
+                      id: 'ADMIN_ID',
+                      nickName: 'Admin',
+                    },
+                    renderTime: true,
+                    sendStatus: 1,
+                    time: time,
+                    isIPhoneX: isIPX,
+                  };
+                  const newRoom = {
+                    type: ROOM_TYPES.MEVSADMIN,
+                    name: user.name,
+                    avatar: user.photo,
+                    lastMessage,
+                  };
+                  newRoom.ownerId = user.id;
+                  newRoom.ownerRef = firestore().doc('USERS/' + user.id);
+                  try {
+                    await firestore()
+                      .collection('rooms')
+                      .add(newRoom)
+                      .then(docRef => {
+                        firestore()
+                          .collection('rooms')
+                          .doc(docRef.id)
+                          .collection('MESSAGES')
+                          .doc(time + RANDOM_STR(5))
+                          .set(lastMessage)
+                          .then(() => {});
+                      });
+                  } catch (e) {
+                    // console.log(e);
+                  }
+                }
                 dispatch(userActions.socialLoginSucceeded({ user }));
               } else {
                 // đã từng đăng nhập

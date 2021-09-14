@@ -14,8 +14,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 // import RegisterScreen from 'app/screens/Auth/Register';
 import AuthLoadingScreen from '../screens/Auth/Loading';
 import StartScreen from '../screens/Auth/Start';
-import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
-import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
+import { VocabProgramGuideline } from '../screens/ProgramGuideline/Vocab';
+import { ChuHanProgramGuideline } from '../screens/ProgramGuideline/ChuHan';
 import { VocabTopicSelection } from '../screens/VocabTopicSelection';
 import { ChuHanBoardSelection } from '../screens/ChuHanBoardSelection';
 import { ListeningLessonSelection } from '../screens/ListeningLessonSelection';
@@ -49,6 +49,7 @@ import { Chat } from '../screens/Chat';
 import Rooms from '../screens/ChatRoom';
 import { Services } from '../screens/More/services';
 import { AdminServices } from '../screens/More/admin/services';
+import { Room } from '../screens/ChatRoom/room';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -221,27 +222,28 @@ const ChatStack = createStackNavigator();
 function ChatStackScreen() {
   const stackProps = DeviceInfo.isTablet()
     ? { headerMode: 'none' }
-    : { headerMode: 'none' };
+    : { headerMode: 'float' };
   return (
     <ChatStack.Navigator
       {...stackProps}
-      // screenOptions={{
-      //   header: ({ scene }) => {
-      //     let { headerProps } = scene.descriptor.options;
-      //     if (_.isEmpty(headerProps)) {
-      //       headerProps = {};
-      //     }
-      //     Object.assign(headerProps, {
-      //       disableBackButton: true,
-      //       title: 'Nihongo365 Chat',
-      //       leftAction: undefined,
-      //     });
-      //     return <Header {...headerProps} />;
-      //   },
-      // }}
-    >
+      screenOptions={{
+        header: ({ scene }) => {
+          let { headerProps } = scene.descriptor.options;
+          if (_.isEmpty(headerProps)) {
+            headerProps = {};
+          }
+          Object.assign(headerProps, {
+            disableBackButton: true,
+            //leftAction: undefined,
+            enableLogoutButton: false,
+            centerTitle: true,
+          });
+          return <Header {...headerProps} />;
+        },
+      }}>
       <ChatStack.Screen name="ChatRooms" component={Rooms} />
       <ChatStack.Screen name="Chat" component={Chat} />
+      <ChatStack.Screen name="Room" component={Room} />
     </ChatStack.Navigator>
   );
 }

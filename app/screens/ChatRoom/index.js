@@ -17,22 +17,16 @@ import {
 // import Modal from 'react-native-modal';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
-import { Dimensions, Platform } from 'react-native';
-import {
-  getPostedTimeFromMillis,
-  getPostTimeFromCreatedAt,
-} from '../../helpers/time';
+import { Dimensions } from 'react-native';
 // import DebounceInput from '../../components/DebounceInput';
-import * as programActions from '../../actions/programActions';
 import { useDispatch, useSelector } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import { ROOM_TYPES } from '../../constants/chat.constants';
 const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+// const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
-import { isIphoneX } from '../../lib/isIphoneX';
-import { RANDOM_STR } from '../../helpers/random';
-const isIPX = isIphoneX();
+import { FAB } from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const TimeCounter = ({ time }) => {
   const [timeInMillis, setTimeInMillis] = useState(Date.now());
   useEffect(() => {
@@ -110,13 +104,11 @@ const Rooms = ({ navigation }) => {
   useEffect(() => {
     setLoading(true);
     setRefreshing(false);
-    // navigation.setOptions({
-    //   headerProps: {
-    //     title: 'Nihongo365 Chat',
-    //     disableBackButton: true,
-    //     leftAction: undefined,
-    //   },
-    // });
+    navigation.setOptions({
+      headerProps: {
+        title: 'Nihongo365 Chat',
+      },
+    });
     const isAdmin = _.get(user, 'role') === 'admin';
     const unsubscribe = firestore()
       .collection('rooms')
@@ -125,14 +117,24 @@ const Rooms = ({ navigation }) => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {
             const type = _.get(documentSnapshot.data(), 'type');
+            const members = _.get(documentSnapshot.data(), 'members');
             const isEmpty = _.isEmpty(documentSnapshot);
+            const index = _.findIndex(members, function(mb) {
+              return mb.id === user.id;
+            });
+            const thisRoomHasMe = index >= 0;
             if (!isAdmin) {
               const ownerId = _.get(documentSnapshot.data(), 'ownerId');
               return (
-                !isEmpty && ownerId === user.id && type !== ROOM_TYPES.SYSTEM
+                (!isEmpty &&
+                  ownerId === user.id &&
+                  type !== ROOM_TYPES.SYSTEM) ||
+                thisRoomHasMe
               );
             } else {
-              return !isEmpty && type === ROOM_TYPES.MEVSADMIN;
+              return (
+                (!isEmpty && type === ROOM_TYPES.MEVSADMIN) || thisRoomHasMe
+              );
             }
           })
           .map(filteredSnapshot => {
@@ -153,50 +155,6 @@ const Rooms = ({ navigation }) => {
             // console.log(item);
             return item;
           });
-        if (!isAdmin && rooms && rooms.length === 0) {
-          const time = Date.now();
-          const lastMessage = {
-            type: 'text',
-            content:
-              'Chào mừng bạn đã đến với Nihongo365! Hãy cùng Nihongo365 xây dựng nên cộng đồng người học tiếng Nhật nhé! Thân ái!',
-            targetId: 'ADMIN_ID', // ID of the person sent this message
-            chatInfo: {
-              // sender information
-              avatar: require('../../assets/logo.png'),
-              // id: 'ADMIN_ID',
-            },
-            renderTime: true,
-            sendStatus: 1,
-            time: time,
-            isIPhoneX: isIPX,
-          };
-          const newRoom = {
-            type: ROOM_TYPES.MEVSADMIN,
-            name: user.name,
-            avatar: user.photo,
-            lastMessage,
-          };
-          if (!isAdmin) {
-            newRoom.ownerId = user.id;
-            newRoom.ownerRef = firestore().doc('USERS/' + user.id);
-          }
-          try {
-            firestore()
-              .collection('rooms')
-              .add(newRoom)
-              .then(docRef => {
-                firestore()
-                  .collection('rooms')
-                  .doc(docRef.id)
-                  .collection('MESSAGES')
-                  .doc(time + RANDOM_STR(5))
-                  .set(lastMessage)
-                  .then(() => {});
-              });
-          } catch (e) {
-            // console.log(e);
-          }
-        }
         setItems(rooms);
         // console.log(rooms);
         setLoading(false);
@@ -205,7 +163,7 @@ const Rooms = ({ navigation }) => {
      * unsubscribe listener
      */
     return () => unsubscribe();
-  }, [user, refresh]);
+  }, [user, refresh, navigation]);
 
   const renderImage = room => {
     const isAdmin = user.role === 'admin';
@@ -247,7 +205,7 @@ const Rooms = ({ navigation }) => {
           } else {
             return (
               <Image
-                source={require('../../assets/girl.png')}
+                source={require('../../assets/default_avatar.png')}
                 style={styles.roomAvatar}
                 resizeMethod="auto"
               />
@@ -290,15 +248,9 @@ const Rooms = ({ navigation }) => {
               const { lastMessage } = item;
               const length = items.length;
               const navigateToItem = () => {
-                // dispatch(
-                //   programActions.newsArticleSelected({
-                //     selectedNewsArticle: {
-                //       item,
-                //     },
-                //   }),
-                // );
                 navigation.navigate('Chat', {
                   roomId: item.id,
+                  roomInfo: { name: item.name, type: item.type, id: item.id },
                 });
               };
               return (
@@ -338,7 +290,9 @@ const Rooms = ({ navigation }) => {
                       }}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {user.role === 'admin' ? item.name : 'Admin'}
+                      {user.role === 'admin' || item.type === ROOM_TYPES.GROUP
+                        ? item.name
+                        : 'Admin'}
                     </Text>
                     <Text
                       style={{
@@ -401,6 +355,22 @@ const Rooms = ({ navigation }) => {
           />
         )}
       </View>
+      <FAB
+        style={styles.fab}
+        onPress={() => {
+          navigation.navigate('Room', {
+            roomId: undefined,
+            roomInfo: undefined,
+          });
+        }}
+        icon={({ size, color }) => (
+          <MaterialCommunityIcons
+            name="tooltip-plus-outline"
+            color="#fff"
+            size={24}
+          />
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -510,6 +480,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: '#EAF8D2',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 5,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(219, 10, 91, 1)',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 6.65,
+
+    elevation: 8,
+    textAlign: 'center',
+    alignContent: 'center',
   },
 });
 

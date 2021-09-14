@@ -16,6 +16,7 @@ import AuthLoadingScreen from '../screens/Auth/Loading';
 import StartScreen from '../screens/Auth/Start';
 import { VocabProgramGuideline } from '../screens/ProgramGuideline/Vocab';
 import { ChuHanProgramGuideline } from '../screens/ProgramGuideline/ChuHan';
+import { DialogProgramGuideline } from '../screens/ProgramGuideline/HoiThoai';
 import { VocabTopicSelection } from '../screens/VocabTopicSelection';
 import { ChuHanBoardSelection } from '../screens/ChuHanBoardSelection';
 import { ListeningLessonSelection } from '../screens/ListeningLessonSelection';
@@ -50,6 +51,9 @@ import Rooms from '../screens/ChatRoom';
 import { Services } from '../screens/More/services';
 import { AdminServices } from '../screens/More/admin/services';
 import { Room } from '../screens/ChatRoom/room';
+import { ListeningProgramGuideline } from '../screens/ProgramGuideline/Listening';
+import { GrammarProgramGuideline } from '../screens/ProgramGuideline/Grammar';
+import { ReadingProgramGuideline } from '../screens/ProgramGuideline/Reading';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -74,6 +78,26 @@ function LearnStackScreen() {
       <LearnStack.Screen
         name="ChuHanProgramGuideline"
         component={ChuHanProgramGuideline}
+        options={{ title: 'Thông tin chương trình học' }}
+      />
+      <LearnStack.Screen
+        name="DialogProgramGuideline"
+        component={DialogProgramGuideline}
+        options={{ title: 'Thông tin chương trình học' }}
+      />
+      <LearnStack.Screen
+        name="ListeningProgramGuideline"
+        component={ListeningProgramGuideline}
+        options={{ title: 'Thông tin chương trình học' }}
+      />
+      <LearnStack.Screen
+        name="GrammarProgramGuideline"
+        component={GrammarProgramGuideline}
+        options={{ title: 'Thông tin chương trình học' }}
+      />
+      <LearnStack.Screen
+        name="ReadingProgramGuideline"
+        component={ReadingProgramGuideline}
         options={{ title: 'Thông tin chương trình học' }}
       />
       <LearnStack.Screen

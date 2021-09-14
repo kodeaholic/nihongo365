@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
 
-import { random_rgba } from 'app/utils/random_rgba';
 import ProfileCard from '../../../components/profile-card';
 
 import * as programActions from '../../../actions/programActions';
@@ -36,6 +35,18 @@ const Item = ({ item, first, last }) => {
             break;
           case PROGRAM_IDS.CHUHAN:
             navigation.navigate('ChuHanProgramGuideline');
+            break;
+          case PROGRAM_IDS.HOITHOAI:
+            navigation.navigate('DialogProgramGuideline');
+            break;
+          case PROGRAM_IDS.NGHE:
+            navigation.navigate('ListeningProgramGuideline');
+            break;
+          case PROGRAM_IDS.GRAMMAR:
+            navigation.navigate('GrammarProgramGuideline');
+            break;
+          case PROGRAM_IDS.READING:
+            navigation.navigate('ReadingProgramGuideline');
             break;
           default:
             break;

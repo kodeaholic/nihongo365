@@ -17,8 +17,14 @@ import DebounceInput from '../../components/DebounceInput';
 import firestore from '@react-native-firebase/firestore';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getCurrentTime } from '../../helpers/time';
+import { ROOM_TYPES } from '../../constants/chat.constants';
+import { isIphoneX } from '../../lib/isIphoneX';
+import { useSelector } from 'react-redux';
+import { RANDOM_STR } from '../../helpers/random';
 const windowWidth = Dimensions.get('window').width;
+const isIPX = isIphoneX();
 export const Room = ({ route, navigation }) => {
+  const user = useSelector(state => state.userReducer.user);
   const { roomId, roomInfo } = route.params;
   const [room, setRoom] = useState({});
   const [title, setTitle] = useState('');
@@ -26,6 +32,7 @@ export const Room = ({ route, navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [roomMembers, setMembers] = useState([]);
+  const [saving, setSaving] = useState(false);
   // first load data
   useEffect(() => {
     if (roomId) {
@@ -87,7 +94,9 @@ export const Room = ({ route, navigation }) => {
                   return mb.id === documentSnapshot.id;
                 });
                 return (
-                  index < 0 && data.email.includes(searchKey.toLowerCase())
+                  documentSnapshot.id !== user.id &&
+                  index < 0 &&
+                  data.email.includes(searchKey.toLowerCase())
                 );
               })
               .map(filteredSnapshot => {
@@ -110,7 +119,7 @@ export const Room = ({ route, navigation }) => {
     return () => {
       unsubscribe && unsubscribe();
     };
-  }, [searchKey, roomMembers]);
+  }, [searchKey, roomMembers, user]);
   return (
     <>
       <SafeAreaView style={{ flex: 1 }}>
@@ -257,7 +266,7 @@ export const Room = ({ route, navigation }) => {
               }}
               numberOfLines={1}
               ellipsizeMode="tail">
-              Không tìm thấy kết quả tương tự
+              Không có thêm kết quả tương tự
             </Text>
           )}
           {!_.isEmpty(roomMembers) && (
@@ -394,7 +403,7 @@ export const Room = ({ route, navigation }) => {
           )}
           {true && (
             <TouchableOpacity
-              disabled={_.isEmpty(title)}
+              disabled={_.isEmpty(title) || saving}
               style={{
                 height: 50,
                 width: windowWidth / 3,
@@ -403,12 +412,88 @@ export const Room = ({ route, navigation }) => {
                 justifyContent: 'center',
                 marginVertical: 15,
               }}
-              onPress={() => {}}>
+              onPress={async () => {
+                // create new room
+                console.log('Click!');
+                if (!roomId) {
+                  setSaving(true);
+                  const time = Date.now();
+                  const lastMessage = {
+                    type: 'system',
+                    content: `${
+                      user.name ? user.name : 'Một bạn giấu tên'
+                    } đã tạo nhóm`,
+                    renderTime: true,
+                    sendStatus: 1,
+                    time: time,
+                    isIPhoneX: isIPX,
+                    targetId: user.role === 'admin' ? 'ADMIN_ID' : user.id,
+                    chatInfo: {
+                      // sender information
+                      avatar:
+                        user.role === 'admin'
+                          ? require('../../assets/logo.png')
+                          : user.photo
+                          ? user.photo
+                          : require('../../assets/default_avatar.png'),
+                      id: user.role === 'admin' ? 'ADMIN_ID' : user.id,
+                      nickName:
+                        user.role === 'admin'
+                          ? 'Admin'
+                          : user.name
+                          ? user.name
+                          : 'Một bạn giấu tên',
+                    },
+                  };
+                  const newRoom = {
+                    type: ROOM_TYPES.GROUP,
+                    name: title,
+                    avatar: require('../../assets/teamwork.png'),
+                    lastMessage,
+                  };
+                  newRoom.ownerId = user.id;
+                  newRoom.ownerRef = firestore().doc('USERS/' + user.id);
+                  // members
+                  let list = [];
+                  list = roomMembers.map(item => {
+                    return { id: item.id, createdAt: item.createdAt };
+                  });
+                  newRoom.members = list;
+                  try {
+                    await firestore()
+                      .collection('rooms')
+                      .add(newRoom)
+                      .then(docRef => {
+                        firestore()
+                          .collection('rooms')
+                          .doc(docRef.id)
+                          .collection('MESSAGES')
+                          .doc(time + RANDOM_STR(5))
+                          .set(lastMessage)
+                          .then(() => {
+                            console.log(docRef);
+                            navigation.navigate('Chat', {
+                              roomId: docRef.id,
+                              roomInfo: {
+                                name: newRoom.name,
+                                type: newRoom.type,
+                                id: newRoom.id,
+                              },
+                            });
+                          });
+                      });
+                    setSaving(false);
+                  } catch (e) {
+                    // console.log(e);
+                  }
+                }
+              }}>
               <Text
                 style={{
-                  backgroundColor: !_.isEmpty(title)
-                    ? 'rgba(0, 181, 204, 1)'
-                    : 'rgba(218, 223, 225, 1)',
+                  backgroundColor:
+                    !_.isEmpty(title) || saving
+                      ? 'rgba(0, 181, 204, 1)'
+                      : 'rgba(218, 223, 225, 1)',
                   width: 120,
                   height: 35,
                   margin: 0,

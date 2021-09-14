@@ -117,14 +117,24 @@ const Rooms = ({ navigation }) => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {
             const type = _.get(documentSnapshot.data(), 'type');
+            const members = _.get(documentSnapshot.data(), 'members');
             const isEmpty = _.isEmpty(documentSnapshot);
+            const index = _.findIndex(members, function(mb) {
+              return mb.id === user.id;
+            });
+            const thisRoomHasMe = index >= 0;
             if (!isAdmin) {
               const ownerId = _.get(documentSnapshot.data(), 'ownerId');
               return (
-                !isEmpty && ownerId === user.id && type !== ROOM_TYPES.SYSTEM
+                (!isEmpty &&
+                  ownerId === user.id &&
+                  type !== ROOM_TYPES.SYSTEM) ||
+                thisRoomHasMe
               );
             } else {
-              return !isEmpty && type === ROOM_TYPES.MEVSADMIN;
+              return (
+                (!isEmpty && type === ROOM_TYPES.MEVSADMIN) || thisRoomHasMe
+              );
             }
           })
           .map(filteredSnapshot => {
@@ -280,7 +290,9 @@ const Rooms = ({ navigation }) => {
                       }}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {user.role === 'admin' ? item.name : 'Admin'}
+                      {user.role === 'admin' || item.type === ROOM_TYPES.GROUP
+                        ? item.name
+                        : 'Admin'}
                     </Text>
                     <Text
                       style={{

@@ -161,6 +161,8 @@ export const Chat = ({ route, navigation }) => {
       switch (info.type) {
         case ROOM_TYPES.MEVSADMIN:
           return user.role === 'user' ? 'Admin' : info.name;
+        case ROOM_TYPES.GROUP:
+          return info.name;
       }
     };
     /** Update header */

@@ -7,20 +7,429 @@ import {
   Dimensions,
   ToastAndroid,
   Image,
+  FlatList,
 } from 'react-native';
 import { Text } from 'react-native-paper';
-import { FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native';
 import _ from 'lodash';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import DebounceInput from '../../components/DebounceInput';
+import firestore from '@react-native-firebase/firestore';
+import { ScrollView } from 'react-native-gesture-handler';
+import { getCurrentTime } from '../../helpers/time';
 const windowWidth = Dimensions.get('window').width;
 export const Room = ({ route, navigation }) => {
+  const { roomId, roomInfo } = route.params;
+  const [room, setRoom] = useState({});
+  const [title, setTitle] = useState('');
+  const [searchKey, setSearchKey] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [roomMembers, setMembers] = useState([]);
+  // first load data
   useEffect(() => {
-    navigation.setOptions({ headerProps: { title: 'Tạo phòng chat' } });
-  }, [navigation]);
+    if (roomId) {
+      navigation.setOptions({ headerProps: { title: 'Chỉnh sửa nhóm chat' } });
+      const getRoom = async () => {
+        const rm = await firestore()
+          .collection('rooms')
+          .doc(roomId)
+          .get();
+        if (_.isEmpty(rm.data())) {
+          ToastAndroid.showWithGravityAndOffset(
+            'Nhóm không tồn tại hoặc đã bị xóa',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            100,
+          );
+          navigation.goBack();
+        } else {
+          // console.log(rm.data());
+          setRoom(rm.data());
+          const { members } = rm.data();
+          if (members && members.length) {
+            // fetch members data by ids
+            let list = [];
+            list = members.map(async (mb, index) => {
+              const doc = await firestore()
+                .collections('USERS')
+                .doc(mb.id)
+                .get();
+              console.log(doc);
+              return doc;
+            });
+            setMembers(members);
+          } else {
+            setMembers([]);
+          }
+        }
+      };
+      getRoom();
+    } else {
+      navigation.setOptions({ headerProps: { title: 'Tạo nhóm chat' } });
+    }
+  }, [navigation, roomId, roomInfo]);
+
+  useEffect(() => {
+    let unsubscribe;
+    if (searchKey && searchKey.length > 2) {
+      // search
+      setSearching(true);
+      const search = async () => {
+        unsubscribe = firestore()
+          .collection('USERS')
+          .onSnapshot(querySnapshot => {
+            const items = querySnapshot.docs
+              .filter(documentSnapshot => {
+                const data = documentSnapshot.data();
+                const index = _.findIndex(roomMembers, function(mb) {
+                  return mb.id === documentSnapshot.id;
+                });
+                return (
+                  index < 0 && data.email.includes(searchKey.toLowerCase())
+                );
+              })
+              .map(filteredSnapshot => {
+                const item = {
+                  id: filteredSnapshot.id,
+                  ...filteredSnapshot.data(),
+                };
+                return item;
+              });
+            // console.log(items);
+            setSearchResults(items);
+            setSearching(false);
+          });
+      };
+      setSearching(false);
+      search();
+    } else {
+      setSearchResults([]);
+    }
+    return () => {
+      unsubscribe && unsubscribe();
+    };
+  }, [searchKey, roomMembers]);
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }} />
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }}>
+          <DebounceInput
+            handleInputChange={setTitle}
+            placeholder="Tên nhóm chat"
+            style={{ backgroundColor: '#fff' }}
+            // heigth = 50, margin 8
+          />
+          <DebounceInput
+            handleInputChange={setSearchKey}
+            placeholder="Tìm và thêm thành viên qua email"
+            style={{ backgroundColor: '#fff' }}
+            enabled={_.isEmpty(title) ? false : true}
+            // height = 50, margin 8
+          />
+          {!_.isEmpty(searchKey) && !_.isEmpty(searchResults) && (
+            <View>
+              <Text
+                style={{
+                  fontFamily: 'SF-Pro-Display-Regular',
+                  textAlign: 'center',
+                  color: '#000',
+                  fontWeight: 'normal',
+                  fontSize: 13,
+                }}
+                numberOfLines={1}
+                ellipsizeMode="tail">
+                Kết quả tìm kiếm
+              </Text>
+              <FlatList
+                data={searchResults}
+                renderItem={({ item, index }) => {
+                  const length = searchResults.length;
+                  const onClick = () => {
+                    setMembers(list => {
+                      const idx = _.findIndex(list, function(mb) {
+                        return mb.id === item.id;
+                      });
+                      if (idx < 0) {
+                        return [
+                          ...list,
+                          {
+                            id: item.id,
+                            createdAt: Date.now(),
+                            name: item.name ? item.name : 'Một bạn giấu tên',
+                            photo: item.photo,
+                          },
+                        ];
+                      } else {
+                        return list;
+                      }
+                    });
+                    ToastAndroid.showWithGravityAndOffset(
+                      `Đã thêm ${item.name}`,
+                      ToastAndroid.LONG,
+                      ToastAndroid.TOP,
+                      0,
+                      100,
+                    );
+                  };
+                  return (
+                    <TouchableOpacity
+                      key={'search-' + item.id}
+                      onPress={() => onClick()}
+                      style={{
+                        minHeight: 50,
+                        backgroundColor: '#fff',
+                        marginTop: index === 0 ? 5 : 0, // first
+                        marginBottom: index === length - 1 ? 10 : 5, // last
+                        marginLeft: 10,
+                        marginRight: 10,
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 2,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        elevation: 5,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        borderRadius: 5,
+                      }}>
+                      <View style={styles.roomAvatarContainer}>
+                        {item.role === 'admin' ? (
+                          <Image
+                            source={require('../../assets/logo.png')}
+                            style={styles.roomAvatar}
+                            resizeMethod="auto"
+                          />
+                        ) : item.photo ? (
+                          <Image
+                            source={{ uri: item.photo }}
+                            style={styles.roomAvatar}
+                            resizeMethod="auto"
+                          />
+                        ) : (
+                          <Image
+                            source={require('../../assets/default_avatar.png')}
+                            style={styles.roomAvatar}
+                            resizeMethod="auto"
+                          />
+                        )}
+                      </View>
+                      <View
+                        style={{
+                          width: windowWidth - 50,
+                          padding: 5,
+                          marginRight: 5,
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: 'SF-Pro-Display-Regular',
+                            textAlign: 'left',
+                            color: '#000',
+                            fontWeight: 'normal',
+                            fontSize: 16,
+                            // textTransform: 'uppercase',
+                          }}
+                          numberOfLines={1}
+                          ellipsizeMode="tail">
+                          {item.name ? item.name : 'Một bạn giấu tên'}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                }}
+                keyExtractor={(item, index) => {
+                  return item.id;
+                }}
+              />
+            </View>
+          )}
+          {!_.isEmpty(searchKey) && _.isEmpty(searchResults) && (
+            <Text
+              style={{
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'center',
+                color: '#000',
+                fontWeight: 'normal',
+                fontSize: 13,
+              }}
+              numberOfLines={1}
+              ellipsizeMode="tail">
+              Không tìm thấy kết quả tương tự
+            </Text>
+          )}
+          {!_.isEmpty(roomMembers) && (
+            <>
+              <Text
+                style={{
+                  fontFamily: 'SF-Pro-Display-Regular',
+                  textAlign: 'center',
+                  color: '#fff',
+                  fontWeight: 'normal',
+                  fontSize: 13,
+                  backgroundColor: 'rgba(63, 195, 128, 1)',
+                  borderRadius: 5,
+                  width: windowWidth / 3,
+                  marginHorizontal: windowWidth / 3,
+                  marginTop: 20,
+                  marginBottom: 5,
+                }}
+                numberOfLines={1}
+                ellipsizeMode="tail">
+                {roomMembers.length} thành viên
+              </Text>
+              <View>
+                <FlatList
+                  data={roomMembers}
+                  renderItem={({ item, index }) => {
+                    const length = searchResults.length;
+                    const onClick = () => {};
+                    return (
+                      <TouchableOpacity
+                        key={'member-' + item.id}
+                        onPress={() => onClick()}
+                        style={{
+                          minHeight: 50,
+                          backgroundColor: '#fff',
+                          marginTop: index === 0 ? 5 : 0, // first
+                          marginBottom: index === length - 1 ? 10 : 5, // last
+                          marginLeft: 10,
+                          marginRight: 10,
+                          shadowColor: '#000',
+                          shadowOffset: {
+                            width: 0,
+                            height: 2,
+                          },
+                          shadowOpacity: 0.25,
+                          shadowRadius: 3.84,
+                          elevation: 5,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          borderRadius: 5,
+                        }}>
+                        <View style={styles.roomAvatarContainer}>
+                          {item.role === 'admin' ? (
+                            <Image
+                              source={require('../../assets/logo.png')}
+                              style={styles.roomAvatar}
+                              resizeMethod="auto"
+                            />
+                          ) : item.photo ? (
+                            <Image
+                              source={{ uri: item.photo }}
+                              style={styles.roomAvatar}
+                              resizeMethod="auto"
+                            />
+                          ) : (
+                            <Image
+                              source={require('../../assets/default_avatar.png')}
+                              style={styles.roomAvatar}
+                              resizeMethod="auto"
+                            />
+                          )}
+                        </View>
+                        <View
+                          style={{
+                            width: windowWidth - 50,
+                            padding: 5,
+                            marginRight: 5,
+                          }}>
+                          <Text
+                            style={{
+                              fontFamily: 'SF-Pro-Display-Regular',
+                              textAlign: 'left',
+                              color: '#000',
+                              fontWeight: 'normal',
+                              fontSize: 16,
+                              // textTransform: 'uppercase',
+                            }}
+                            numberOfLines={1}
+                            ellipsizeMode="tail">
+                            {item.name ? item.name : 'Một bạn giấu tên'}
+                          </Text>
+                          <Text
+                            style={{
+                              fontFamily: 'SF-Pro-Display-Regular',
+                              textAlign: 'left',
+                              color: '#000',
+                              fontWeight: 'normal',
+                              fontSize: 11,
+                            }}
+                            numberOfLines={1}
+                            ellipsizeMode="tail">
+                            Tham gia từ: {getCurrentTime(item.createdAt)}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  }}
+                  keyExtractor={(item, index) => {
+                    return item.id;
+                  }}
+                />
+              </View>
+            </>
+          )}
+          {_.isEmpty(roomMembers) && (
+            <Text
+              style={{
+                fontFamily: 'SF-Pro-Display-Regular',
+                textAlign: 'center',
+                color: '#fff',
+                fontWeight: 'normal',
+                fontSize: 13,
+                backgroundColor: 'rgba(63, 195, 128, 1)',
+                borderRadius: 5,
+                width: windowWidth / 3,
+                marginHorizontal: windowWidth / 3,
+                marginTop: 20,
+                marginBottom: 5,
+              }}
+              numberOfLines={1}
+              ellipsizeMode="tail">
+              0 thành viên
+            </Text>
+          )}
+          {true && (
+            <TouchableOpacity
+              disabled={_.isEmpty(title)}
+              style={{
+                height: 50,
+                width: windowWidth / 3,
+                marginHorizontal: windowWidth / 3,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginVertical: 15,
+              }}
+              onPress={() => {}}>
+              <Text
+                style={{
+                  backgroundColor: !_.isEmpty(title)
+                    ? 'rgba(0, 181, 204, 1)'
+                    : 'rgba(218, 223, 225, 1)',
+                  width: 120,
+                  height: 35,
+                  margin: 0,
+                  fontFamily: 'SF-Pro-Detail-Regular',
+                  fontSize: 15,
+                  fontWeight: 'normal',
+                  color: '#fff',
+                  textAlign: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  paddingVertical: 7,
+                  borderRadius: 10,
+                  textTransform: 'uppercase',
+                }}>
+                Lưu
+              </Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 };
@@ -129,5 +538,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignContent: 'center',
     alignItems: 'center',
+  },
+  roomAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 32 / 2,
+    borderWidth: 2,
+    borderColor: 'rgba(63, 195, 128, 1)',
+  },
+  roomAvatarContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 5,
   },
 });

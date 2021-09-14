@@ -9,6 +9,7 @@ const DebounceInput = props => {
     handleInputChange,
     label = 'Input',
     placeholder = 'Bạn có thể nhập 私, わたし, hoặc tôi',
+    enabled = true,
   } = props;
   const debounceFunc = React.useCallback(
     _.debounce(e => handleInputChange(e), 1000),
@@ -25,6 +26,8 @@ const DebounceInput = props => {
       style={[defaultStyle.textInput, style]}
       defaultValue={defaultValue}
       placeholder={placeholder}
+      editable={enabled}
+      selectTextOnFocus={enabled}
     />
   );
 };

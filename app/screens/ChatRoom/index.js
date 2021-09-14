@@ -346,7 +346,10 @@ const Rooms = ({ navigation }) => {
       <FAB
         style={styles.fab}
         onPress={() => {
-          navigation.navigate('Room');
+          navigation.navigate('Room', {
+            roomId: undefined,
+            roomInfo: undefined,
+          });
         }}
         icon={({ size, color }) => (
           <MaterialCommunityIcons

@@ -14,8 +14,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 // import RegisterScreen from 'app/screens/Auth/Register';
 import AuthLoadingScreen from '../screens/Auth/Loading';
 import StartScreen from '../screens/Auth/Start';
-import VocabProgramGuideline from '../screens/ProgramGuideline/Vocab';
-import ChuHanProgramGuideline from '../screens/ProgramGuideline/ChuHan';
+import { VocabProgramGuideline } from '../screens/ProgramGuideline/Vocab';
+import { ChuHanProgramGuideline } from '../screens/ProgramGuideline/ChuHan';
 import { VocabTopicSelection } from '../screens/VocabTopicSelection';
 import { ChuHanBoardSelection } from '../screens/ChuHanBoardSelection';
 import { ListeningLessonSelection } from '../screens/ListeningLessonSelection';

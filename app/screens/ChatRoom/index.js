@@ -129,11 +129,14 @@ const Rooms = ({ navigation }) => {
                 (!isEmpty &&
                   ownerId === user.id &&
                   type !== ROOM_TYPES.SYSTEM) ||
-                thisRoomHasMe
+                thisRoomHasMe ||
+                documentSnapshot.id.includes('DEFAULT_ROOM')
               );
             } else {
               return (
-                (!isEmpty && type === ROOM_TYPES.MEVSADMIN) || thisRoomHasMe
+                (!isEmpty && type === ROOM_TYPES.MEVSADMIN) ||
+                thisRoomHasMe ||
+                _.get(documentSnapshot.data(), 'ownerId') === 'ADMIN_ID'
               );
             }
           })
@@ -260,7 +263,7 @@ const Rooms = ({ navigation }) => {
                     minHeight: 100,
                     backgroundColor: '#fff',
                     marginTop: index === 0 ? 1 : 0, // first
-                    marginBottom: index === length - 1 ? 10 : 0.5, // last
+                    marginBottom: index === length - 1 ? 0.5 : 0.5, // last
                     marginLeft: 1,
                     marginRight: 1,
                     // borderRadius: 5,

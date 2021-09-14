@@ -471,7 +471,7 @@ export const Room = ({ route, navigation }) => {
                           .doc(time + RANDOM_STR(5))
                           .set(lastMessage)
                           .then(() => {
-                            console.log(docRef);
+                            // console.log(docRef);
                             navigation.navigate('Chat', {
                               roomId: docRef.id,
                               roomInfo: {

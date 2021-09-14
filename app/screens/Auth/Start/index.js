@@ -24,7 +24,7 @@ firestore().settings({
   ignoreUndefinedProperties: true,
 });
 import { isIphoneX } from '../../../lib/isIphoneX';
-import { ROOM_TYPES } from '../../../constants/chat.constants';
+import { DEFAULT_ROOMS, ROOM_TYPES } from '../../../constants/chat.constants';
 import { RANDOM_STR } from '../../../helpers/random';
 const isIPX = isIphoneX();
 export default function StartScreen({ navigation }) {

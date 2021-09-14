@@ -16,3 +16,71 @@ export const AVATARS = {
   ADMIN: require('../assets/logo.png'),
   DEFAULT_USER_AVATAR: require('../assets/girl.png'),
 };
+
+const LAST_MESSAGE = {
+  type: 'system',
+  content: 'Admin đã tạo nhóm',
+  renderTime: true,
+  sendStatus: 1,
+  time: 1631600000000,
+  isIPhoneX: false,
+  targetId: 'ADMIN_ID',
+  chatInfo: {
+    avatar: require('../assets/default_avatar.png'),
+    id: 'ADMIN_ID',
+    nickName: 'Admin',
+  },
+};
+
+export const DEFAULT_ROOMS = {
+  N1: {
+    id: 'DEFAULT_ROOM_N1_NIHONGO365',
+    roomInfo: {
+      name: 'Nhóm N1 Nihongo365',
+      type: ROOM_TYPES.GROUP,
+      lastMessage: LAST_MESSAGE,
+      ownerId: 'ADMIN_ID',
+      avatar: require('../assets/teamwork.png'),
+    },
+  },
+  N2: {
+    id: 'DEFAULT_ROOM_N2_NIHONGO365',
+    roomInfo: {
+      name: 'Nhóm N2 Nihongo365',
+      type: ROOM_TYPES.GROUP,
+      lastMessage: LAST_MESSAGE,
+      ownerId: 'ADMIN_ID',
+      avatar: require('../assets/teamwork.png'),
+    },
+  },
+  N3: {
+    id: 'DEFAULT_ROOM_N3_NIHONGO365',
+    roomInfo: {
+      name: 'Nhóm N3 Nihongo365',
+      type: ROOM_TYPES.GROUP,
+      lastMessage: LAST_MESSAGE,
+      ownerId: 'ADMIN_ID',
+      avatar: require('../assets/teamwork.png'),
+    },
+  },
+  N4: {
+    id: 'DEFAULT_ROOM_N4_NIHONGO365',
+    roomInfo: {
+      name: 'Nhóm N4 Nihongo365',
+      type: ROOM_TYPES.GROUP,
+      lastMessage: LAST_MESSAGE,
+      ownerId: 'ADMIN_ID',
+      avatar: require('../assets/teamwork.png'),
+    },
+  },
+  N5: {
+    id: 'DEFAULT_ROOM_N5_NIHONGO365',
+    roomInfo: {
+      name: 'Nhóm N5 Nihongo365',
+      type: ROOM_TYPES.GROUP,
+      lastMessage: LAST_MESSAGE,
+      ownerId: 'ADMIN_ID',
+      avatar: require('../assets/teamwork.png'),
+    },
+  },
+};

@@ -18,9 +18,17 @@ import { isIphoneX } from '../../lib/isIphoneX';
 import firestore from '@react-native-firebase/firestore';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
-import { ToastAndroid, Image, View, Text } from 'react-native';
+import {
+  ToastAndroid,
+  Image,
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import { ROOM_TYPES } from '../../constants/chat.constants';
 import { getCurrentTime } from '../../helpers/time';
+const { width, height } = Dimensions.get('window');
 const isIPX = isIphoneX();
 const renderMessageTime = time => (
   <View
@@ -214,8 +222,18 @@ export const Chat = ({ route, navigation }) => {
       chatInfo: {
         // sender info
         avatar:
-          user.role === 'admin' ? require('../../assets/logo.png') : user.photo,
+          user.role === 'admin'
+            ? require('../../assets/logo.png')
+            : user.photo
+            ? user.photo
+            : require('../../assets/default_avatar.png'),
         id: user.role === 'admin' ? 'ADMIN_ID' : user.id,
+        nickName:
+          user.role === 'admin'
+            ? 'Admin'
+            : user.name
+            ? user.name
+            : 'Một bạn giấu tên',
       },
       renderTime: true,
       sendStatus: 1,
@@ -255,6 +273,7 @@ export const Chat = ({ route, navigation }) => {
     <>
       {!_.isEmpty(messages) && (
         <ChatScreen
+          chatType="group"
           messageList={messages}
           sendMessage={sendMessage}
           placeholder="Nhập tin nhắn..."
@@ -266,8 +285,127 @@ export const Chat = ({ route, navigation }) => {
           isIPhoneX={isIPX}
           renderMessageTime={renderMessageTime}
           usePopView={false}
+          userNameStyle={styles.userName}
+          rightMessageBackground="#fff"
+          renderAvatar={message => {
+            const isSelf = userProfile.id === message.targetId;
+            const avatar = isSelf
+              ? userProfile.avatar
+              : message.chatInfo.avatar;
+            const avatarSource = avatar
+              ? typeof avatar === 'number'
+                ? avatar
+                : { uri: avatar }
+              : require('../../assets/default_avatar.png');
+            return <Image source={avatarSource} style={[styles.avatar]} />;
+          }}
         />
       )}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  commentBar: {
+    width: width,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    borderColor: '#ccc',
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  subEmojiStyle: {
+    width: 20,
+    height: 20,
+  },
+  commentBar__input: {
+    borderRadius: 18,
+    height: 26,
+    width: '100%',
+    padding: 0,
+    paddingHorizontal: 20,
+    // backgroundColor: '#f9f9f9'
+  },
+  circle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#ddd',
+    borderWidth: 0.8,
+  },
+  chat: {
+    paddingHorizontal: 10,
+    paddingVertical: 14,
+  },
+  right: {
+    flexDirection: 'row-reverse',
+  },
+  left: {
+    flexDirection: 'row',
+  },
+  txtArea: {},
+  voiceArea: {
+    borderRadius: 12,
+    maxWidth: width - 160,
+    justifyContent: 'center',
+    minHeight: 30,
+  },
+  avatar: {
+    marginLeft: 8,
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+  },
+  leftAvatar: {
+    marginLeft: 8,
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+  },
+  rightAvatar: {
+    marginLeft: 8,
+    borderRadius: 16,
+    width: 30,
+    height: 30,
+    borderTopWidth: 2,
+    borderColor: '#5cdb5e',
+  },
+  check: {
+    width: 20,
+    height: 20,
+    backgroundColor: 'green',
+    borderRadius: 10,
+    marginTop: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  unCheck: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#fff',
+    borderWidth: 0.6,
+    borderRadius: 10,
+    borderColor: '#9c9c9c',
+    marginTop: 14,
+  },
+  system_container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  system_button: {
+    backgroundColor: 'rgba(240, 240, 240, 0.7)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 4,
+  },
+  system_text: {
+    fontSize: 12,
+  },
+  userName: {
+    fontSize: 10,
+    color: '#000',
+    marginBottom: 2,
+    marginLeft: 14,
+  },
+});

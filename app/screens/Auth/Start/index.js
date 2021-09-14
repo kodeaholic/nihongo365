@@ -130,7 +130,8 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                     chatInfo: {
                       // sender information
                       avatar: require('../../../assets/logo.png'),
-                      // id: 'ADMIN_ID',
+                      id: 'ADMIN_ID',
+                      nickName: 'Admin',
                     },
                     renderTime: true,
                     sendStatus: 1,

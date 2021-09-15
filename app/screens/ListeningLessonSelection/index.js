@@ -171,7 +171,7 @@ export const ListeningLessonSelection = ({ navigation }) => {
                         },
                       }),
                     );
-                    navigation.navigate('ListeningLesson');
+                    navigation.navigate('ListeningLesson', { lesson: item });
                   };
                   return (
                     <List.Item

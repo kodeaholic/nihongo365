@@ -24,7 +24,7 @@ export const RegisterPopup = ({ service, setVisible, visible }) => {
       animationIn="bounceInLeft"
       animationOut="bounceOutLeft"
       animationInTiming={1500}
-      animationOutTiming={1500}
+      animationOutTiming={4000}
       onBackButtonPress={() => {
         // if (visible) {
         //   setVisible(false);
@@ -95,22 +95,13 @@ export const RegisterPopup = ({ service, setVisible, visible }) => {
             onPress={() => {
               setVisible(false);
               ToastAndroid.showWithGravityAndOffset(
-                'Bạn đang xem tài liệu có tính phí',
-                ToastAndroid.SHORT,
+                `Đăng ký ${service} để học và thi không giới hạn 😍`,
+                ToastAndroid.LONG,
                 ToastAndroid.TOP,
                 0,
                 100,
               );
-              setTimeout(() => {
-                navigation.goBack();
-                ToastAndroid.showWithGravityAndOffset(
-                  `🤗 bạn ơi nhanh tay đăng ký ${service} 🤗\n😍 Học và thi không giới hạn 😍`,
-                  ToastAndroid.LONG,
-                  ToastAndroid.TOP,
-                  0,
-                  100,
-                );
-              }, 10000);
+              navigation.goBack();
             }}>
             <Text
               style={{

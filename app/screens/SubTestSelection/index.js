@@ -56,7 +56,7 @@ export const SubTestSelection = ({ navigation }) => {
     if (_.get(filter, 'type')) {
       url += `&type=${_.get(filter, 'type')}`;
     }
-    console.log(url);
+    // console.log(url);
     try {
       const response = await fetch(url, requestOptions);
       const data = await response.json();
@@ -309,6 +309,7 @@ export const SubTestSelection = ({ navigation }) => {
                         navigation.navigate('SubTest', {
                           itemId: item.id,
                           itemType: item.type,
+                          free: item.free,
                         });
                       };
                       return (

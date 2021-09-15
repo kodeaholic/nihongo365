@@ -68,9 +68,9 @@ export const AudioPlayer = props => {
       };
       AppState.addEventListener('change', handleAppStateChange);
       const backAction = () => {
-        console.log('BackButton clicked! Navigating back ...');
+        // console.log('BackButton clicked! Navigating back ...');
         if (player && player.isPlaying()) {
-          console.log('Pausing audio file ...');
+          // console.log('Pausing audio file ...');
           pause();
           // navigation.goBack(null);
         }
@@ -82,9 +82,9 @@ export const AudioPlayer = props => {
         backAction,
       );
       navigation.addListener('beforeRemove', e => {
-        console.log('Navigating back ...');
+        // console.log('Navigating back ...');
         if (player && player.isPlaying()) {
-          console.log('Pausing audio file ...');
+          // console.log('Pausing audio file ...');
           pause();
         }
       });

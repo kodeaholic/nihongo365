@@ -26,7 +26,7 @@ export const SubTest = ({ route, navigation }) => {
     state => state.programReducer.selectedLevel,
   );
   const subTest = useSelector(state => state.programReducer.subTest);
-  const { itemId, itemType } = route.params;
+  const { itemId, itemType, free } = route.params;
   let url = `${apiConfig.baseUrl}/#/sub-tests/getSubTest/webview/${itemId}`;
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -42,7 +42,7 @@ export const SubTest = ({ route, navigation }) => {
   const user = useSelector(state => state.userReducer.user);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
-    if (selectedLevel !== 'N5') {
+    if (selectedLevel !== 'N5' && free !== 1) {
       async function getDoc() {
         let docRef;
         if (user && user.id) {
@@ -55,7 +55,7 @@ export const SubTest = ({ route, navigation }) => {
             let doc = await docRef.get();
             doc = doc.data();
             if (_.isEmpty(doc) || doc.status !== STATUS.SUCCESS.value) {
-              setPopupVisible(true);
+              setTimeout(() => setPopupVisible(true), 10000);
               setService(selectedLevel);
             } else {
               setPopupVisible(false);
@@ -69,7 +69,7 @@ export const SubTest = ({ route, navigation }) => {
       }
       getDoc();
     }
-  }, [user, selectedLevel]);
+  }, [user, selectedLevel, free]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {!_.isEmpty(service) && popupVisible && (

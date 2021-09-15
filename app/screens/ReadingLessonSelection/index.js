@@ -168,9 +168,7 @@ export const ReadingLessonSelection = ({ navigation }) => {
                         },
                       }),
                     );
-                    navigation.navigate('ReadingLesson', {
-                      lessonId: item.id,
-                    });
+                    navigation.navigate('ReadingLesson', { lesson: item });
                   };
                   return (
                     <List.Item

@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 // import { StyleSheet, View } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 import { Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -283,21 +283,21 @@ if (DeviceInfo.isTablet()) {
 }
 
 function MainStackScreen() {
-  React.useEffect(() => {
-    // console.log(Date.now());
-    (async () => {
-      if (Platform.OS === 'android') {
-        const authStatus = await messaging().requestPermission();
-        const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  // React.useEffect(() => {
+  //   // console.log(Date.now());
+  //   (async () => {
+  //     if (Platform.OS === 'android') {
+  //       const authStatus = await messaging().requestPermission();
+  //       const enabled =
+  //         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+  //         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-        if (enabled) {
-          // console.log('Authorization status:', authStatus);
-        }
-      }
-    })();
-  }, []);
+  //       if (enabled) {
+  //         // console.log('Authorization status:', authStatus);
+  //       }
+  //     }
+  //   })();
+  // }, []);
   return (
     <React.Fragment>
       <Tab.Navigator

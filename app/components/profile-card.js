@@ -16,20 +16,26 @@ export default function profileCard({
       size={50}
     />
   );
-  const RightContent = props => (
-    <Chip
-      mode="flat"
-      onPress={onSelected}
-      style={styles.chip}
-      textStyle={{ color: '#fff' }}>
-      Cách học
-    </Chip>
-  );
+  const RightContent = props => {
+    if (!disableRightBtn) {
+      return (
+        <Chip
+          mode="flat"
+          onPress={onSelected}
+          style={styles.chip}
+          textStyle={{ color: '#fff' }}>
+          Cách học
+        </Chip>
+      );
+    } else {
+      return <></>;
+    }
+  };
   return (
     <Card.Title
       title={program}
       left={LeftContent}
-      right={disableRightBtn ? null : RightContent}
+      right={RightContent}
       titleStyle={styles.cardTitle}
       subtitleStyle={styles.cardSub}
     />

@@ -170,7 +170,7 @@ export const DialogLessonSelection = ({ navigation }) => {
                       }),
                     );
                     navigation.navigate('DialogLesson', {
-                      lessonId: item.id,
+                      lesson: item,
                     });
                   };
                   return (

@@ -19,7 +19,8 @@ const Sound = require('react-native-sound');
 const windowWidth = Dimensions.get('window').width;
 // const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
-export const ListeningLesson = ({ navigation }) => {
+export const ListeningLesson = ({ route, navigation }) => {
+  const { lesson } = route.params;
   const selectedListeningLesson = useSelector(
     state => state.programReducer.selectedListeningLesson,
   );
@@ -43,7 +44,7 @@ export const ListeningLesson = ({ navigation }) => {
   const user = useSelector(state => state.userReducer.user);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
-    if (selectedLevel !== 'N5') {
+    if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {
       async function getDoc() {
         let docRef;
         if (user && user.id) {
@@ -56,7 +57,7 @@ export const ListeningLesson = ({ navigation }) => {
             let doc = await docRef.get();
             doc = doc.data();
             if (_.isEmpty(doc) || doc.status !== STATUS.SUCCESS.value) {
-              setPopupVisible(true);
+              setTimeout(() => setPopupVisible(true), 10000);
               setService(selectedLevel);
             } else {
               setPopupVisible(false);
@@ -70,7 +71,7 @@ export const ListeningLesson = ({ navigation }) => {
       }
       getDoc();
     }
-  }, [user, selectedLevel]);
+  }, [user, selectedLevel, lesson]);
   const falseColor = '#f00';
   const trueColor = '#5cdb5e';
   const normalColor = '#000';

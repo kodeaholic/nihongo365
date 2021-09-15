@@ -21,16 +21,16 @@ const ActivityIndicatorElement = () => {
   );
 };
 export const ReadingLesson = ({ route, navigation }) => {
+  const { lesson } = route.params;
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
   const selectedReadingLesson = useSelector(
     state => state.programReducer.selectedReadingLesson,
   );
-  const { lessonId } = route.params;
-  let url = `${
-    apiConfig.baseUrl
-  }/#/reading-boards/getBoard/webview/${lessonId}`;
+  let url = `${apiConfig.baseUrl}/#/reading-boards/getBoard/webview/${
+    lesson.id
+  }`;
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     navigation.setOptions({
@@ -45,7 +45,7 @@ export const ReadingLesson = ({ route, navigation }) => {
   const user = useSelector(state => state.userReducer.user);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
-    if (selectedLevel !== 'N5') {
+    if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {
       async function getDoc() {
         let docRef;
         if (user && user.id) {
@@ -58,7 +58,7 @@ export const ReadingLesson = ({ route, navigation }) => {
             let doc = await docRef.get();
             doc = doc.data();
             if (_.isEmpty(doc) || doc.status !== STATUS.SUCCESS.value) {
-              setPopupVisible(true);
+              setTimeout(() => setPopupVisible(true), 10000);
               setService(selectedLevel);
             } else {
               setPopupVisible(false);
@@ -72,7 +72,7 @@ export const ReadingLesson = ({ route, navigation }) => {
       }
       getDoc();
     }
-  }, [user, selectedLevel]);
+  }, [user, selectedLevel, lesson]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {!_.isEmpty(service) && popupVisible && (

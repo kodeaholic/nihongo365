@@ -20,9 +20,9 @@ import { useDispatch } from 'react-redux';
 import { userActions } from '../../../actions/userActions';
 import firestore from '@react-native-firebase/firestore';
 import deviceInfoModule from 'react-native-device-info';
-firestore().settings({
-  ignoreUndefinedProperties: true,
-});
+// firestore().settings({
+//   ignoreUndefinedProperties: true,
+// });
 import { isIphoneX } from '../../../lib/isIphoneX';
 import { DEFAULT_ROOMS, ROOM_TYPES } from '../../../constants/chat.constants';
 import { RANDOM_STR } from '../../../helpers/random';

@@ -65,7 +65,11 @@ const Item = ({ item, first, last }) => {
   return (
     <Card style={[styles.card, last ? { marginBottom: 12 } : {}]}>
       <ProfileCard
-        disableRightButton={!available}
+        disableRightBtn={
+          id === PROGRAM_IDS.LUYENTHI || id === PROGRAM_IDS.THITHU
+            ? true
+            : false
+        }
         authorName={name}
         program={program}
         onSelected={onSelected}

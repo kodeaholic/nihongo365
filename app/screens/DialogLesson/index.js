@@ -27,11 +27,10 @@ export const DialogLesson = ({ route, navigation }) => {
   const selectedDialogLesson = useSelector(
     state => state.programReducer.selectedDialogLesson,
   );
-  const { lessonId } = route.params;
-  let url = `${apiConfig.baseUrl}/#/dialog-boards/mobilev2/${lessonId}`;
+  const { lesson } = route.params;
+  let url = `${apiConfig.baseUrl}/#/dialog-boards/mobilev2/${lesson.id}`;
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    console.log(selectedDialogLesson);
     const subtitle = `${selectedDialogLesson.board.title}`;
     navigation.setOptions({
       headerProps: {
@@ -45,7 +44,7 @@ export const DialogLesson = ({ route, navigation }) => {
   const user = useSelector(state => state.userReducer.user);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
-    if (selectedLevel !== 'N5') {
+    if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {
       async function getDoc() {
         let docRef;
         if (user && user.id) {
@@ -58,7 +57,7 @@ export const DialogLesson = ({ route, navigation }) => {
             let doc = await docRef.get();
             doc = doc.data();
             if (_.isEmpty(doc) || doc.status !== STATUS.SUCCESS.value) {
-              setPopupVisible(true);
+              setTimeout(() => setPopupVisible(true), 10000);
               setService(selectedLevel);
             } else {
               setPopupVisible(false);
@@ -72,7 +71,7 @@ export const DialogLesson = ({ route, navigation }) => {
       }
       getDoc();
     }
-  }, [user, selectedLevel]);
+  }, [user, selectedLevel, lesson]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {!_.isEmpty(service) && popupVisible && (

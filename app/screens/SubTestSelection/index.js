@@ -309,6 +309,7 @@ export const SubTestSelection = ({ navigation }) => {
                         navigation.navigate('SubTest', {
                           itemId: item.id,
                           itemType: item.type,
+                          free: item.free,
                         });
                       };
                       return (

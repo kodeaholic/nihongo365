@@ -76,7 +76,7 @@ export const VocabProgramGuideline = ({ navigation }) => {
   <body cz-shortcut-listen="true" style="background-color: #fff;">
     <main>
       <div class="content">
-        <p style="margin-top:0pt; margin-bottom:10pt; text-align:justify; line-height:150%; font-size:14pt;">
+        <p style="margin-top:10px; margin-bottom:10pt; text-align:justify; line-height:150%; font-size:14pt;">
           <strong>
             <span style=" color:#00b050;">Ch&agrave;o mừng c&aacute;c bạn đ&atilde; đến với Nihongo365 !</span>
           </strong>

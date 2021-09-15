@@ -49,7 +49,7 @@ const renderMessageTime = time => (
 export const Chat = ({ route, navigation }) => {
   const user = useSelector(state => state.userReducer.user);
   const { roomId, roomInfo } = route.params;
-  console.log(roomId, roomInfo);
+  // console.log(roomId, roomInfo);
   const [userProfile, setUserProfile] = useState(undefined);
   const [loading, setLoading] = useState(false);
   // const defaultMessages = [
@@ -193,7 +193,7 @@ export const Chat = ({ route, navigation }) => {
         .collection('MESSAGES')
         .orderBy('time', 'desc')
         .onSnapshot(querySnapshot => {
-          console.log(querySnapshot);
+          // console.log(querySnapshot);
           items = querySnapshot.docs.map(msg => {
             let item = {
               id: msg.id,

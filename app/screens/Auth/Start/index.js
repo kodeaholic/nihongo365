@@ -6,7 +6,13 @@ import Header from '../../../components/Header';
 // import Button from '../../../components/Button';
 // import { CommonActions } from '@react-navigation/native';
 import Paragraph from '../../../components/Paragraph';
-import { ToastAndroid, ActivityIndicator, Platform, Text } from 'react-native';
+import {
+  ToastAndroid,
+  ActivityIndicator,
+  Platform,
+  Text,
+  Linking,
+} from 'react-native';
 import {
   GoogleSignin,
   statusCodes,
@@ -27,6 +33,9 @@ import { isIphoneX } from '../../../lib/isIphoneX';
 import { DEFAULT_ROOMS, ROOM_TYPES } from '../../../constants/chat.constants';
 import { RANDOM_STR } from '../../../helpers/random';
 const isIPX = isIphoneX();
+const PRIVACY_URL = 'https://nihong0.herokuapp.com/privacy-policy.html';
+const TERMS_AND_CONDITIONS_URL =
+  'https://nihong0.herokuapp.com/terms-and-conditions.html';
 export default function StartScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState({});
@@ -309,23 +318,55 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
             color={GoogleSigninButton.Color.Dark}
             onPress={_googleSignIn}
           />
-        </>
-      )}
-      {loading && (
-        <>
-          <ActivityIndicator size="large" />
           <Text
             style={{
               color: 'rgba(241, 90, 34, 1)',
               // fontStyle: 'italic',
               fontFamily: 'SF-Pro-Display-Regular',
               fontWeight: 'normal',
-              fontSize: 13,
+              fontSize: 11,
               marginTop: 5,
               textAlign: 'center',
             }}>
             Mỗi tài khoản Google chỉ sử dụng được trên 01 thiết bị duy nhất
           </Text>
+          <Text
+            style={{
+              textAlign: 'center',
+              color: '#000',
+              fontFamily: 'SF-Pro-Detail-Regular',
+              // fontStyle: 'italic',
+              marginHorizontal: 10,
+              marginVertical: 10,
+              lineHeight: 22,
+            }}>
+            Bằng việc sử dụng Nihongo365, bạn đã đồng ý với{' '}
+            <Text
+              onPress={() => {
+                Linking.openURL(PRIVACY_URL);
+              }}
+              style={{
+                color: '#5cdb5e',
+              }}>
+              chính sách bảo mật
+            </Text>{' '}
+            và{' '}
+            <Text
+              onPress={() => {
+                Linking.openURL(TERMS_AND_CONDITIONS_URL);
+              }}
+              style={{
+                color: '#5cdb5e',
+              }}>
+              điều khoản sử dụng
+            </Text>{' '}
+            của chúng tôi
+          </Text>
+        </>
+      )}
+      {loading && (
+        <>
+          <ActivityIndicator size="large" />
         </>
       )}
       {/* <Button

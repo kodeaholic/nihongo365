@@ -12,6 +12,7 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Badge } from 'react-native-paper';
@@ -38,6 +39,9 @@ const alertFeatureUnavailable = () => {
     100,
   );
 };
+const PRIVACY_URL = 'https://nihong0.herokuapp.com/privacy-policy.html';
+const TERMS_AND_CONDITIONS_URL =
+  'https://nihong0.herokuapp.com/terms-and-conditions.html';
 export const More = ({ navigation }) => {
   const [exiting, setExiting] = useState(false);
   const dispatch = useDispatch();
@@ -292,6 +296,38 @@ export const More = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         )}
+        <Text
+          style={{
+            textAlign: 'center',
+            color: '#000',
+            fontFamily: 'SF-Pro-Detail-Regular',
+            fontStyle: 'italic',
+            marginHorizontal: 10,
+            marginVertical: 10,
+            lineHeight: 22,
+          }}>
+          Bằng việc sử dụng Nihongo365, bạn đã đồng ý với{' '}
+          <Text
+            onPress={() => {
+              Linking.openURL(PRIVACY_URL);
+            }}
+            style={{
+              color: '#5cdb5e',
+            }}>
+            chính sách bảo mật
+          </Text>{' '}
+          và{' '}
+          <Text
+            onPress={() => {
+              Linking.openURL(TERMS_AND_CONDITIONS_URL);
+            }}
+            style={{
+              color: '#5cdb5e',
+            }}>
+            điều khoản sử dụng
+          </Text>{' '}
+          của chúng tôi.
+        </Text>
         {exiting && (
           <ActivityIndicator
             size="large"

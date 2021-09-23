@@ -3,9 +3,10 @@ import {
   ImageBackground,
   StyleSheet,
   KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import { theme } from '../theme/authTheme';
-
+const { width, height } = Dimensions.get('window');
 export default function Background({ children }) {
   return (
     <ImageBackground
@@ -22,16 +23,18 @@ export default function Background({ children }) {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    width: '100%',
+    width: width,
     backgroundColor: theme.colors.surface,
   },
   container: {
     flex: 1,
     padding: 20,
-    width: '100%',
-    maxWidth: 340,
+    width: width - 40,
+    maxWidth: width - 40,
+    height: height,
     alignSelf: 'center',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    marginTop: 0,
   },
 });

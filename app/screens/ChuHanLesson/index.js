@@ -99,7 +99,8 @@ export const ChuHanLesson = ({ navigation }) => {
         subtitle,
         rightAction: {
           lessonCheck:
-            selectedChuHanLesson.type === BOARD_TYPE.EXERCISE
+            selectedChuHanLesson.type === BOARD_TYPE.EXERCISE ||
+            _.isEmpty(selectedChuHanLesson.board.quiz)
               ? {
                   program: PROGRAM_TYPES[PROGRAM_IDS.CHUHAN],
                   item: item,

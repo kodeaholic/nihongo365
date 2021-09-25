@@ -19,7 +19,7 @@ import {
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '../actions/userActions';
-import { getCurrentTime, getPostTimeFromCreatedAt } from '../helpers/time';
+import { getPostTimeFromCreatedAt } from '../helpers/time';
 export const Header = props => {
   const user = useSelector(state => state.userReducer.user);
   const confirmExit = text => {
@@ -61,8 +61,8 @@ export const Header = props => {
     contentProps = {
       ...contentProps,
       subtitle: subtitle,
-      subtitleStyle: styles.subTitle,
-      titleStyle: [styles.title, { marginTop: 5 }],
+      subtitleStyle: [styles.subTitle, { paddingBottom: 10 }],
+      titleStyle: [styles.title, { paddingTop: 10 }],
     };
   }
   if (screen === 'MORE') {

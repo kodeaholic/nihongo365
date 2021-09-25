@@ -1,3 +1,4 @@
+/* eslint-disable handle-callback-err */
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import Background from '../../../components/Background';
@@ -18,7 +19,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import { FBLogin, FBLoginManager } from 'react-native-facebook-login';
+import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import { apiConfig } from '../../../api/config/apiConfig';
 import { SOCIAL_PROVIDER } from '../../../constants/socialAuth';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -336,51 +337,300 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                   resizeMethod="auto"
                 />
               </TouchableOpacity>
-              {/* <Text
-                style={{
-                  color: 'rgba(241, 90, 34, 1)',
-                  // fontStyle: 'italic',
-                  fontFamily: 'SF-Pro-Display-Regular',
-                  fontWeight: 'normal',
-                  fontSize: 11,
-                  textAlign: 'center',
+              <TouchableOpacity
+                onPress={async () => {
+                  setLoading(true);
+                  const fbLoginResponse = await LoginManager.logInWithPermissions(
+                    ['public_profile', 'email'],
+                  );
+                  if (
+                    fbLoginResponse.grantedPermissions &&
+                    fbLoginResponse.grantedPermissions.includes(
+                      'public_profile',
+                    ) &&
+                    fbLoginResponse.grantedPermissions.includes('email')
+                  ) {
+                    const tokenResponse = await AccessToken.getCurrentAccessToken();
+                    if (
+                      tokenResponse.permissions &&
+                      tokenResponse.permissions.includes('public_profile') &&
+                      tokenResponse.permissions.includes('email') &&
+                      tokenResponse.accessToken &&
+                      tokenResponse.userID
+                    ) {
+                      try {
+                        let nihong0Reponse = await fetch(
+                          `https://graph.facebook.com/me?fields=id,name,email&access_token=${
+                            tokenResponse.accessToken
+                          }`,
+                          { method: 'GET' },
+                        );
+                        nihong0Reponse = await nihong0Reponse.json();
+                        // call social login to our server
+                        const { email, id, name } = nihong0Reponse;
+                        const photo = `https://graph.facebook.com/${id}/picture?type=large`;
+                        const socialUserData = { email, id, name, photo };
+                        try {
+                          let url = `${apiConfig.baseUrl}${
+                            apiConfig.apiEndpoint
+                          }/auth/social-login`;
+                          const headers = {
+                            'Content-Type': 'application/json',
+                          };
+                          const requestOptions = {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify({
+                              userSocialDetails: {
+                                provider: SOCIAL_PROVIDER.FACEBOOK,
+                                userInfo: { user: socialUserData },
+                              },
+                            }),
+                          };
+                          try {
+                            const response = await fetch(url, requestOptions);
+                            const data = await response.json();
+                            if (data.code) {
+                              dispatch(userActions.socialLoginFailed());
+                            } else {
+                              let user = _.get(data, 'user');
+                              if (
+                                user.socialUserDetails &&
+                                typeof user.socialUserDetails === 'string'
+                              ) {
+                                user.socialUserDetails = JSON.parse(
+                                  user.socialUserDetails,
+                                );
+                              }
+                              // add or update users collection in firestore
+                              try {
+                                let clone = Object.assign({}, user);
+                                delete clone.id;
+                                let uniqueId = deviceInfoModule.getUniqueId();
+                                const res = await firestore()
+                                  .collection('USERS')
+                                  .doc(user.id)
+                                  .get();
+                                if (_.isEmpty(res.data())) {
+                                  //chưa đăng nhập bao giờ
+                                  await firestore()
+                                    .collection('USERS')
+                                    .doc(user.id)
+                                    .set({
+                                      ...clone,
+                                      device: {
+                                        id: uniqueId,
+                                        platform: Platform.OS,
+                                      },
+                                    });
+                                  if (user.role === 'user') {
+                                    const time = Date.now();
+                                    const lastMessage = {
+                                      type: 'text',
+                                      content: `Chào mừng bạn đã đến với Nihongo365 !
+Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng theo thời gian. Mong rằng sẽ là cánh tay đắc lực cùng bạn chinh phục tiếng Nhật một cách hiệu quả nhất. Hãy để lại ý kiến đóng góp của bạn bằng cách trả lời tin nhắn này. Trân trọng !`,
+                                      targetId: 'ADMIN_ID', // ID of the person sent this message
+                                      chatInfo: {
+                                        // sender information
+                                        avatar: require('../../../assets/logo.png'),
+                                        id: 'ADMIN_ID',
+                                        nickName: 'Admin',
+                                      },
+                                      renderTime: true,
+                                      sendStatus: 1,
+                                      time: time,
+                                      isIPhoneX: isIPX,
+                                    };
+                                    const newRoom = {
+                                      type: ROOM_TYPES.MEVSADMIN,
+                                      name: user.name,
+                                      avatar: user.photo,
+                                      lastMessage,
+                                    };
+                                    newRoom.ownerId = user.id;
+                                    newRoom.ownerRef = firestore().doc(
+                                      'USERS/' + user.id,
+                                    );
+                                    try {
+                                      await firestore()
+                                        .collection('rooms')
+                                        .add(newRoom)
+                                        .then(docRef => {
+                                          firestore()
+                                            .collection('rooms')
+                                            .doc(docRef.id)
+                                            .collection('MESSAGES')
+                                            .doc(time + RANDOM_STR(5))
+                                            .set(lastMessage)
+                                            .then(() => {});
+                                        });
+                                    } catch (e) {
+                                      // console.log(e);
+                                    }
+                                  }
+                                  dispatch(
+                                    userActions.socialLoginSucceeded({ user }),
+                                  );
+                                } else {
+                                  // đã từng đăng nhập
+                                  const { device } = res.data();
+                                  if (_.isEmpty(device)) {
+                                    // hiện tại chưa dùng thiết bị nào
+                                    if (true) {
+                                      await firestore()
+                                        .collection('USERS')
+                                        .doc(user.id)
+                                        .set(
+                                          {
+                                            ...clone,
+                                            device: {
+                                              id: uniqueId,
+                                              platform: Platform.OS,
+                                            },
+                                          },
+                                          { merge: true },
+                                        );
+                                      dispatch(
+                                        userActions.socialLoginSucceeded({
+                                          user,
+                                        }),
+                                      );
+                                    }
+                                  } else {
+                                    // đã dùng 1 thiết bị
+                                    if (device.id === uniqueId) {
+                                      // trùng thiết bị này
+                                      await firestore()
+                                        .collection('USERS')
+                                        .doc(user.id)
+                                        .set(
+                                          {
+                                            ...clone,
+                                            device: {
+                                              id: uniqueId,
+                                              platform: Platform.OS,
+                                            },
+                                          },
+                                          { merge: true },
+                                        );
+                                      dispatch(
+                                        userActions.socialLoginSucceeded({
+                                          user,
+                                        }),
+                                      );
+                                    } else {
+                                      // không trùng
+                                      if (user.role && user.role === 'user') {
+                                        setResult({ code: 409 });
+                                        setLoading(false);
+                                        dispatch(
+                                          userActions.socialLoginFailed(),
+                                        );
+                                        ToastAndroid.showWithGravityAndOffset(
+                                          'Tài khoản gắn với email hoặc SĐT của bạn đã được sử dụng để đăng nhập ở một thiết bị khác',
+                                          ToastAndroid.LONG,
+                                          ToastAndroid.TOP,
+                                          0,
+                                          100,
+                                        );
+                                      } else {
+                                        // admin login anywhere
+                                        setResult(data);
+                                        setLoading(false);
+                                        dispatch(
+                                          userActions.socialLoginSucceeded({
+                                            user,
+                                          }),
+                                        );
+                                      }
+                                      return;
+                                    }
+                                  }
+                                }
+                              } catch (error) {
+                                setLoading(false);
+                                dispatch(userActions.socialLoginFailed());
+                                ToastAndroid.showWithGravityAndOffset(
+                                  'Có lỗi trong quá trình đăng nhập. Vui lòng thử lại',
+                                  ToastAndroid.LONG,
+                                  ToastAndroid.TOP,
+                                  0,
+                                  100,
+                                );
+                                return error;
+                              }
+                            }
+                            setResult(data);
+                            setLoading(false);
+                            return data;
+                          } catch (error) {
+                            setLoading(false);
+                            dispatch(userActions.socialLoginFailed());
+                            ToastAndroid.showWithGravityAndOffset(
+                              'Có lỗi trong quá trình đăng nhập. Vui lòng thử lại',
+                              ToastAndroid.LONG,
+                              ToastAndroid.TOP,
+                              0,
+                              100,
+                            );
+                            return error;
+                          }
+                        } catch (error) {
+                          setLoading(false);
+                          dispatch(userActions.socialLoginFailed());
+                          ToastAndroid.showWithGravityAndOffset(
+                            'Lỗi kết nối. Vui lòng thử lại',
+                            ToastAndroid.LONG,
+                            ToastAndroid.TOP,
+                            0,
+                            100,
+                          );
+                        }
+                      } catch (error) {
+                        setLoading(false);
+                        dispatch(userActions.socialLoginFailed());
+                        ToastAndroid.showWithGravityAndOffset(
+                          'Lỗi kết nối. Vui lòng thử lại',
+                          ToastAndroid.LONG,
+                          ToastAndroid.TOP,
+                          0,
+                          100,
+                        );
+                      }
+                    } else {
+                      setLoading(false);
+                      dispatch(userActions.socialLoginFailed());
+                      ToastAndroid.showWithGravityAndOffset(
+                        'Có lỗi trong quá trình đăng nhập. Vui lòng thử lại',
+                        ToastAndroid.LONG,
+                        ToastAndroid.TOP,
+                        0,
+                        100,
+                      );
+                    }
+                  } else {
+                    setLoading(false);
+                    dispatch(userActions.socialLoginFailed());
+                    ToastAndroid.showWithGravityAndOffset(
+                      'Vui lòng thử lại và đồng ý chia sẻ email cùng thông tin cơ bản của bạn để tiếp tục',
+                      ToastAndroid.LONG,
+                      ToastAndroid.TOP,
+                      0,
+                      100,
+                    );
+                  }
                 }}>
-                hoặc
-              </Text> */}
-              <FBLogin
-                buttonView={
-                  <Image
-                    source={require('../../../assets/facebook.png')}
-                    style={{
-                      width: 46,
-                      height: 46,
-                      borderRadius: 46 / 2,
-                      borderColor: '#fff',
-                    }}
-                    resizeMethod="auto"
-                  />
-                }
-                loginBehavior={FBLoginManager.LoginBehaviors.Native}
-                permissions={['email', 'user_friends']}
-                onLogin={function(e) {
-                  console.log(e);
-                }}
-                onLoginFound={function(e) {
-                  console.log(e);
-                }}
-                onLoginNotFound={function(e) {
-                  console.log(e);
-                }}
-                onLogout={function(e) {
-                  console.log(e);
-                }}
-                onCancel={function(e) {
-                  console.log(e);
-                }}
-                onPermissionsMissing={function(e) {
-                  console.log(e);
-                }}
-              />
+                <Image
+                  source={require('../../../assets/facebook.png')}
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 48 / 2,
+                    borderColor: '#fff',
+                  }}
+                  resizeMethod="auto"
+                />
+              </TouchableOpacity>
             </View>
 
             {/* <Text
@@ -437,16 +687,6 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
             <ActivityIndicator size="large" />
           </>
         )}
-        {/* <Button
-      mode="contained"
-      onPress={() => navigation.navigate('LoginScreen')}>
-      Đăng nhập
-    </Button>
-    <Button
-      mode="outlined"
-      onPress={() => navigation.navigate('RegisterScreen')}>
-      Đăng ký
-    </Button> */}
       </Background>
     </SafeAreaView>
   );

@@ -140,8 +140,8 @@ android {
         applicationId "com.nihongo365"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
-        versionName "1.1.5"
+        versionCode 16
+        versionName "1.1.6"
     }
     splits {
         abi {
@@ -232,7 +232,6 @@ dependencies {
         implementation jscFlavor
     }
     compile project(':react-native-sound')
-    compile project(':react-native-facebook-login')
 }
 
 android {

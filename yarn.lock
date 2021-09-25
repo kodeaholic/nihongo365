@@ -4071,11 +4071,6 @@ iterall@^1.2.2:
   resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.3.0.tgz#afcb08492e2915cbd8a0884eb93a8c94d0d72fea"
   integrity sha512-QZ9qOMdF+QLHxy1QIpUHUU1D5pS2CG2P69LF6L6CPjPYA/XMOmKV3PZpawHoAjHNyB0swdVTRxdYT4tbBbxqwg==
 
-itypeof@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/itypeof/-/itypeof-1.1.2.tgz#6fb22639dc78a414f594b3d553a5f2c2488fd022"
-  integrity sha1-b7ImOdx4pBT1lLPVU6XywkiP0CI=
-
 jest-changed-files@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-24.9.0.tgz#08d8c15eb79a7fa3fc98269bc14b451ee82f8039"
@@ -5934,12 +5929,10 @@ react-native-easy-chat-ui@0.4.14:
   dependencies:
     moment "^2.22.2"
 
-react-native-facebook-login@1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/react-native-facebook-login/-/react-native-facebook-login-1.6.2.tgz#a2454b98e6384caaa4fbf062b181f6139ee7da58"
-  integrity sha512-XDB50QJXZF8rDJZ41wZiQvCaPSTWSjbeSsI5ymJa4T8VjsYf6MTUSSNo5j8qarQCGZcwPGBHYaWQ0Lw+IS9TwQ==
-  dependencies:
-    itypeof "^1.1.2"
+react-native-fbsdk@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-fbsdk/-/react-native-fbsdk-3.0.0.tgz#07ef41758bb17a0acaff744008af625a45ef9a01"
+  integrity sha512-i0JocuzLlGk13J0xFDjm8GlX7SADAL2kh/syE/HOn5HHdW+PFjC31MNj5AtzIw2TicHXpHGO6VPKNfdWFbxboA==
 
 react-native-gesture-handler@^1.6.1:
   version "1.10.3"

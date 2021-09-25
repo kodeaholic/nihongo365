@@ -35,7 +35,7 @@
     "react-native-autoheight-webview": "^1.5.8",
     "react-native-device-info": "^8.3.1",
     "react-native-easy-chat-ui": "0.4.14",
-    "react-native-facebook-login": "1.6.2",
+    "react-native-fbsdk": "^3.0.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-get-random-values": "^1.7.0",
     "react-native-linear-gradient": "^2.5.6",

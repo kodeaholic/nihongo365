@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Nihongo365</string>
-    <string name="fb_app_id">232529955493815</string>
-    <string name="fb_login_protocol_scheme">fb232529955493815</string>
+    <!-- <string name="fb_app_id">232529955493815</string>
+    <string name="fb_login_protocol_scheme">fb232529955493815</string> -->
+    <string name="facebook_app_id">232529955493815</string>
+    <string name="facebook_client_token">0c105b1b161bff1970075278647115f5</string>
 </resources>

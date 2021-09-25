@@ -26,7 +26,7 @@ export const VocabLesson = ({ navigation }) => {
   );
   const user = useSelector(state => state.userReducer.user);
   const [html, setHtml] = useState('');
-  const [completed, setCompleted] = useState('false');
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -106,6 +106,8 @@ export const VocabLesson = ({ navigation }) => {
     const subtitle = `${selectedVocabLesson.chapterName} - ${
       selectedVocabLesson.chapterDescription
     } - ${selectedVocabLesson.name}`;
+    let item = { ...selectedVocabLesson };
+    delete item.audioSrc;
     navigation.setOptions({
       headerProps: {
         title,

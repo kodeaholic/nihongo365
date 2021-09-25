@@ -3,8 +3,7 @@ import 'react-native-get-random-values';
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { Text, Card, Divider, Badge, RadioButton } from 'react-native-paper';
-import { Header } from '../../components/commonHeader';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   SafeAreaView,
   ScrollView,
@@ -20,6 +19,8 @@ import _ from 'lodash';
 import { WebView } from 'react-native-webview';
 import { BOARD_TYPE } from '../../constants/board';
 import ScrollingButtonMenu from 'react-native-scroll-menu';
+import firestore from '@react-native-firebase/firestore';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 export const ChuHanLesson = ({ navigation }) => {
@@ -39,7 +40,6 @@ export const ChuHanLesson = ({ navigation }) => {
   const [selectedCard, setSelectedCard] = useState(
     _.get(selectedChuHanLesson, 'board.cards')[0] || {},
   );
-  const [cards] = useState(_.get(selectedChuHanLesson, 'board.cards'));
   const trueColor = '#5cdb5e';
   const falseColor = '#f00';
   const menus = _.get(selectedChuHanLesson, 'board.cards').map(
@@ -47,20 +47,72 @@ export const ChuHanLesson = ({ navigation }) => {
       return { ...item, name: item.letter, index: index };
     },
   );
+  const user = useSelector(state => state.userReducer.user);
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
-    if (!_.isEmpty(selectedChuHanLesson)) {
-      setLoading(false);
-
-      /* Update header title */
-      const title = `Học chữ Hán ${selectedLevel}`;
-      let subtitle = _.get(selectedChuHanLesson, 'board.title');
-      subtitle +=
-        selectedChuHanLesson.type === BOARD_TYPE.THEORY
-          ? ' - Lý thuyết'
-          : ' - Bài tập củng cố';
-      navigation.setOptions({ headerProps: { title, subtitle } });
+    // check if this is a completed item
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              return documentSnapshot.id === selectedChuHanLesson.board.id;
+            })
+            .map(filteredSnapshot => {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              return item;
+            });
+          if (!_.isEmpty(items)) {
+            setCompleted(true);
+          } else {
+            setCompleted(false);
+          }
+        });
     }
-  }, [navigation, selectedChuHanLesson, selectedLevel]);
+
+    setLoading(false);
+
+    /* Update header title */
+    const title = `Học chữ Hán ${selectedLevel}`;
+    let subtitle = _.get(selectedChuHanLesson, 'board.title');
+    subtitle +=
+      selectedChuHanLesson.type === BOARD_TYPE.THEORY
+        ? ' - Lý thuyết'
+        : ' - Bài tập củng cố';
+    let item = { ...selectedChuHanLesson.board };
+    delete item.cards;
+    delete item.quiz;
+    delete item.createdAt;
+    delete item.updatedAt;
+    delete item.description;
+    delete item.free;
+    navigation.setOptions({
+      headerProps: {
+        title,
+        subtitle,
+        rightAction: {
+          lessonCheck:
+            selectedChuHanLesson.type === BOARD_TYPE.EXERCISE
+              ? {
+                  program: PROGRAM_TYPES[PROGRAM_IDS.CHUHAN],
+                  item: item,
+                  level: selectedLevel,
+                  completed: completed,
+                }
+              : {},
+        },
+      },
+    });
+
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedChuHanLesson, selectedLevel, user, completed]);
   const renderQuizItem = ({ item, index }) => {
     const quiz = item;
     const screenWidth = Dimensions.get('window').width;

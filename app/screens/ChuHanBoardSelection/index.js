@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  StyleSheet,
   ToastAndroid,
   Dimensions,
   FlatList,
@@ -19,6 +18,9 @@ import * as programActions from '../../actions/programActions';
 import { BOARD_TYPE } from '../../constants/board';
 import _ from 'lodash';
 import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import firestore from '@react-native-firebase/firestore';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 const windowHeight = Dimensions.get('window').height;
 export const ChuHanBoardSelection = ({ navigation }) => {
   const [items, setItems] = useState([]);
@@ -31,7 +33,8 @@ export const ChuHanBoardSelection = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [page, setPage] = useState(1);
-
+  const user = useSelector(state => state.userReducer.user);
+  const [completedItems, setCompletedItems] = useState([]);
   const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
@@ -107,7 +110,32 @@ export const ChuHanBoardSelection = ({ navigation }) => {
     /** Update header */
     const title = `Học chữ Hán ${selectedLevel}`;
     navigation.setOptions({ headerProps: { title } });
-  }, [navigation, selectedLevel]);
+
+    /** Get list completed items */
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const results = querySnapshot.docs
+            .filter(documentSnapshot => {
+              const level = _.get(documentSnapshot.data(), 'level');
+              const program = _.get(documentSnapshot.data(), 'program');
+              return (
+                level === selectedLevel &&
+                program === PROGRAM_TYPES[PROGRAM_IDS.CHUHAN]
+              );
+            })
+            .map(filteredSnapshot => {
+              return filteredSnapshot.id;
+            });
+          setCompletedItems(results);
+        });
+    }
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, user]);
   const dispatch = useDispatch();
 
   const loadMore = () => {
@@ -172,15 +200,51 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                     );
                     navigation.navigate('ChuHanLesson');
                   };
+                  const completed =
+                    completedItems && completedItems.includes(item.id);
                   return (
                     <List.Accordion
                       key={`${item.id}-board`}
-                      title={`${item.title}`}
+                      title={
+                        <>
+                          <Text
+                            style={{
+                              fontFamily: 'SF-Pro-Detail-Regular',
+                              color: '#000',
+                            }}>
+                            {`${item.title}`}{' '}
+                          </Text>
+                          {completed && (
+                            <MaterialCommunityIcons
+                              name="checkbox-marked-circle-outline"
+                              color="#5cdb5e"
+                              size={18}
+                            />
+                          )}
+                        </>
+                      }
                       titleStyle={{ color: '#000' }}
                       left={props => <List.Icon {...props} icon="folder" />}
                       titleEllipsizeMode="tail">
                       <List.Item
-                        title={'Lý thuyết'}
+                        title={
+                          <>
+                            <Text
+                              style={{
+                                fontFamily: 'SF-Pro-Detail-Regular',
+                                color: '#000',
+                              }}>
+                              Lý thuyết{' '}
+                            </Text>
+                            {completed && (
+                              <MaterialCommunityIcons
+                                name="checkbox-marked-circle-outline"
+                                color="#5cdb5e"
+                                size={18}
+                              />
+                            )}
+                          </>
+                        }
                         titleStyle={{ color: '#000' }}
                         key={`${item.id}-theory`}
                         titleEllipsizeMode="tail"
@@ -190,7 +254,24 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                       />
                       {!_.isEmpty(item.quiz) && item.quiz.length && (
                         <List.Item
-                          title={'Bài tập củng cố'}
+                          title={
+                            <>
+                              <Text
+                                style={{
+                                  fontFamily: 'SF-Pro-Detail-Regular',
+                                  color: '#000',
+                                }}>
+                                {'Bài tập củng cố'}{' '}
+                              </Text>
+                              {completed && (
+                                <MaterialCommunityIcons
+                                  name="checkbox-marked-circle-outline"
+                                  color="#5cdb5e"
+                                  size={18}
+                                />
+                              )}
+                            </>
+                          }
                           titleStyle={{ color: '#000' }}
                           key={`${item.id}-excercise`}
                           titleEllipsizeMode="tail"
@@ -263,21 +344,3 @@ export const ChuHanBoardSelection = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 8,
-  },
-  text: {
-    textAlign: 'center',
-    margin: 8,
-    fontSize: 20,
-  },
-  description: {
-    margin: 8,
-    fontSize: 20,
-  },
-});

@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
-import { Text, Card, Divider } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
@@ -10,8 +10,9 @@ import { ActivityIndicator } from 'react-native';
 import { AudioPlayer } from '../../components/audio-player';
 import _ from 'lodash';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
-import AutoHeightWebView from 'react-native-autoheight-webview';
 import WebView from 'react-native-webview';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
+import firestore from '@react-native-firebase/firestore';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 export const VocabLesson = ({ navigation }) => {
@@ -23,7 +24,9 @@ export const VocabLesson = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const user = useSelector(state => state.userReducer.user);
   const [html, setHtml] = useState('');
+  const [completed, setCompleted] = useState('false');
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -67,66 +70,35 @@ export const VocabLesson = ({ navigation }) => {
       getVocabs();
     }
     getVocabs();
-  }, [selectedVocabLesson.id]);
-  const renderFlatListItem = ({ item }) => {
-    const { id, vocab, vocabMeaning, example, exampleMeaning } = item;
-    return (
-      <Card style={styles.card} key={id}>
-        <Divider />
-        <View style={styles.parentView}>
-          <View
-            style={{
-              flex: 2,
-              borderRightWidth: 0.5,
-              marginLeft: 5,
-            }}>
-            <View style={styles.parentView}>
-              <View
-                style={{
-                  flex: 5,
-                  marginRight: 0,
-                  marginLeft: 0,
-                  height: 'auto',
-                }}>
-                <AutoHeightWebView
-                  style={{ marginTop: 5, minHeight: 50, height: 'auto' }}
-                  source={{
-                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                      vocab,
-                    )}</div>`,
-                  }}
-                  scalesPageToFit={true}
-                  viewportContent={'width=device-width, user-scalable=no'}
-                />
-                <Text style={{ marginLeft: 5 }}>{vocabMeaning}</Text>
-              </View>
-            </View>
-          </View>
-          {!_.isEmpty(example) && (
-            <View style={{ flex: 5, height: 'auto' }}>
-              <AutoHeightWebView
-                style={{
-                  marginTop: 5,
-                  marginLeft: 5,
-                  minHeight: 100,
-                  height: 'auto',
-                }}
-                source={{
-                  html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                    example,
-                  )}</div>`,
-                }}
-                scalesPageToFit={true}
-                viewportContent={'width=device-width, user-scalable=no'}
-              />
-              <Text style={{ marginLeft: 5 }}>{exampleMeaning}</Text>
-            </View>
-          )}
-        </View>
-        <Divider />
-      </Card>
-    );
-  };
+
+    // check if this is a completed item
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              return documentSnapshot.id === selectedVocabLesson.id;
+            })
+            .map(filteredSnapshot => {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              return item;
+            });
+          if (!_.isEmpty(items)) {
+            setCompleted(true);
+          } else {
+            setCompleted(false);
+          }
+        });
+    }
+    return () => unsubscribe && unsubscribe();
+  }, [selectedVocabLesson.id, user]);
 
   /* Update headerProps onMounted */
   useEffect(() => {
@@ -134,8 +106,21 @@ export const VocabLesson = ({ navigation }) => {
     const subtitle = `${selectedVocabLesson.chapterName} - ${
       selectedVocabLesson.chapterDescription
     } - ${selectedVocabLesson.name}`;
-    navigation.setOptions({ headerProps: { title, subtitle } });
-  }, [navigation, selectedLevel, selectedVocabLesson]);
+    navigation.setOptions({
+      headerProps: {
+        title,
+        subtitle,
+        rightAction: {
+          lessonCheck: {
+            program: PROGRAM_TYPES[PROGRAM_IDS.TUVUNG],
+            item: selectedVocabLesson,
+            level: selectedLevel,
+            completed: completed,
+          },
+        },
+      },
+    });
+  }, [navigation, selectedLevel, selectedVocabLesson, completed]);
   useEffect(() => {
     if (vocabs && vocabs.length) {
       let content = '';

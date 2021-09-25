@@ -4,22 +4,78 @@ import {
   StyleSheet,
   BackHandler,
   Alert,
-  ToastAndroid,
   Text,
   Image,
   View,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Appbar } from 'react-native-paper';
-import AsyncStorage from '@react-native-community/async-storage';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import { Appbar, Menu } from 'react-native-paper';
 import _ from 'lodash';
-import { useDispatch, useSelector } from 'react-redux';
-import { userActions } from '../actions/userActions';
+import { useSelector } from 'react-redux';
 import { getPostTimeFromCreatedAt } from '../helpers/time';
+import firestore from '@react-native-firebase/firestore';
+
+const completeItem = async (user, item, level, program) => {
+  let clone = { ...item };
+  delete clone.id;
+  await firestore()
+    .collection('USERS')
+    .doc(user.id)
+    .collection('COMPLETED_ITEMS')
+    .doc(item.id)
+    .set(
+      {
+        ...clone,
+        level,
+        program,
+      },
+      { merge: true },
+    );
+};
+
+const uncompleteItem = async (user, item) => {
+  await firestore()
+    .collection('USERS')
+    .doc(user.id)
+    .collection('COMPLETED_ITEMS')
+    .doc(item.id)
+    .delete();
+};
+
+const RightMenuButtonCheck = props => {
+  const user = useSelector(state => state.userReducer.user);
+  const { completed, item, level, program } = props;
+  const [visible, setVisible] = React.useState(false);
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
+  const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
+  const navigation = useNavigation();
+  return (
+    <Menu
+      visible={visible}
+      onDismiss={closeMenu}
+      anchor={
+        <Appbar.Action icon={MORE_ICON} color="white" onPress={openMenu} />
+      }>
+      <Menu.Item
+        onPress={() => {
+          if (!completed) {
+            completeItem(user, item, level, program);
+            if (navigation.canGoBack()) {
+              navigation.goBack();
+            }
+          } else {
+            uncompleteItem(user, item);
+          }
+          closeMenu();
+        }}
+        title={completed ? 'Đánh dấu chưa học' : 'Hoàn thành bài học'}
+        titleStyle={{ fontFamily: 'SF-Pro-Detail-Regular', color: '#000' }}
+      />
+    </Menu>
+  );
+};
 export const Header = props => {
   const user = useSelector(state => state.userReducer.user);
   const confirmExit = text => {
@@ -40,6 +96,7 @@ export const Header = props => {
     leftAction = {},
     screen = '',
     centerTitle = false,
+    rightAction = { lessonCheck: {} },
   } = props;
   const navigation = useNavigation();
   const _goBack = () => {
@@ -136,6 +193,9 @@ export const Header = props => {
             </View>
           )}
         </>
+      )}
+      {!_.isEmpty(rightAction.lessonCheck) && (
+        <RightMenuButtonCheck {...rightAction.lessonCheck} />
       )}
     </Appbar.Header>
   );

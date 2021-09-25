@@ -11,6 +11,17 @@ export const PROGRAM_IDS = {
   THITHU: 8,
 };
 
+export const PROGRAM_TYPES = {
+  1: 'TUVUNG',
+  2: 'CHUHAN',
+  3: 'GRAMMAR',
+  4: 'NGHE',
+  5: 'HOITHOAI',
+  6: 'READING',
+  7: 'LUYENTHI',
+  8: 'THITHU',
+};
+
 export const DATA = [
   {
     id: PROGRAM_IDS.TUVUNG,

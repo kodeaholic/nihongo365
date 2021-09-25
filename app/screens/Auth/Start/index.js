@@ -312,10 +312,10 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
             fontFamily: 'SF-Pro-Display-Regular',
             fontWeight: 'normal',
             fontSize: 13,
-            marginVertical: 10,
+            marginVertical: 20,
             textAlign: 'center',
           }}>
-          Đăng nhập để tiếp tục
+          {loading ? 'Đang tiến hành đăng nhập ...' : 'Đăng nhập để tiếp tục'}
         </Text>
         {!loading && (
           <>
@@ -325,13 +325,15 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <TouchableOpacity onPress={_googleSignIn}>
+              <TouchableOpacity
+                onPress={_googleSignIn}
+                style={{ marginRight: 10 }}>
                 <Image
-                  source={require('../../../assets/google.png')}
+                  source={require('../../../assets/google-2048.png')}
                   style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 48 / 2,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 40 / 2,
                     borderColor: '#fff',
                   }}
                   resizeMethod="auto"
@@ -339,7 +341,6 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  setLoading(true);
                   const fbLoginResponse = await LoginManager.logInWithPermissions(
                     ['public_profile', 'email'],
                   );
@@ -359,6 +360,7 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                       tokenResponse.userID
                     ) {
                       try {
+                        setLoading(true);
                         let nihong0Reponse = await fetch(
                           `https://graph.facebook.com/me?fields=id,name,email&access_token=${
                             tokenResponse.accessToken
@@ -391,7 +393,15 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                             const response = await fetch(url, requestOptions);
                             const data = await response.json();
                             if (data.code) {
+                              setLoading(false);
                               dispatch(userActions.socialLoginFailed());
+                              ToastAndroid.showWithGravityAndOffset(
+                                'Có lỗi trong quá trình đăng nhập. Vui lòng thử lại',
+                                ToastAndroid.LONG,
+                                ToastAndroid.TOP,
+                                0,
+                                100,
+                              );
                             } else {
                               let user = _.get(data, 'user');
                               if (
@@ -468,6 +478,7 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                                       // console.log(e);
                                     }
                                   }
+                                  setLoading(false);
                                   dispatch(
                                     userActions.socialLoginSucceeded({ user }),
                                   );
@@ -495,6 +506,7 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                                           user,
                                         }),
                                       );
+                                      setLoading(false);
                                     }
                                   } else {
                                     // đã dùng 1 thiết bị
@@ -518,6 +530,7 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                                           user,
                                         }),
                                       );
+                                      setLoading(false);
                                     } else {
                                       // không trùng
                                       if (user.role && user.role === 'user') {
@@ -619,13 +632,14 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                       100,
                     );
                   }
-                }}>
+                }}
+                style={{ marginLeft: 10 }}>
                 <Image
-                  source={require('../../../assets/facebook.png')}
+                  source={require('../../../assets/facebook-2048.png')}
                   style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 48 / 2,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 40 / 2,
                     borderColor: '#fff',
                   }}
                   resizeMethod="auto"

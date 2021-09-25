@@ -2,7 +2,9 @@ import React from 'react';
 import { Image, StyleSheet, Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window');
 export default function Logo() {
-  return <Image source={require('../assets/logo.png')} style={styles.image} />;
+  return (
+    <Image source={require('../assets/logo-2048.jpg')} style={styles.image} />
+  );
 }
 
 const styles = StyleSheet.create({

@@ -1,9 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
-import { Button, Text, Chip } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { Header } from '../../components/commonHeader';
+import { Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { List } from 'react-native-paper';
 import { SafeAreaView, ScrollView } from 'react-native';
@@ -12,8 +10,11 @@ import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import _ from 'lodash';
+import firestore from '@react-native-firebase/firestore';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 const windowHeight = Dimensions.get('window').height;
-const windowWidth = Dimensions.get('window').width;
 export const VocabTopicSelection = ({ navigation }) => {
   const [topics, setTopics] = useState([]);
   const [chapters, setChapters] = useState([]);
@@ -22,7 +23,9 @@ export const VocabTopicSelection = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const user = useSelector(state => state.userReducer.user);
   const [adLoaded, setAdLoaded] = useState(false);
+  const [completedItems, setCompletedItems] = useState([]);
   useEffect(() => {
     async function getTopics() {
       const headers = await authHeader();
@@ -60,7 +63,32 @@ export const VocabTopicSelection = ({ navigation }) => {
     /** Update header */
     const title = `Học từ vựng ${selectedLevel}`;
     navigation.setOptions({ headerProps: { title } });
-  }, [navigation, selectedLevel]);
+
+    /** Get list completed items */
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              const level = _.get(documentSnapshot.data(), 'level');
+              const program = _.get(documentSnapshot.data(), 'program');
+              return (
+                level === selectedLevel &&
+                program === PROGRAM_TYPES[PROGRAM_IDS.TUVUNG]
+              );
+            })
+            .map(filteredSnapshot => {
+              return filteredSnapshot.id;
+            });
+          setCompletedItems(items);
+        });
+    }
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, user]);
 
   const Chapter = props => {
     const { data, listOfLessons } = props;
@@ -94,9 +122,28 @@ export const VocabTopicSelection = ({ navigation }) => {
             );
             navigation.navigate('VocabLesson');
           };
+          const completed =
+            completedItems && completedItems.includes(lesson.id);
           return (
             <List.Item
-              title={`${lesson.name} - ${lesson.meaning}`}
+              title={
+                <>
+                  <Text
+                    style={{
+                      fontFamily: 'SF-Pro-Detail-Regular',
+                      color: '#000',
+                    }}>
+                    {lesson.name} - {lesson.meaning}{' '}
+                  </Text>
+                  {completed && (
+                    <MaterialCommunityIcons
+                      name="checkbox-marked-circle-outline"
+                      color="#5cdb5e"
+                      size={18}
+                    />
+                  )}
+                </>
+              }
               titleStyle={{
                 fontFamily: 'SF-Pro-Detail-Regular',
                 color: '#000',

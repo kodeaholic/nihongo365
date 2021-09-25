@@ -29,6 +29,7 @@ const completeItem = async (user, item, level, program) => {
         ...clone,
         level,
         program,
+        createdAt: Date.now(),
       },
       { merge: true },
     );

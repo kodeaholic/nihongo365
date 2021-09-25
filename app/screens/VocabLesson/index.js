@@ -115,7 +115,7 @@ export const VocabLesson = ({ navigation }) => {
         rightAction: {
           lessonCheck: {
             program: PROGRAM_TYPES[PROGRAM_IDS.TUVUNG],
-            item: selectedVocabLesson,
+            item: item,
             level: selectedLevel,
             completed: completed,
           },

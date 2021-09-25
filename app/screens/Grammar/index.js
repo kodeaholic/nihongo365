@@ -9,6 +9,9 @@ import {
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import _ from 'lodash';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 const ActivityIndicatorElement = () => {
   return (
     <View style={styles.activityIndicatorStyle}>
@@ -23,13 +26,66 @@ export const Grammar = ({ route, navigation }) => {
   const { itemId } = route.params;
   let url = `${apiConfig.baseUrl}/#/grammar/getGrammar/webview/${itemId}`;
   const [visible, setVisible] = useState(false);
+  const selectedGrammarLesson = useSelector(
+    state => state.programReducer.selectedGrammarLesson,
+  );
+  const user = useSelector(state => state.userReducer.user);
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
-    navigation.setOptions({
-      headerProps: {
-        title: 'Ngữ pháp ' + selectedLevel,
-      },
-    });
-  }, [navigation, selectedLevel]);
+    // check if this is a completed item
+    let unsubscribe;
+    if (selectedGrammarLesson && !_.isEmpty(selectedGrammarLesson.item)) {
+      if (user && user.id) {
+        unsubscribe = firestore()
+          .collection('USERS')
+          .doc(user.id)
+          .collection('COMPLETED_ITEMS')
+          .onSnapshot(querySnapshot => {
+            const items = querySnapshot.docs
+              .filter(documentSnapshot => {
+                return documentSnapshot.id === selectedGrammarLesson.item.id;
+              })
+              .map(filteredSnapshot => {
+                const item = {
+                  id: filteredSnapshot.id,
+                  ...filteredSnapshot.data(),
+                };
+                return item;
+              });
+            if (!_.isEmpty(items)) {
+              setCompleted(true);
+            } else {
+              setCompleted(false);
+            }
+          });
+      }
+      let item = { ...selectedGrammarLesson.item };
+      delete item.content;
+      delete item.createdAt;
+      delete item.updatedAt;
+      delete item.example;
+      delete item.free;
+      delete item.meaning;
+      delete item.quiz;
+      delete item.usage;
+      delete item.name;
+      navigation.setOptions({
+        headerProps: {
+          title: 'Ngữ pháp ' + selectedLevel,
+          rightAction: {
+            lessonCheck: {
+              program: PROGRAM_TYPES[PROGRAM_IDS.GRAMMAR],
+              item: item,
+              level: selectedLevel,
+              completed: completed,
+            },
+          },
+        },
+      });
+    }
+
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, selectedGrammarLesson, user, completed]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>

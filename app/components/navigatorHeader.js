@@ -37,7 +37,6 @@ export const Header = props => {
     subtitle,
     disableBackButton = false,
     customStyles,
-    enableLogoutButton = true,
     leftAction = {},
     screen = '',
     centerTitle = false,
@@ -50,7 +49,6 @@ export const Header = props => {
       confirmExit('Bạn muốn thoát ứng dụng?');
     }
   };
-  const dispatch = useDispatch();
   let contentProps = {
     titleStyle: !centerTitle
       ? styles.title
@@ -73,14 +71,7 @@ export const Header = props => {
     // console.log(user);
   }
   return (
-    <Appbar.Header
-      style={[
-        styles.header,
-        customStyles,
-        // screen === 'MORE'
-        //   ? { alignItems: 'center', justifyContent: 'center' }
-        //   : {},
-      ]}>
+    <Appbar.Header style={[styles.header, customStyles]}>
       {!disableBackButton && (
         <Appbar.BackAction color="#fff" onPress={_goBack} />
       )}
@@ -145,66 +136,6 @@ export const Header = props => {
             </View>
           )}
         </>
-      )}
-      {enableLogoutButton && (
-        <Appbar.Action
-          color="#fff"
-          icon="exit-to-app"
-          onPress={() => {
-            Alert.alert('Thông báo', 'Bạn muốn đăng xuất khỏi tài khoản?', [
-              {
-                text: 'Hủy',
-                onPress: () => null,
-                style: 'cancel',
-              },
-              {
-                text: 'ĐĂNG XUẤT',
-                onPress: () => {
-                  const logout = async () => {
-                    try {
-                      GoogleSignin.configure({
-                        androidClientId:
-                          '401904380301-i04gskn6e842tbn5u452jth603uugmk8.apps.googleusercontent.com',
-                      });
-                      try {
-                        await GoogleSignin.signInSilently();
-                        try {
-                          await GoogleSignin.revokeAccess();
-                          await GoogleSignin.signOut();
-                        } catch (error) {
-                          // console.error(error);
-                        }
-                      } catch (error) {
-                        if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-                          // user has not signed in yet
-                        } else {
-                          // some other error
-                        }
-                      }
-                    } catch (e) {
-                      // console.log(e);
-                    }
-                    dispatch(userActions.socialLoginFailed());
-                    AsyncStorage.removeItem('user');
-                    AsyncStorage.removeItem('tokens');
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'StartScreen' }],
-                    });
-                    ToastAndroid.showWithGravityAndOffset(
-                      'Đăng xuất thành công',
-                      ToastAndroid.LONG,
-                      ToastAndroid.TOP,
-                      0,
-                      100,
-                    );
-                  };
-                  logout();
-                },
-              },
-            ]);
-          }}
-        />
       )}
     </Appbar.Header>
   );

@@ -1,24 +1,52 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
-import { Button, Text, Card, Divider, Badge } from 'react-native-paper';
+import { View, ToastAndroid, Dimensions } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-import { SafeAreaView, ScrollView, AppState } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { useIsFocused } from '@react-navigation/native';
 import _ from 'lodash';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
-import { AudioPlayer } from '../../components/audio-player';
 import firestore from '@react-native-firebase/firestore';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { STATUS } from '../../constants/payment.constants';
 import { RegisterPopup } from '../../components/registerPopup';
-const Sound = require('react-native-sound');
 const windowWidth = Dimensions.get('window').width;
-// const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
+const falseColor = '#f00';
+const trueColor = '#5cdb5e';
+const normalColor = '#000';
+const answerOptionLabel = {
+  fontSize: 18,
+  backgroundColor: '#dbd4c8',
+  borderWidth: 1,
+  color: '#000000',
+  height: 30,
+  width: 30,
+  borderRadius: 15,
+  textAlign: 'center',
+  alignItems: 'center',
+  padding: 0,
+  margin: 0,
+};
+const answerOptionContainer = {
+  flexDirection: 'row',
+  height: 65,
+  marginLeft: 5,
+  marginRight: 5,
+};
+const answerOptionStyle = {
+  flex: 1,
+  flexDirection: 'row',
+  borderRadius: 5,
+  padding: 5,
+  margin: 5,
+  alignItems: 'center',
+};
 export const ListeningLesson = ({ route, navigation }) => {
   const { lesson } = route.params;
   const selectedListeningLesson = useSelector(
@@ -27,7 +55,6 @@ export const ListeningLesson = ({ route, navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const [board, setBoard] = useState(selectedListeningLesson.board);
   const [script, setScript] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [displaySubtitle, setDisplaySubtitle] = useState(false);
@@ -42,7 +69,9 @@ export const ListeningLesson = ({ route, navigation }) => {
   /* popup */
   const [popupVisible, setPopupVisible] = useState(false);
   const user = useSelector(state => state.userReducer.user);
+  const [completed, setCompleted] = useState(false);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
+  const isFocused = useIsFocused();
   useEffect(() => {
     if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {
       async function getDoc() {
@@ -72,36 +101,7 @@ export const ListeningLesson = ({ route, navigation }) => {
       getDoc();
     }
   }, [user, selectedLevel, lesson]);
-  const falseColor = '#f00';
-  const trueColor = '#5cdb5e';
-  const normalColor = '#000';
-  const answerOptionLabel = {
-    fontSize: 18,
-    backgroundColor: '#dbd4c8',
-    borderWidth: 1,
-    color: '#000000',
-    height: 30,
-    width: 30,
-    borderRadius: 15,
-    textAlign: 'center',
-    alignItems: 'center',
-    padding: 0,
-    margin: 0,
-  };
-  const answerOptionContainer = {
-    flexDirection: 'row',
-    height: 65,
-    marginLeft: 5,
-    marginRight: 5,
-  };
-  const answerOptionStyle = {
-    flex: 1,
-    flexDirection: 'row',
-    borderRadius: 5,
-    padding: 5,
-    margin: 5,
-    alignItems: 'center',
-  };
+
   const onAnswerOptionSelected = (val, index, correctAnswer) => {
     let copy = { ...value };
     copy['' + index] = val;
@@ -162,62 +162,53 @@ export const ListeningLesson = ({ route, navigation }) => {
       }
     }
     getBoard();
+    // check if this is a completed item
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              return documentSnapshot.id === selectedListeningLesson.board.id;
+            })
+            .map(filteredSnapshot => {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              return item;
+            });
+          if (!_.isEmpty(items)) {
+            setCompleted(true);
+          } else {
+            setCompleted(false);
+          }
+        });
+    }
+    let item = { ...selectedListeningLesson.board };
+    delete item.audioSrc;
+    delete item.free;
     const title = `Luyện nghe ${selectedLevel}`;
     const headerSubtitle = `${selectedListeningLesson.board.title}`;
-    navigation.setOptions({ headerProps: { title, subtitle: headerSubtitle } });
-  }, [navigation, selectedLevel, selectedListeningLesson]);
-  useEffect(() => {
-    if (displayScript) {
-      const whoosh = new Sound(
-        selectedListeningLesson.board.audioSrc,
-        Sound.MAIN_BUNDLE,
-        error => {
-          if (error) {
-            //   console.log('failed to load the sound', error);
-            return;
-          }
-          // loaded successfully
-          // console.log(
-          //   'duration in seconds: ' +
-          //     whoosh.getDuration() +
-          //     'number of channels: ' +
-          //     whoosh.getNumberOfChannels(),
-          // );
-
-          // Play the sound with an onEnd callback
-          if (global.sound) {
-            global.sound.stop();
-          }
-          global.sound = whoosh;
-          whoosh.play(success => {
-            if (success) {
-              // console.log('successfully finished playing');
-            } else {
-              // console.log('playback failed due to audio decoding errors');
-            }
-          });
+    navigation.setOptions({
+      headerProps: {
+        title,
+        subtitle: headerSubtitle,
+        rightAction: {
+          lessonCheck: {
+            program: PROGRAM_TYPES[PROGRAM_IDS.NGHE],
+            item: item,
+            level: selectedLevel,
+            completed: completed,
+          },
         },
-      );
-      const handleAppStateChange = currentAppState => {
-        if (
-          currentAppState === 'background' ||
-          currentAppState === 'inactive'
-        ) {
-          if (whoosh && whoosh.isPlaying()) {
-            whoosh.pause();
-          }
-        }
-      };
-      AppState.addEventListener('change', handleAppStateChange);
-      return () => {
-        if (!_.isEmpty(selectedListeningLesson.board.audioSrc)) {
-          if (whoosh && whoosh.isPlaying()) {
-            whoosh.pause();
-          }
-        }
-      };
-    }
-  }, [displayScript, selectedListeningLesson.board.audioSrc]);
+      },
+    });
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, selectedListeningLesson, user, completed]);
   let myInjectedJs = `(function(){let e=document.querySelectorAll("img");for(let t=0;t<e.length;t++)e[t]&&e[t].setAttribute("style", "width:${floorW}px;height:auto;margin-top:15px;margin-bottom:15px;")})()`;
   return (
     <>
@@ -239,16 +230,6 @@ export const ListeningLesson = ({ route, navigation }) => {
             <ScrollView style={{ flex: 1, backgroundColor: '#dbd4c8' }}>
               {!displayScript && (
                 <>
-                  <View
-                    style={{
-                      margin: 5,
-                      padding: 5,
-                      borderRadius: 5,
-                      borderColor: '#964B00',
-                      borderWidth: 0.5,
-                    }}>
-                    <AudioPlayer src={selectedListeningLesson.board.audioSrc} />
-                  </View>
                   {quizes.length &&
                     quizes.map((quiz, index) => {
                       let quizA = quiz.A;
@@ -283,37 +264,30 @@ export const ListeningLesson = ({ route, navigation }) => {
                               borderRadius: 5,
                               borderColor: '#964B00',
                               borderWidth: 0.5,
-                              height: 300,
+                              height: 350,
                             }}>
-                            <WebView
-                              // injectJavaScript={myInjectedJs}
-                              // injectedJavaScript={myInjectedJs}
-                              style={{ flex: 1, backgroundColor: '#dbd4c8' }}
-                              source={{
-                                html: quiz.question
-                                  ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
-                                      10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${htmlEntityDecode(
-                                      quiz.question,
-                                    )}</div> </main></body></html>`
-                                  : '',
-                              }}
-                              javaScriptEnabled={true}
-                              domStorageEnabled={true}
-                              onLoadStart={() => {}}
-                              // onLoad={() => setLoading(false)}
-                            />
-                            {/* <WebView
-                              source={{
-                                html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                                  quiz.question,
-                                )}</div>`,
-                              }}
-                              style={{ backgroundColor: '#dbd4c8' }}
-                              injectedJavaScript={
-                                "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                              }
-                              scalesPageToFit={false}
-                            /> */}
+                            {isFocused && (
+                              <WebView
+                                style={{ flex: 1, backgroundColor: '#dbd4c8' }}
+                                source={{
+                                  html: quiz.question
+                                    ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
+                                        10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">
+                                        <audio controls controlsList="nodownload" style="width: calc(100% - 10px); margin-left: 5px;">
+                                          <source src="${
+                                            selectedListeningLesson.board
+                                              .audioSrc
+                                          }">
+                                        </audio>
+                                      ${htmlEntityDecode(
+                                        quiz.question,
+                                      )}</div> </main></body></html>`
+                                    : '',
+                                }}
+                                javaScriptEnabled={true}
+                                domStorageEnabled={true}
+                              />
+                            )}
                           </View>
                           <View
                             style={{
@@ -357,24 +331,26 @@ export const ListeningLesson = ({ route, navigation }) => {
                                   }>
                                   A
                                 </Text>
-                                <WebView
-                                  source={{
-                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                      !value['' + index]
-                                        ? normalColor
-                                        : quiz.answer === 'A'
-                                        ? trueColor
-                                        : value['' + index] === 'A'
-                                        ? falseColor
-                                        : normalColor
-                                    };">${quizA}</div>`,
-                                  }}
-                                  style={{ backgroundColor: '#dbd4c8' }}
-                                  injectedJavaScript={
-                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                  }
-                                  scalesPageToFit={false}
-                                />
+                                {isFocused && (
+                                  <WebView
+                                    source={{
+                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                        !value['' + index]
+                                          ? normalColor
+                                          : quiz.answer === 'A'
+                                          ? trueColor
+                                          : value['' + index] === 'A'
+                                          ? falseColor
+                                          : normalColor
+                                      };">${quizA}</div>`,
+                                    }}
+                                    style={{ backgroundColor: '#dbd4c8' }}
+                                    injectedJavaScript={
+                                      "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                    }
+                                    scalesPageToFit={false}
+                                  />
+                                )}
                               </View>
                             </View>
                             <View style={answerOptionContainer}>
@@ -413,24 +389,26 @@ export const ListeningLesson = ({ route, navigation }) => {
                                   }>
                                   B
                                 </Text>
-                                <WebView
-                                  source={{
-                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                      !value['' + index]
-                                        ? normalColor
-                                        : quiz.answer === 'B'
-                                        ? trueColor
-                                        : value['' + index] === 'B'
-                                        ? falseColor
-                                        : normalColor
-                                    };">${quizB}</div>`,
-                                  }}
-                                  style={{ backgroundColor: '#dbd4c8' }}
-                                  injectedJavaScript={
-                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                  }
-                                  scalesPageToFit={false}
-                                />
+                                {isFocused && (
+                                  <WebView
+                                    source={{
+                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                        !value['' + index]
+                                          ? normalColor
+                                          : quiz.answer === 'B'
+                                          ? trueColor
+                                          : value['' + index] === 'B'
+                                          ? falseColor
+                                          : normalColor
+                                      };">${quizB}</div>`,
+                                    }}
+                                    style={{ backgroundColor: '#dbd4c8' }}
+                                    injectedJavaScript={
+                                      "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                    }
+                                    scalesPageToFit={false}
+                                  />
+                                )}
                               </View>
                             </View>
                             <View style={answerOptionContainer}>
@@ -469,24 +447,26 @@ export const ListeningLesson = ({ route, navigation }) => {
                                   }>
                                   C
                                 </Text>
-                                <WebView
-                                  source={{
-                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                      !value['' + index]
-                                        ? normalColor
-                                        : quiz.answer === 'C'
-                                        ? trueColor
-                                        : value['' + index] === 'C'
-                                        ? falseColor
-                                        : normalColor
-                                    };">${quizC}</div>`,
-                                  }}
-                                  style={{ backgroundColor: '#dbd4c8' }}
-                                  injectedJavaScript={
-                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                  }
-                                  scalesPageToFit={false}
-                                />
+                                {isFocused && (
+                                  <WebView
+                                    source={{
+                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                        !value['' + index]
+                                          ? normalColor
+                                          : quiz.answer === 'C'
+                                          ? trueColor
+                                          : value['' + index] === 'C'
+                                          ? falseColor
+                                          : normalColor
+                                      };">${quizC}</div>`,
+                                    }}
+                                    style={{ backgroundColor: '#dbd4c8' }}
+                                    injectedJavaScript={
+                                      "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                    }
+                                    scalesPageToFit={false}
+                                  />
+                                )}
                               </View>
                             </View>
                             <View style={answerOptionContainer}>
@@ -525,24 +505,26 @@ export const ListeningLesson = ({ route, navigation }) => {
                                   }>
                                   D
                                 </Text>
-                                <WebView
-                                  source={{
-                                    html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
-                                      !value['' + index]
-                                        ? normalColor
-                                        : quiz.answer === 'D'
-                                        ? trueColor
-                                        : value['' + index] === 'D'
-                                        ? falseColor
-                                        : normalColor
-                                    };">${quizD}</div>`,
-                                  }}
-                                  style={{ backgroundColor: '#dbd4c8' }}
-                                  injectedJavaScript={
-                                    "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                                  }
-                                  scalesPageToFit={false}
-                                />
+                                {isFocused && (
+                                  <WebView
+                                    source={{
+                                      html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;color: ${
+                                        !value['' + index]
+                                          ? normalColor
+                                          : quiz.answer === 'D'
+                                          ? trueColor
+                                          : value['' + index] === 'D'
+                                          ? falseColor
+                                          : normalColor
+                                      };">${quizD}</div>`,
+                                    }}
+                                    style={{ backgroundColor: '#dbd4c8' }}
+                                    injectedJavaScript={
+                                      "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+                                    }
+                                    scalesPageToFit={false}
+                                  />
+                                )}
                               </View>
                             </View>
                           </View>
@@ -580,64 +562,41 @@ export const ListeningLesson = ({ route, navigation }) => {
                     }}>
                     {!displaySubtitle && (
                       <>
-                        <WebView
-                          injectJavaScript={myInjectedJs}
-                          injectedJavaScript={myInjectedJs}
-                          style={{ flex: 1, backgroundColor: '#dbd4c8' }}
-                          source={{
-                            html: script
-                              ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
-                                  10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${script}</div> </main></body></html>`
-                              : '',
-                          }}
-                          javaScriptEnabled={true}
-                          domStorageEnabled={true}
-                          onLoadStart={() => {}}
-                          // onLoad={() => setLoading(false)}
-                        />
-                        {/* <WebView
-                          source={{
-                            html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                              script,
-                            )}</div>`,
-                          }}
-                          style={{ backgroundColor: '#dbd4c8' }}
-                          injectedJavaScript={
-                            "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                          }
-                          scalesPageToFit={false}
-                        /> */}
+                        {isFocused && (
+                          <WebView
+                            injectJavaScript={myInjectedJs}
+                            injectedJavaScript={myInjectedJs}
+                            style={{ flex: 1, backgroundColor: '#dbd4c8' }}
+                            source={{
+                              html: script
+                                ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
+                                    10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${script}</div> </main></body></html>`
+                                : '',
+                            }}
+                            javaScriptEnabled={true}
+                            domStorageEnabled={true}
+                            onLoadStart={() => {}}
+                          />
+                        )}
                       </>
                     )}
                     {displaySubtitle && (
                       <>
-                        {/* <WebView
-                          source={{
-                            html: `<div style="background-color: #dbd4c8; margin: 0px; padding: 0px;">${htmlEntityDecode(
-                              subtitle,
-                            )}</div>`,
-                          }}
-                          style={{ backgroundColor: '#dbd4c8' }}
-                          injectedJavaScript={
-                            "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=1, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
-                          }
-                          scalesPageToFit={false}
-                        /> */}
-                        <WebView
-                          injectJavaScript={myInjectedJs}
-                          injectedJavaScript={myInjectedJs}
-                          style={{ flex: 1 }}
-                          source={{
-                            html: subtitle
-                              ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
-                                  10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${subtitle}</div> </main></body></html>`
-                              : '',
-                          }}
-                          javaScriptEnabled={true}
-                          domStorageEnabled={true}
-                          onLoadStart={() => {}}
-                          // onLoad={() => setLoading(false)}
-                        />
+                        {isFocused && (
+                          <WebView
+                            injectJavaScript={myInjectedJs}
+                            injectedJavaScript={myInjectedJs}
+                            style={{ flex: 1 }}
+                            source={{
+                              html: subtitle
+                                ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
+                                    10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${subtitle}</div> </main></body></html>`
+                                : '',
+                            }}
+                            javaScriptEnabled={true}
+                            domStorageEnabled={true}
+                          />
+                        )}
                       </>
                     )}
                   </View>
@@ -667,41 +626,3 @@ export const ListeningLesson = ({ route, navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 8,
-  },
-  text: {
-    textAlign: 'center',
-    margin: 8,
-    fontSize: 20,
-  },
-  description: {
-    margin: 8,
-    fontSize: 20,
-  },
-  cardTitle: { fontWeight: 'normal' },
-  cardSub: { fontSize: 13, color: '#0097e8' },
-  chip: {
-    marginRight: 5,
-    backgroundColor: '#5cdb5e',
-    color: '#ffffff',
-  },
-  parentView: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    justifyContent: 'center',
-  },
-  childView: {
-    flex: 1,
-  },
-  card: {
-    margin: 0,
-    backgroundColor: '#dbd4c8',
-    flex: 1,
-  },
-});

@@ -8,17 +8,18 @@ import {
   RefreshControl,
   FlatList,
 } from 'react-native';
-import { Button, Text, Chip } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { Header } from '../../components/commonHeader';
+import { Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { List } from 'react-native-paper';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import _ from 'lodash';
+import firestore from '@react-native-firebase/firestore';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 const windowHeight = Dimensions.get('window').height;
 export const ListeningLessonSelection = ({ navigation }) => {
@@ -32,7 +33,8 @@ export const ListeningLessonSelection = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [page, setPage] = useState(1);
-
+  const user = useSelector(state => state.userReducer.user);
+  const [completedItems, setCompletedItems] = useState([]);
   const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
@@ -109,7 +111,31 @@ export const ListeningLessonSelection = ({ navigation }) => {
       const title = 'Luyện nghe ';
       navigation.setOptions({ headerProps: { title } });
     }
-  }, [navigation, selectedLevel]);
+    /** Get list completed items */
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const results = querySnapshot.docs
+            .filter(documentSnapshot => {
+              const level = _.get(documentSnapshot.data(), 'level');
+              const program = _.get(documentSnapshot.data(), 'program');
+              return (
+                level === selectedLevel &&
+                program === PROGRAM_TYPES[PROGRAM_IDS.NGHE]
+              );
+            })
+            .map(filteredSnapshot => {
+              return filteredSnapshot.id;
+            });
+          setCompletedItems(results);
+        });
+    }
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, user]);
 
   const loadMore = () => {
     const load = async () => {
@@ -173,9 +199,28 @@ export const ListeningLessonSelection = ({ navigation }) => {
                     );
                     navigation.navigate('ListeningLesson', { lesson: item });
                   };
+                  const completed =
+                    completedItems && completedItems.includes(item.id);
                   return (
                     <List.Item
-                      title={`${item.title}`}
+                      title={
+                        <>
+                          <Text
+                            style={{
+                              fontFamily: 'SF-Pro-Detail-Regular',
+                              color: '#000',
+                            }}>
+                            {`${item.title}`}{' '}
+                          </Text>
+                          {completed && (
+                            <MaterialCommunityIcons
+                              name="checkbox-marked-circle-outline"
+                              color="#5cdb5e"
+                              size={18}
+                            />
+                          )}
+                        </>
+                      }
                       titleStyle={{
                         fontFamily: 'SF-Pro-Detail-Regular',
                         color: '#000',

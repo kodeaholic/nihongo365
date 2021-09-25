@@ -13,17 +13,13 @@ import {
   StyleSheet,
   Dimensions,
   ActivityIndicator,
-  BackHandler,
   TouchableOpacity,
 } from 'react-native';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import _ from 'lodash';
 import { WebView } from 'react-native-webview';
-import AutoHeightWebView from 'react-native-autoheight-webview';
 import { BOARD_TYPE } from '../../constants/board';
-import * as programActions from '../../actions/programActions';
 import ScrollingButtonMenu from 'react-native-scroll-menu';
-import GestureRecognizer from 'react-native-swipe-gestures';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 export const ChuHanLesson = ({ navigation }) => {
@@ -33,7 +29,6 @@ export const ChuHanLesson = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
-  const [board] = useState(selectedChuHanLesson.board);
   const [loading, setLoading] = useState(true);
   const [quizes] = useState(_.get(selectedChuHanLesson, 'board.quiz'));
   const [value, setValue] = useState({});
@@ -45,18 +40,6 @@ export const ChuHanLesson = ({ navigation }) => {
     _.get(selectedChuHanLesson, 'board.cards')[0] || {},
   );
   const [cards] = useState(_.get(selectedChuHanLesson, 'board.cards'));
-  const [selectedCardIndex, setSelectedCardIndex] = useState(0);
-  const moveCard = (step = 0) => {
-    let index = selectedCardIndex + step;
-    if (index < 0) {
-      index = cards.length - 1;
-    } // move from first to last
-    if (index >= cards.length) {
-      index = 0;
-    } // move from last to first
-    setSelectedCardIndex(index);
-    setSelectedCard(cards[index]);
-  };
   const trueColor = '#5cdb5e';
   const falseColor = '#f00';
   const menus = _.get(selectedChuHanLesson, 'board.cards').map(
@@ -78,18 +61,6 @@ export const ChuHanLesson = ({ navigation }) => {
       navigation.setOptions({ headerProps: { title, subtitle } });
     }
   }, [navigation, selectedChuHanLesson, selectedLevel]);
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   // component will unmount
-  //   return () => {
-  //     console.log('cleaned up');
-  //     dispatch(
-  //       programActions.chuHanLessonSelected({
-  //         selectedChuHanLesson: {},
-  //       }),
-  //     );
-  //   };
-  // }, [dispatch]);
   const renderQuizItem = ({ item, index }) => {
     const quiz = item;
     const screenWidth = Dimensions.get('window').width;
@@ -258,20 +229,6 @@ export const ChuHanLesson = ({ navigation }) => {
                   />
                 </View>
               </View>
-              {/* {value['' + index] && (
-                <Text
-                  style={{
-                    color:
-                      value['' + index] === quiz.answer
-                        ? trueColor
-                        : falseColor,
-                    textAlign: 'left',
-                    fontSize: 16,
-                    marginLeft: 17,
-                  }}>{`${value['' + index] === quiz.answer ? 'Ｏ' : 'Ｘ'}. ${
-                  quiz.answer
-                }`}</Text>
-              )} */}
             </RadioButton.Group>
           </View>
         </View>
@@ -376,7 +333,7 @@ export const ChuHanLesson = ({ navigation }) => {
   if (selectedChuHanLesson.type === BOARD_TYPE.THEORY) {
     return (
       <>
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
           {loading && (
             <>
               <ActivityIndicator size="large" style={{ marginTop: 20 }} />
@@ -390,23 +347,15 @@ export const ChuHanLesson = ({ navigation }) => {
                   paddingTop: 10,
                   paddingBottom: 15,
                   paddingLeft: 0,
-                  paddingRight: 2,
                   backgroundColor: '#fff',
                   justifyContent: 'center',
                   alignContent: 'center',
+                  marginRight: 10,
                 }}>
                 <ScrollingButtonMenu
                   items={menus}
                   onPress={e => {
                     setSelectedCard(e);
-                    let index = _.findIndex(
-                      cards,
-                      card => {
-                        return card.id === e.id;
-                      },
-                      0,
-                    );
-                    setSelectedCardIndex(index);
                   }}
                   selectedOpacity={0.7}
                   selected={selectedCard.id}
@@ -419,34 +368,18 @@ export const ChuHanLesson = ({ navigation }) => {
                 style={{
                   flex: 1,
                   backgroundColor: '#fff',
-                  paddingBottom: 10,
-                  borderBottomWidth: 0.5,
                 }}>
                 {!_.isEmpty(selectedCard) && (
                   <>
-                    {/* <GestureRecognizer
-                      onSwipeUp={() => {
-                        moveCard(+1);
-                      }}
-                      onSwipeDown={() => {
-                        moveCard(-1);
-                      }}
-                      onSwipeLeft={() => {
-                        moveCard(+1);
-                      }}
-                      onSwipeRight={() => {
-                        moveCard(-1);
-                      }}>
-                      <Card style={styles.card} key={selectedCard.id} />
-                    </GestureRecognizer> */}
                     <ChuHanWebView card={selectedCard} />
                     <WebView
                       style={{
                         flex: 1,
                         backgroundColor: '#fff',
                         paddingBottom: 10,
-                        minHeight: windowHeight - 200 - 30,
+                        minHeight: windowHeight,
                         maxHeight: windowHeight,
+                        marginBottom: 15,
                       }}
                       source={{
                         html: `<html lang="en" style="scroll-behavior: smooth;"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -

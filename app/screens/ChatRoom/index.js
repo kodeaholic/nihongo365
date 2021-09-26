@@ -114,7 +114,7 @@ const Rooms = ({ navigation }) => {
       .collection('rooms')
       .orderBy('lastMessage.time', 'desc')
       .onSnapshot(querySnapshot => {
-        const rooms = querySnapshot.docs
+        let rooms = querySnapshot.docs
           .filter(documentSnapshot => {
             // filter by logic room
             const data = documentSnapshot.data();
@@ -152,12 +152,6 @@ const Rooms = ({ navigation }) => {
                 : true;
             return filterByName;
           })
-          .filter(documentSnapshot => {
-            // filter by time
-            const data = documentSnapshot.data();
-            const time = _.get(data, 'lastMessage.time');
-            return time > currentMs - DAY_IN_MS;
-          })
           .map(filteredSnapshot => {
             const item = {
               id: filteredSnapshot.id,
@@ -165,6 +159,16 @@ const Rooms = ({ navigation }) => {
             };
             return item;
           });
+        if (rooms && rooms.length > 40) {
+          // apply filter for long list
+          rooms = rooms.filter(documentSnapshot => {
+            console.log(documentSnapshot);
+            // filter by time
+            const time = _.get(documentSnapshot, 'lastMessage.time');
+            return time > currentMs - DAY_IN_MS;
+          });
+        }
+
         setItems(rooms);
         setRefreshing(false);
         setLoadingMore(false);

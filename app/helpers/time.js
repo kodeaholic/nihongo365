@@ -34,6 +34,19 @@ export const getPostTimeFromCreatedAt = timeString => {
   }
 };
 
+export const isNew = timeString => {
+  const date = new Date(timeString);
+  const today = new Date();
+  let mins = Math.abs(today - date) / (60 * 1000);
+  mins = parseInt(mins);
+  if (mins < 60 * 72) {
+    // mới đăng trong 48 tiếng trở lại
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const getPostedTimeFromMillis = timeString => {
   const date = new Date(timeString);
   // console.log('date: ', date);

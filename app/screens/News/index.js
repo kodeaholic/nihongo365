@@ -20,10 +20,13 @@ import _ from 'lodash';
 import { Dimensions } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
-import { getPostTimeFromCreatedAt } from '../../helpers/time';
+import { getPostTimeFromCreatedAt, isNew } from '../../helpers/time';
 // import DebounceInput from '../../components/DebounceInput';
 import * as programActions from '../../actions/programActions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AD_UNIT_IDS } from '../../constants/ads';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
@@ -290,6 +293,7 @@ const CategoriesTreeModal = props => {
 };
 
 const News = ({ navigation }) => {
+  const user = useSelector(state => state.userReducer.user);
   const [selectedCategory, setSelectedCategory] = useState({
     title: 'Tổng hợp',
   });
@@ -509,64 +513,64 @@ const News = ({ navigation }) => {
                 });
               };
               return (
-                <TouchableOpacity
-                  onPress={() => navigateToItem()}
-                  style={{
-                    minHeight: 100,
-                    backgroundColor: '#fff',
-                    marginTop: index === 0 ? 5 : 0, // first
-                    marginBottom: index === length - 1 ? 10 : 5, // last
-                    marginLeft: 5,
-                    marginRight: 5,
-                    borderRadius: 5,
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    elevation: 5,
-                    flexDirection: 'row',
-                  }}>
-                  <View style={{ width: 115, height: 115, padding: 5 }}>
-                    <Image
-                      source={
-                        item.thumbnail
-                          ? { uri: item.thumbnail }
-                          : require('../../assets/logo.png')
-                      }
-                      style={{ width: 95, height: 95 }}
-                      resizeMethod="auto"
-                    />
-                  </View>
-                  <View style={{ width: windowWidth - 125, padding: 5 }}>
-                    <Text
-                      style={{
-                        fontFamily: 'SF-Pro-Display-Regular',
-                        textAlign: 'left',
-                        color: '#000',
-                        fontWeight: 'bold',
-                        fontSize: 16,
-                        textTransform: 'uppercase',
-                      }}
-                      numberOfLines={1}
-                      ellipsizeMode="tail">
-                      {item.title}
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: 'SF-Pro-Display-Regular',
-                        textAlign: 'left',
-                        color: '#000',
-                        fontWeight: '400',
-                        fontSize: 14,
-                      }}
-                      numberOfLines={4}
-                      ellipsizeMode="tail">
-                      {item.description}
-                    </Text>
-                    {/* {_.isEmpty(_.get(selectedCategory, 'id')) && (
+                <>
+                  <TouchableOpacity
+                    onPress={() => navigateToItem()}
+                    style={{
+                      minHeight: 100,
+                      backgroundColor: '#fff',
+                      marginTop: index === 0 ? 5 : 0, // first
+                      marginBottom: index === length - 1 ? 10 : 5, // last
+                      marginLeft: 5,
+                      marginRight: 5,
+                      borderRadius: 5,
+                      shadowColor: '#000',
+                      shadowOffset: {
+                        width: 0,
+                        height: 2,
+                      },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                      elevation: 5,
+                      flexDirection: 'row',
+                    }}>
+                    <View style={{ width: 115, height: 115, padding: 5 }}>
+                      <Image
+                        source={
+                          item.thumbnail
+                            ? { uri: item.thumbnail }
+                            : require('../../assets/logo.png')
+                        }
+                        style={{ width: 95, height: 95 }}
+                        resizeMethod="auto"
+                      />
+                    </View>
+                    <View style={{ width: windowWidth - 125, padding: 5 }}>
+                      <Text
+                        style={{
+                          fontFamily: 'SF-Pro-Display-Regular',
+                          textAlign: 'left',
+                          color: '#000',
+                          fontWeight: 'bold',
+                          fontSize: 16,
+                          textTransform: 'uppercase',
+                        }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail">
+                        {item.title}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: 'SF-Pro-Display-Regular',
+                          textAlign: 'left',
+                          color: '#000',
+                          fontWeight: '400',
+                          fontSize: 14,
+                        }}
+                        numberOfLines={4}
+                        ellipsizeMode="tail">
+                        {item.description}
+                      </Text>
                       <Text
                         style={{
                           fontFamily: 'SF-Pro-Display-Regular',
@@ -574,26 +578,50 @@ const News = ({ navigation }) => {
                           color: '#000',
                           fontWeight: '400',
                           fontSize: 12,
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}
                         numberOfLines={1}
                         ellipsizeMode="tail">
-                        {_.get(item, 'parent.title')}
+                        {getPostTimeFromCreatedAt(item.createdAt)}{' '}
+                        {isNew(item.createdAt) || index === 0 ? (
+                          <>
+                            <MaterialCommunityIcons
+                              name="hexagram"
+                              color="rgba(217, 30, 24, 1)"
+                              size={11}
+                            />
+                            <Text style={{ fontSize: 11, fontStyle: 'italic' }}>
+                              {' '}
+                              Bài viết mới
+                            </Text>
+                          </>
+                        ) : (
+                          <></>
+                        )}
                       </Text>
-                    )} */}
-                    <Text
+                    </View>
+                  </TouchableOpacity>
+                  {index % 3 === 0 && index !== 0 && user.role !== 'admin' && (
+                    <View
                       style={{
-                        fontFamily: 'SF-Pro-Display-Regular',
-                        textAlign: 'left',
-                        color: '#000',
-                        fontWeight: '400',
-                        fontSize: 12,
-                      }}
-                      numberOfLines={1}
-                      ellipsizeMode="tail">
-                      {getPostTimeFromCreatedAt(item.createdAt)}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                        height: 70,
+                        marginHorizontal: 5,
+                        marginBottom: 5,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginTop: 0,
+                      }}>
+                      <BannerAd
+                        unitId={AD_UNIT_IDS.BANNER}
+                        size={BannerAdSize.SMART_BANNER}
+                        requestOptions={{
+                          requestNonPersonalizedAdsOnly: false,
+                        }}
+                      />
+                    </View>
+                  )}
+                </>
               );
             }}
             keyExtractor={(item, index) => {

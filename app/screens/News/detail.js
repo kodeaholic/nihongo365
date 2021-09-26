@@ -14,8 +14,10 @@ import {
 import _ from 'lodash';
 import { authHeader } from '../../api/authHeader';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
+import { AD_UNIT_IDS } from '../../constants/ads';
+import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 const windowWidth = Dimensions.get('window').width;
-// const windowHeight = Dimensions.get('window').height;
+const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
 const ActivityIndicatorElement = () => {
   return (
@@ -31,6 +33,8 @@ export const NewsDetail = ({ route, navigation }) => {
   const { itemId } = route.params;
   const [item, setItem] = useState([]);
   const [loading, setLoading] = useState(true);
+  const user = useSelector(state => state.userReducer.user);
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     if (!_.isEmpty(selectedNewsArticle)) {
       navigation.setOptions({
@@ -100,23 +104,49 @@ export const NewsDetail = ({ route, navigation }) => {
   let myInjectedJs = `(function(){let e=document.querySelectorAll("img");for(let t=0;t<e.length;t++)e[t]&&e[t].setAttribute("style", "width:${floorW}px;height:auto;margin-top:15px;margin-bottom:15px;")})()`;
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          { height: windowHeight - 56 * 2 - (adLoaded ? 70 : 0) },
+        ]}>
         {!loading && (
-          <WebView
-            injectJavaScript={myInjectedJs}
-            injectedJavaScript={myInjectedJs}
-            style={{ flex: 1 }}
-            source={{
-              html: item && item.content ? htmlEntityDecode(item.content) : '',
-            }}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            onLoadStart={() => {}}
-            onLoad={() => setLoading(false)}
-          />
+          <>
+            <WebView
+              injectJavaScript={myInjectedJs}
+              injectedJavaScript={myInjectedJs}
+              style={{
+                flex: 1,
+              }}
+              source={{
+                html:
+                  item && item.content ? htmlEntityDecode(item.content) : '',
+              }}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              onLoadStart={() => {}}
+              onLoad={() => setLoading(false)}
+            />
+          </>
         )}
         {loading ? <ActivityIndicatorElement /> : null}
       </View>
+      {user.role !== 'admin' && (
+        <View style={{ height: 70 }}>
+          <BannerAd
+            unitId={AD_UNIT_IDS.BANNER}
+            size={BannerAdSize.SMART_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: false,
+            }}
+            onAdLoaded={() => {
+              setAdLoaded(true);
+            }}
+            onAdFailedToLoad={error => {
+              // console.error('Advert failed to load: ', error);
+            }}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -124,7 +154,6 @@ export const NewsDetail = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F5FCFF',
-    flex: 1,
   },
   activityIndicatorStyle: {
     flex: 1,

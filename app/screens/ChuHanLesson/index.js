@@ -130,7 +130,9 @@ export const ChuHanLesson = ({ navigation }) => {
     });
 
     // Start loading the interstitial straight away
-    interstitial.load();
+    if (user.role !== 'admin') {
+      interstitial.load();
+    }
 
     return () => {
       unsubscribe && unsubscribe();

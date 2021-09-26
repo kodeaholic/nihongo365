@@ -18,6 +18,7 @@ import { authHeader } from '../../api/authHeader';
 import DebounceInput from '../../components/DebounceInput';
 import { InterstitialAd, AdEventType } from '@react-native-firebase/admob';
 import { AD_UNIT_IDS, INTERSTITIAL_KEYWORDS } from '../../constants/ads';
+import { useSelector } from 'react-redux';
 const interstitial = InterstitialAd.createForAdRequest(
   AD_UNIT_IDS.INTERSTITIAL,
   {
@@ -31,6 +32,7 @@ export default function Dictionary({ navigation }) {
   const [results, setResults] = useState([]);
   const [selected, setSelected] = useState('dictionary');
   const [adLoaded, setAdLoaded] = useState(false);
+  const user = useSelector(state => state.userReducer.user);
   useEffect(() => {
     navigation.setOptions({ headerProps: { title: 'Từ điển' } });
     // ads
@@ -41,11 +43,13 @@ export default function Dictionary({ navigation }) {
     });
 
     // Start loading the interstitial straight away
-    interstitial.load();
+    if (user.role !== 'admin') {
+      interstitial.load();
+    }
     return () => {
       eventListener();
     };
-  }, [navigation]);
+  }, [navigation, user]);
 
   useEffect(() => {
     if (adLoaded !== false && interstitial.loaded) {

@@ -98,7 +98,9 @@ export const DialogLesson = ({ route, navigation }) => {
     });
 
     // Start loading the interstitial straight away
-    interstitial.load();
+    if (user.role !== 'admin') {
+      interstitial.load();
+    }
 
     return () => {
       unsubscribe && unsubscribe();

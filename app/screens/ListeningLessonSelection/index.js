@@ -29,6 +29,7 @@ export const ListeningLessonSelection = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const selectedID = useSelector(state => state.programReducer.selectedID);
   const [adLoaded, setAdLoaded] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -190,6 +191,22 @@ export const ListeningLessonSelection = ({ navigation }) => {
                 data={items}
                 renderItem={({ item, index }) => {
                   const navigateToListeningLesson = () => {
+                    try {
+                      firestore()
+                        .collection('logs')
+                        .add({
+                          time: Date.now(),
+                          user: {
+                            id: user.id,
+                            name: user.name,
+                            email: user.email,
+                            photo: user.photo,
+                          },
+                          content: `Học > ${
+                            PROGRAM_TYPES[selectedID]
+                          } > ${selectedLevel} > ${item.title}`,
+                        });
+                    } catch (e) {}
                     dispatch(
                       programActions.listeningLessonSelected({
                         selectedListeningLesson: {

@@ -24,6 +24,7 @@ export const VocabTopicSelection = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const selectedID = useSelector(state => state.programReducer.selectedID);
   const user = useSelector(state => state.userReducer.user);
   const [adLoaded, setAdLoaded] = useState(false);
   const [completedItems, setCompletedItems] = useState([]);
@@ -112,6 +113,22 @@ export const VocabTopicSelection = ({ navigation }) => {
             const name = lesson.meaning;
             const chapterDescription = data.description;
             const audioSrc = lesson.audioSrc;
+            try {
+              firestore()
+                .collection('logs')
+                .add({
+                  time: Date.now(),
+                  user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    photo: user.photo,
+                  },
+                  content: `Học > ${
+                    PROGRAM_TYPES[selectedID]
+                  } > ${selectedLevel} > ${chapterName} > ${lesson.name}`,
+                });
+            } catch (e) {}
             dispatch(
               programActions.vocabLessonSelected({
                 selectedVocabLesson: {

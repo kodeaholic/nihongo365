@@ -1,16 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
-import { Button, Card, Divider, Text } from 'react-native-paper';
-
-import { useDispatch } from 'react-redux';
+import { Button, Card } from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
 
 import ProfileCard from '../../../components/profile-card';
 
 import * as programActions from '../../../actions/programActions';
-import { PROGRAM_IDS } from '../data';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../data';
 import { LEVEL } from '../../../constants/level';
 const COLORS = {
   N5: 'rgba(241, 130, 141,1)',
@@ -25,7 +25,7 @@ const Item = ({ item, first, last }) => {
   const isTablet = DeviceInfo.isTablet();
 
   const dispatch = useDispatch();
-
+  const user = useSelector(state => state.userReducer.user);
   const onSelected = () => {
     if (available) {
       if (!isTablet) {
@@ -81,7 +81,19 @@ const Item = ({ item, first, last }) => {
               labelColor: '#fff',
               buttonColor: COLORS[itx],
             };
-            const onLevelButtonPressed = () => {
+            const onLevelButtonPressed = async () => {
+              firestore()
+                .collection('logs')
+                .add({
+                  time: Date.now(),
+                  user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    photo: user.photo,
+                  },
+                  content: `Học > ${PROGRAM_TYPES[id]} > ${itx}`,
+                });
               dispatch(
                 programActions.levelSelected({
                   selectedID: id,

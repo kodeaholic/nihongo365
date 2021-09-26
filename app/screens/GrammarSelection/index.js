@@ -31,6 +31,7 @@ export const GrammarSelection = ({ navigation }) => {
   const selectedLevel = useSelector(
     state => state.programReducer.selectedLevel,
   );
+  const selectedID = useSelector(state => state.programReducer.selectedID);
   const [adLoaded, setAdLoaded] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -198,6 +199,22 @@ export const GrammarSelection = ({ navigation }) => {
                     data={items}
                     renderItem={({ item, index }) => {
                       const navigateToDetail = () => {
+                        try {
+                          firestore()
+                            .collection('logs')
+                            .add({
+                              time: Date.now(),
+                              user: {
+                                id: user.id,
+                                name: user.name,
+                                email: user.email,
+                                photo: user.photo,
+                              },
+                              content: `Học > NGUPHAP > ${selectedLevel} > ${
+                                item.title
+                              }`,
+                            });
+                        } catch (e) {}
                         dispatch(
                           programActions.grammarLessonSelected({
                             selectedGrammarLesson: {

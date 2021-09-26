@@ -8,6 +8,7 @@ import {
   Image,
   View,
   Platform,
+  ToastAndroid,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar, Menu } from 'react-native-paper';
@@ -64,11 +65,22 @@ const RightMenuButtonCheck = props => {
           onPress={() => {
             if (!completed) {
               completeItem(user, item, level, program);
-              // if (navigation.canGoBack()) {
-              //   navigation.goBack();
-              // }
+              ToastAndroid.showWithGravityAndOffset(
+                'Đã đánh dấu hoàn thành bài',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100,
+              );
             } else {
               uncompleteItem(user, item);
+              ToastAndroid.showWithGravityAndOffset(
+                'Đã đánh dấu chưa hoàn thành bài',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100,
+              );
             }
           }}
         />

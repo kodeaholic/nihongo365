@@ -28,6 +28,7 @@ const windowWidth = Dimensions.get('window').width;
 const floorW = Math.floor(windowWidth);
 import { FAB } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import DebounceInput from '../../components/DebounceInput';
 const DAY_IN_MS = 86400000;
 const TimeCounter = ({ time }) => {
   const [timeInMillis, setTimeInMillis] = useState(Date.now());
@@ -115,8 +116,8 @@ const Rooms = ({ navigation }) => {
       .onSnapshot(querySnapshot => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {
+            // filter by logic room
             const data = documentSnapshot.data();
-            const time = _.get(data, 'lastMessage.time');
             const type = _.get(data, 'type');
             const members = _.get(data, 'members');
             const isEmpty = _.isEmpty(documentSnapshot);
@@ -127,21 +128,35 @@ const Rooms = ({ navigation }) => {
             if (!isAdmin) {
               const ownerId = _.get(documentSnapshot.data(), 'ownerId');
               return (
-                ((!isEmpty && ownerId === user.id) ||
-                  thisRoomHasMe ||
-                  documentSnapshot.id.includes('DEFAULT_ROOM') ||
-                  type === ROOM_TYPES.SYSTEM) &&
-                time > currentMs - DAY_IN_MS
+                (!isEmpty && ownerId === user.id) ||
+                thisRoomHasMe ||
+                documentSnapshot.id.includes('DEFAULT_ROOM') ||
+                type === ROOM_TYPES.SYSTEM
               );
             } else {
               return (
-                ((!isEmpty && type === ROOM_TYPES.MEVSADMIN) ||
-                  thisRoomHasMe ||
-                  _.get(documentSnapshot.data(), 'ownerId') === 'ADMIN_ID' ||
-                  type === ROOM_TYPES.SYSTEM) &&
-                time > currentMs - DAY_IN_MS
+                (!isEmpty && type === ROOM_TYPES.MEVSADMIN) ||
+                thisRoomHasMe ||
+                _.get(documentSnapshot.data(), 'ownerId') === 'ADMIN_ID' ||
+                type === ROOM_TYPES.SYSTEM
               );
             }
+          })
+          .filter(documentSnapshot => {
+            // filter by name
+            const data = documentSnapshot.data();
+            const name = _.get(data, 'name');
+            const filterByName =
+              search && search.length > 0 && name && name.length > 0
+                ? name.toLowerCase().includes(search.toLowerCase())
+                : true;
+            return filterByName;
+          })
+          .filter(documentSnapshot => {
+            // filter by time
+            const data = documentSnapshot.data();
+            const time = _.get(data, 'lastMessage.time');
+            return time > currentMs - DAY_IN_MS;
           })
           .map(filteredSnapshot => {
             const item = {
@@ -153,15 +168,17 @@ const Rooms = ({ navigation }) => {
         setItems(rooms);
         setRefreshing(false);
         setLoadingMore(false);
+        setScrolled(false);
       });
     /**
      * unsubscribe listener
      */
     return () => unsubscribe();
-  }, [user, refresh, navigation, currentMs]);
+  }, [user, refresh, navigation, currentMs, search]);
 
   useEffect(() => {
     setCurrentMs(Date.now());
+    setScrolled(false);
   }, [refresh]);
 
   // loadmore
@@ -223,28 +240,12 @@ const Rooms = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <View style={styles.container} scrollEnabled={true} refresh={refresh}>
-        {_.isEmpty(items) && (
-          <Skeleton speed={1500}>
-            {[...Array(15).keys()].map(item => (
-              <View
-                key={item}
-                style={[
-                  styles.skeletonRow,
-                  {
-                    marginTop: 10,
-                    marginLeft: 8,
-                    marginRight: 8,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    height: 115,
-                    width: '95%',
-                    borderRadius: 10,
-                  },
-                ]}
-              />
-            ))}
-          </Skeleton>
-        )}
+        <DebounceInput
+          handleInputChange={setSearch}
+          placeholder="Tìm theo tên người hoặc tên nhóm ..."
+          style={{ backgroundColor: '#fff', margin: 0, borderRadius: 0 }}
+          // heigth = 50, margin 8
+        />
         {!_.isEmpty(items) && !_.isEmpty(items) && (
           <FlatList
             showsVerticalScrollIndicator={true}

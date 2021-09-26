@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { STATUS } from '../../constants/payment.constants';
 import { RegisterPopup } from '../../components/registerPopup';
 import _ from 'lodash';
@@ -29,17 +30,59 @@ export const SubTest = ({ route, navigation }) => {
   const { itemId, itemType, free } = route.params;
   let url = `${apiConfig.baseUrl}/#/sub-tests/getSubTest/webview/${itemId}`;
   const [visible, setVisible] = useState(false);
+  const user = useSelector(state => state.userReducer.user);
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
+    // check if this is a completed item
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              return documentSnapshot.id === subTest.item.id;
+            })
+            .map(filteredSnapshot => {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              return item;
+            });
+          if (!_.isEmpty(items)) {
+            setCompleted(true);
+          } else {
+            setCompleted(false);
+          }
+        });
+    }
+    let item = { ...subTest.item };
+    delete item.content;
+    delete item.quiz;
+    delete item.createdAt;
+    delete item.updatedAt;
+    delete item.free;
     navigation.setOptions({
       headerProps: {
         title: 'Luyện thi ' + selectedLevel,
         subtitle: getTestTypeName(itemType),
+        rightAction: {
+          lessonCheck: {
+            program: PROGRAM_TYPES[PROGRAM_IDS.LUYENTHI],
+            item: item,
+            level: selectedLevel,
+            completed: completed,
+          },
+        },
       },
     });
-  }, [navigation, selectedLevel, itemType]);
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, itemType, subTest, user, completed]);
   /* popup */
   const [popupVisible, setPopupVisible] = useState(false);
-  const user = useSelector(state => state.userReducer.user);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
     if (selectedLevel !== 'N5' && free !== 1) {

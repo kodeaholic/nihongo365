@@ -13,11 +13,14 @@ import {
 import { Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { List, FAB } from 'react-native-paper';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import * as programActions from '../../actions/programActions';
 import _ from 'lodash';
+import firestore from '@react-native-firebase/firestore';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { getTestTypeName, TEST_TYPES } from '../../constants/test';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
@@ -35,7 +38,8 @@ export const SubTestSelection = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [page, setPage] = useState(1);
-
+  const user = useSelector(state => state.userReducer.user);
+  const [completedItems, setCompletedItems] = useState([]);
   const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
@@ -127,7 +131,36 @@ export const SubTestSelection = ({ navigation }) => {
         headerProps: { title },
       });
     }
-  }, [navigation, selectedLevel, selectedTestType]);
+
+    /** Get list completed items */
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          if (querySnapshot) {
+            const results = querySnapshot.docs
+              .filter(documentSnapshot => {
+                const level = _.get(documentSnapshot.data(), 'level');
+                const program = _.get(documentSnapshot.data(), 'program');
+                const type = _.get(documentSnapshot.data(), 'type');
+                return (
+                  level === selectedLevel &&
+                  program === PROGRAM_TYPES[PROGRAM_IDS.LUYENTHI] &&
+                  type === selectedTestType
+                );
+              })
+              .map(filteredSnapshot => {
+                return filteredSnapshot.id;
+              });
+            setCompletedItems(results);
+          }
+        });
+    }
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, selectedTestType, user]);
 
   const loadMore = () => {
     const load = async () => {
@@ -176,64 +209,6 @@ export const SubTestSelection = ({ navigation }) => {
     };
     load();
   };
-  // useEffect(() => {
-  //   if (selectedTestType > 0 && !_.isEmpty(selectedLevel)) {
-  //     setIsLoading(true);
-  //     async function getItems() {
-  //       const headers = await authHeader();
-  //       const requestOptions = {
-  //         method: 'GET',
-  //         headers: headers,
-  //       };
-  //       let url = `${apiConfig.baseUrl}${
-  //         apiConfig.apiEndpoint
-  //       }/sub-tests?level=${selectedLevel}&limit=1000&type=${selectedTestType}`;
-  //       try {
-  //         setIsLoading(true);
-  //         const response = await fetch(url, requestOptions);
-  //         const data = await response.json();
-  //         if (data.code) {
-  //           ToastAndroid.showWithGravityAndOffset(
-  //             data.message,
-  //             ToastAndroid.LONG,
-  //             ToastAndroid.TOP,
-  //             0,
-  //             100,
-  //           );
-  //         } else {
-  //           if (_.isEmpty(data.results)) {
-  //             ToastAndroid.showWithGravityAndOffset(
-  //               'Chưa có bài thi trong mục này, vui lòng quay lại sau',
-  //               ToastAndroid.LONG,
-  //               ToastAndroid.TOP,
-  //               0,
-  //               100,
-  //             );
-  //           }
-  //           setItems(data.results);
-  //         }
-  //         setIsLoading(false);
-  //       } catch (error) {
-  //         setIsLoading(false);
-  //         return error;
-  //       }
-  //       setFabVisible(true);
-  //     }
-  //     getItems();
-
-  //     /** Update header */
-  //     const title = `Luyện thi ${selectedLevel}`;
-  //     const subtitle = getTestTypeName(selectedTestType);
-  //     navigation.setOptions({
-  //       headerProps: { title, subtitle },
-  //     });
-  //   } else {
-  //     const title = `Luyện thi ${selectedLevel}`;
-  //     navigation.setOptions({
-  //       headerProps: { title },
-  //     });
-  //   }
-  // }, [navigation, selectedLevel, selectedTestType]);
   const dispatch = useDispatch();
   const windowWidth = Dimensions.get('window').width;
   return (
@@ -312,9 +287,28 @@ export const SubTestSelection = ({ navigation }) => {
                           free: item.free,
                         });
                       };
+                      const completed =
+                        completedItems && completedItems.includes(item.id);
                       return (
                         <List.Item
-                          title={`${item.title}`}
+                          title={
+                            <>
+                              <Text
+                                style={{
+                                  fontFamily: 'SF-Pro-Detail-Regular',
+                                  color: '#000',
+                                }}>
+                                {`${item.title}`}{' '}
+                              </Text>
+                              {completed && (
+                                <MaterialCommunityIcons
+                                  name="checkbox-marked-circle-outline"
+                                  color="#5cdb5e"
+                                  size={18}
+                                />
+                              )}
+                            </>
+                          }
                           titleStyle={{
                             fontFamily: 'SF-Pro-Detail-Regular',
                             color: '#000',

@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { STATUS } from '../../constants/payment.constants';
 import { RegisterPopup } from '../../components/registerPopup';
 import _ from 'lodash';
@@ -32,17 +33,61 @@ export const ReadingLesson = ({ route, navigation }) => {
     lesson.id
   }`;
   const [visible, setVisible] = useState(false);
+  const user = useSelector(state => state.userReducer.user);
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
+    // check if this is a completed item
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              return documentSnapshot.id === selectedReadingLesson.board.id;
+            })
+            .map(filteredSnapshot => {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              return item;
+            });
+          if (!_.isEmpty(items)) {
+            setCompleted(true);
+          } else {
+            setCompleted(false);
+          }
+        });
+    }
+    let item = { ...selectedReadingLesson.board };
+    delete item.content;
+    delete item.content_vn;
+    delete item.quiz;
+    delete item.tooltipContent;
+    delete item.createdAt;
+    delete item.updatedAt;
+    delete item.free;
     navigation.setOptions({
       headerProps: {
         title: 'Luyện đọc ' + selectedLevel,
         subtitle: selectedReadingLesson.board.title,
+        rightAction: {
+          lessonCheck: {
+            program: PROGRAM_TYPES[PROGRAM_IDS.READING],
+            item: item,
+            level: selectedLevel,
+            completed: completed,
+          },
+        },
       },
     });
-  }, [navigation, selectedLevel, selectedReadingLesson.board.title]);
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, selectedReadingLesson, user, completed]);
   /* popup */
   const [popupVisible, setPopupVisible] = useState(false);
-  const user = useSelector(state => state.userReducer.user);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
     if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {

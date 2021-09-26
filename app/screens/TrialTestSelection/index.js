@@ -8,15 +8,19 @@ import {
   RefreshControl,
   ActivityIndicator,
   FlatList,
+  Text,
 } from 'react-native';
 // import { Text } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { List, FAB } from 'react-native-paper';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { List } from 'react-native-paper';
+import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import * as programActions from '../../actions/programActions';
 import _ from 'lodash';
+import firestore from '@react-native-firebase/firestore';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 const windowHeight = Dimensions.get('window').height;
@@ -31,7 +35,8 @@ export const TrialTestSelection = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [page, setPage] = useState(1);
-
+  const user = useSelector(state => state.userReducer.user);
+  const [completedItems, setCompletedItems] = useState([]);
   const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
@@ -111,7 +116,33 @@ export const TrialTestSelection = ({ navigation }) => {
         headerProps: { title },
       });
     }
-  }, [navigation, selectedLevel]);
+    /** Get list completed items */
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          if (querySnapshot) {
+            const results = querySnapshot.docs
+              .filter(documentSnapshot => {
+                const level = _.get(documentSnapshot.data(), 'level');
+                const program = _.get(documentSnapshot.data(), 'program');
+                return (
+                  level === selectedLevel &&
+                  program === PROGRAM_TYPES[PROGRAM_IDS.THITHU]
+                );
+              })
+              .map(filteredSnapshot => {
+                return filteredSnapshot.id;
+              });
+            setCompletedItems(results);
+          }
+        });
+    }
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, user]);
 
   const loadMore = () => {
     const load = async () => {
@@ -179,9 +210,28 @@ export const TrialTestSelection = ({ navigation }) => {
                           itemId: item.id,
                         });
                       };
+                      const completed =
+                        completedItems && completedItems.includes(item.id);
                       return (
                         <List.Item
-                          title={`${item.title}`}
+                          title={
+                            <>
+                              <Text
+                                style={{
+                                  fontFamily: 'SF-Pro-Detail-Regular',
+                                  color: '#000',
+                                }}>
+                                {`${item.title}`}{' '}
+                              </Text>
+                              {completed && (
+                                <MaterialCommunityIcons
+                                  name="checkbox-marked-circle-outline"
+                                  color="#5cdb5e"
+                                  size={18}
+                                />
+                              )}
+                            </>
+                          }
                           titleStyle={{
                             fontFamily: 'SF-Pro-Detail-Regular',
                             color: '#000',

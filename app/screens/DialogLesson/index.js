@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { STATUS } from '../../constants/payment.constants';
 import { RegisterPopup } from '../../components/registerPopup';
 import _ from 'lodash';
@@ -30,18 +31,59 @@ export const DialogLesson = ({ route, navigation }) => {
   const { lesson } = route.params;
   let url = `${apiConfig.baseUrl}/#/dialog-boards/mobilev2/${lesson.id}`;
   const [visible, setVisible] = useState(false);
+  const user = useSelector(state => state.userReducer.user);
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
+    // check if this is a completed item
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              return documentSnapshot.id === selectedDialogLesson.board.id;
+            })
+            .map(filteredSnapshot => {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              return item;
+            });
+          if (!_.isEmpty(items)) {
+            setCompleted(true);
+          } else {
+            setCompleted(false);
+          }
+        });
+    }
+
+    let item = { ...selectedDialogLesson.board };
+    delete item.audioSrc;
+    delete item.free;
     const subtitle = `${selectedDialogLesson.board.title}`;
     navigation.setOptions({
       headerProps: {
         title: 'Luyện hội thoại ' + selectedLevel,
         subtitle: subtitle,
+        rightAction: {
+          lessonCheck: {
+            program: PROGRAM_TYPES[PROGRAM_IDS.HOITHOAI],
+            item: item,
+            level: selectedLevel,
+            completed: completed,
+          },
+        },
       },
     });
-  }, [navigation, selectedDialogLesson, selectedLevel]);
+
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedDialogLesson, selectedLevel, user, completed]);
   /* popup */
   const [popupVisible, setPopupVisible] = useState(false);
-  const user = useSelector(state => state.userReducer.user);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
     if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {

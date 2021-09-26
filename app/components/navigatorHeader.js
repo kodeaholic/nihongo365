@@ -71,7 +71,7 @@ const RightMenuButtonCheck = props => {
           }
           closeMenu();
         }}
-        title={completed ? 'Đánh dấu chưa học' : 'Hoàn thành bài học'}
+        title={completed ? 'Đánh dấu chưa hoàn thành' : 'Hoàn thành bài này'}
         titleStyle={{ fontFamily: 'SF-Pro-Detail-Regular', color: '#000' }}
       />
     </Menu>

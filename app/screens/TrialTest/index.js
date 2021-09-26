@@ -9,7 +9,9 @@ import {
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
-import { getTestTypeName } from '../../constants/test';
+import firestore from '@react-native-firebase/firestore';
+import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
+import _ from 'lodash';
 const ActivityIndicatorElement = () => {
   return (
     <View style={styles.activityIndicatorStyle}>
@@ -25,13 +27,64 @@ export const TrialTest = ({ route, navigation }) => {
   const { itemId } = route.params;
   let url = `${apiConfig.baseUrl}/#/trial-tests/getTrialTest/webview/${itemId}`;
   const [visible, setVisible] = useState(false);
+  const user = useSelector(state => state.userReducer.user);
+  const [completed, setCompleted] = useState(false);
   useEffect(() => {
+    // check if this is a completed item
+    let unsubscribe;
+    if (user && user.id) {
+      unsubscribe = firestore()
+        .collection('USERS')
+        .doc(user.id)
+        .collection('COMPLETED_ITEMS')
+        .onSnapshot(querySnapshot => {
+          const items = querySnapshot.docs
+            .filter(documentSnapshot => {
+              return documentSnapshot.id === trialTest.item.id;
+            })
+            .map(filteredSnapshot => {
+              const item = {
+                id: filteredSnapshot.id,
+                ...filteredSnapshot.data(),
+              };
+              return item;
+            });
+          if (!_.isEmpty(items)) {
+            setCompleted(true);
+          } else {
+            setCompleted(false);
+          }
+        });
+    }
+    let item = { ...trialTest.item };
+    delete item.content;
+    delete item.quiz;
+    delete item.createdAt;
+    delete item.updatedAt;
+    delete item.free;
+    delete item.grammarContent;
+    delete item.listeningAudioSrc;
+    delete item.listeningContent;
+    delete item.quizGroups;
+    delete item.readingContent;
+    delete item.time_part_1;
+    delete item.time_part_2;
+    delete item.vocabularyContent;
     navigation.setOptions({
       headerProps: {
         title: 'Thi thử ' + selectedLevel,
+        rightAction: {
+          lessonCheck: {
+            program: PROGRAM_TYPES[PROGRAM_IDS.THITHU],
+            item: item,
+            level: selectedLevel,
+            completed: completed,
+          },
+        },
       },
     });
-  }, [navigation, selectedLevel]);
+    return () => unsubscribe && unsubscribe();
+  }, [navigation, selectedLevel, trialTest, user, completed]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>

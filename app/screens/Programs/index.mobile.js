@@ -26,7 +26,8 @@ export default function Programs() {
         }}
         renderSectionHeader={({ section: { key } }) => <Title>{key}</Title>}
         stickySectionHeadersEnabled={false}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
+        persistentScrollbar={true}
         keyExtractor={item => item.id}
       />
     </SafeAreaView>

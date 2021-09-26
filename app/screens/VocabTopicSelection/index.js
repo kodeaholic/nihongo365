@@ -193,7 +193,7 @@ export const VocabTopicSelection = ({ navigation }) => {
         <View
           style={{
             backgroundColor: '#e5dfd7',
-            height: windowHeight - 56 * 2 - (adLoaded ? 70 : 0),
+            height: windowHeight - 56 * 2 - (adLoaded ? 100 : 0),
           }}>
           <ScrollView>
             {!isLoading &&
@@ -225,7 +225,7 @@ export const VocabTopicSelection = ({ navigation }) => {
           </ScrollView>
         </View>
         {user.role !== 'admin' && (
-          <View style={{ height: 70 }}>
+          <View style={{ height: 100 }}>
             <BannerAd
               unitId={AD_UNIT_IDS.BANNER}
               size={BannerAdSize.SMART_BANNER}

@@ -605,7 +605,7 @@ const News = ({ navigation }) => {
                   {index % 3 === 0 && index !== 0 && user.role !== 'admin' && (
                     <View
                       style={{
-                        height: 70,
+                        height: 100,
                         marginHorizontal: 5,
                         marginBottom: 5,
                         alignItems: 'center',

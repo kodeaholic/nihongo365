@@ -12,7 +12,7 @@ export default function profileCard({
   const LeftContent = props => (
     <Avatar.Image
       {...props}
-      source={require('app/assets/logo.png')}
+      source={require('app/assets/logo-2048.jpg')}
       size={50}
     />
   );

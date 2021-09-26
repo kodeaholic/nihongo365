@@ -20,7 +20,7 @@ const COLORS = {
   N1: 'rgba(241, 90, 34, 1)',
 };
 const Item = ({ item, first, last }) => {
-  const { id, name, description, tags, avatar, program, available } = item;
+  const { id, name, tags, program, available } = item;
   const navigation = useNavigation();
   const isTablet = DeviceInfo.isTablet();
 
@@ -75,8 +75,6 @@ const Item = ({ item, first, last }) => {
         onSelected={onSelected}
       />
       <Card.Content>
-        <Divider />
-        <Text style={styles.duration}>{description}</Text>
         <View style={styles.tags}>
           {tags.map((itx, i) => {
             const { labelColor, buttonColor } = {
@@ -169,7 +167,12 @@ const styles = StyleSheet.create({
     fontFamily: 'SF-Pro-Detail-Regular',
     color: '#000',
   },
-  tags: { flexDirection: 'row' },
+  tags: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // borderWidth
+  },
   tag: {
     flex: 1,
     margin: 4,

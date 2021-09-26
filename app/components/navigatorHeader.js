@@ -51,15 +51,29 @@ const RightMenuButtonCheck = props => {
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
   const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
+  const starIcon = completed ? 'star' : 'star-outline';
   const navigation = useNavigation();
   return (
     <Menu
       visible={visible}
       onDismiss={closeMenu}
       anchor={
-        <Appbar.Action icon={MORE_ICON} color="white" onPress={openMenu} />
+        <Appbar.Action
+          icon={starIcon}
+          color="white"
+          onPress={() => {
+            if (!completed) {
+              completeItem(user, item, level, program);
+              // if (navigation.canGoBack()) {
+              //   navigation.goBack();
+              // }
+            } else {
+              uncompleteItem(user, item);
+            }
+          }}
+        />
       }>
-      <Menu.Item
+      {/* <Menu.Item
         onPress={() => {
           if (!completed) {
             completeItem(user, item, level, program);
@@ -73,7 +87,7 @@ const RightMenuButtonCheck = props => {
         }}
         title={completed ? 'Đánh dấu chưa hoàn thành' : 'Hoàn thành bài này'}
         titleStyle={{ fontFamily: 'SF-Pro-Detail-Regular', color: '#000' }}
-      />
+      /> */}
     </Menu>
   );
 };

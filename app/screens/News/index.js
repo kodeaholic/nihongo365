@@ -26,7 +26,7 @@ import * as programActions from '../../actions/programActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { AD_UNIT_IDS } from '../../constants/ads';
+import { AD_UNIT_IDS, BANNER_HEIGHT } from '../../constants/ads';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
@@ -605,7 +605,7 @@ const News = ({ navigation }) => {
                   {index % 3 === 0 && index !== 0 && user.role !== 'admin' && (
                     <View
                       style={{
-                        height: 100,
+                        height: BANNER_HEIGHT,
                         marginHorizontal: 5,
                         marginBottom: 5,
                         alignItems: 'center',

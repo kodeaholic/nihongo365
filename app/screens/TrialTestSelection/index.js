@@ -23,7 +23,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import Skeleton from '@thevsstech/react-native-skeleton';
 import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
-import { AD_UNIT_IDS } from '../../constants/ads';
+import { AD_UNIT_IDS, BANNER_HEIGHT } from '../../constants/ads';
 const windowHeight = Dimensions.get('window').height;
 export const TrialTestSelection = ({ navigation }) => {
   const [items, setItems] = useState([]);
@@ -192,7 +192,7 @@ export const TrialTestSelection = ({ navigation }) => {
             <View
               style={{
                 backgroundColor: '#e5dfd7',
-                height: windowHeight - 56 * 2 - (adLoaded ? 100 : 0),
+                height: windowHeight - 56 * 2 - (adLoaded ? BANNER_HEIGHT : 0),
               }}>
               {!isLoading && !_.isEmpty(items) && (
                 <>
@@ -298,7 +298,7 @@ export const TrialTestSelection = ({ navigation }) => {
               )}
             </View>
             {user.role !== 'admin' && (
-              <View style={{ height: 100 }}>
+              <View style={{ height: BANNER_HEIGHT }}>
                 <BannerAd
                   unitId={AD_UNIT_IDS.BANNER}
                   size={BannerAdSize.SMART_BANNER}

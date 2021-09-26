@@ -10,3 +10,5 @@ export const INTERSTITIAL_KEYWORDS = [
   'sale',
   'deal',
 ];
+
+export const BANNER_HEIGHT = 90;

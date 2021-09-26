@@ -72,19 +72,21 @@ export const VocabTopicSelection = ({ navigation }) => {
         .doc(user.id)
         .collection('COMPLETED_ITEMS')
         .onSnapshot(querySnapshot => {
-          const items = querySnapshot.docs
-            .filter(documentSnapshot => {
-              const level = _.get(documentSnapshot.data(), 'level');
-              const program = _.get(documentSnapshot.data(), 'program');
-              return (
-                level === selectedLevel &&
-                program === PROGRAM_TYPES[PROGRAM_IDS.TUVUNG]
-              );
-            })
-            .map(filteredSnapshot => {
-              return filteredSnapshot.id;
-            });
-          setCompletedItems(items);
+          if (querySnapshot) {
+            const items = querySnapshot.docs
+              .filter(documentSnapshot => {
+                const level = _.get(documentSnapshot.data(), 'level');
+                const program = _.get(documentSnapshot.data(), 'program');
+                return (
+                  level === selectedLevel &&
+                  program === PROGRAM_TYPES[PROGRAM_IDS.TUVUNG]
+                );
+              })
+              .map(filteredSnapshot => {
+                return filteredSnapshot.id;
+              });
+            setCompletedItems(items);
+          }
         });
     }
     return () => unsubscribe && unsubscribe();

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
+import { View, ToastAndroid, Dimensions } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
@@ -13,6 +13,7 @@ import { htmlEntityDecode } from '../../helpers/htmlentities';
 import WebView from 'react-native-webview';
 import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import firestore from '@react-native-firebase/firestore';
+import { useIsFocused } from '@react-navigation/native';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 export const VocabLesson = ({ navigation }) => {
@@ -27,6 +28,7 @@ export const VocabLesson = ({ navigation }) => {
   const user = useSelector(state => state.userReducer.user);
   const [html, setHtml] = useState('');
   const [completed, setCompleted] = useState(false);
+  const isFocused = useIsFocused();
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -156,22 +158,19 @@ export const VocabLesson = ({ navigation }) => {
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         {!loading && !_.isEmpty(html) && (
           <>
-            <WebView
-              style={{
-                flex: 1,
-                backgroundColor: '#fff',
-                height: windowHeight - 60,
-                paddingBottom: 10,
-              }}
-              source={{
-                html: html,
-              }}
-            />
-            {/* <FlatList
-            data={vocabs}
-            renderItem={renderFlatListItem}
-            keyExtractor={item => item.id}
-          /> */}
+            {isFocused && (
+              <WebView
+                style={{
+                  flex: 1,
+                  backgroundColor: '#fff',
+                  height: windowHeight - 60,
+                  paddingBottom: 10,
+                }}
+                source={{
+                  html: html,
+                }}
+              />
+            )}
           </>
         )}
         {loading && (
@@ -203,47 +202,3 @@ export const VocabLesson = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 8,
-  },
-  text: {
-    textAlign: 'center',
-    margin: 8,
-    fontSize: 20,
-  },
-  description: {
-    margin: 8,
-    fontSize: 20,
-  },
-  //   container: {
-  //     flex: 1,
-  //     justifyContent: 'center',
-  //     backgroundColor: '#f0f6f9',
-  //   },
-  cardTitle: { fontWeight: 'normal' },
-  cardSub: { fontSize: 13, color: '#0097e8' },
-  chip: {
-    marginRight: 5,
-    backgroundColor: '#5cdb5e',
-    color: '#ffffff',
-  },
-  parentView: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    justifyContent: 'center',
-    height: 'auto',
-  },
-  childView: {
-    flex: 1,
-  },
-  card: {
-    margin: 0,
-    backgroundColor: '#dbd4c8',
-    flex: 1,
-  },
-});

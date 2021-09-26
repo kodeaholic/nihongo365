@@ -33,6 +33,16 @@ const LAST_MESSAGE = {
 };
 
 export const DEFAULT_ROOMS = {
+  SYSTEM: {
+    id: 'SYSTEM_NIHONGO365',
+    roomInfo: {
+      name: 'Tin nhắn toàn hệ thống',
+      type: ROOM_TYPES.SYSTEM,
+      lastMessage: LAST_MESSAGE,
+      ownerId: 'ADMIN_ID',
+      avatar: require('../assets/system_notification.png'), // 3
+    },
+  },
   N1: {
     id: 'DEFAULT_ROOM_N1_NIHONGO365',
     roomInfo: {

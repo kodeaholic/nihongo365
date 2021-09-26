@@ -164,6 +164,8 @@ export const Chat = ({ route, navigation }) => {
           return user.role === 'user' ? 'Admin' : info.name;
         case ROOM_TYPES.GROUP:
           return info.name;
+        case ROOM_TYPES.SYSTEM:
+          return info.name;
       }
     };
     /** Update header */
@@ -202,7 +204,6 @@ export const Chat = ({ route, navigation }) => {
             // console.log(item);
             return item;
           });
-          console.log('items: ', items);
           setMessages(msgs => items);
         });
     }
@@ -280,8 +281,16 @@ export const Chat = ({ route, navigation }) => {
         <ChatScreen
           chatType="group"
           messageList={messages}
-          sendMessage={sendMessage}
-          placeholder="Nhập tin nhắn..."
+          sendMessage={
+            user.role === 'user' && roomInfo.type === ROOM_TYPES.SYSTEM
+              ? () => {}
+              : sendMessage
+          }
+          placeholder={
+            user.role === 'user' && roomInfo.type === ROOM_TYPES.SYSTEM
+              ? 'Bạn không thể gửi tin trong nhóm này'
+              : 'Nhập tin nhắn...'
+          }
           useEmoji={false}
           useVoice={false}
           usePlus={false}

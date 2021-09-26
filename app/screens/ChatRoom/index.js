@@ -99,7 +99,6 @@ const Rooms = ({ navigation }) => {
   const [scrolled, setScrolled] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refresh, setRefresh] = useState(0);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     setLoading(true);
@@ -126,17 +125,17 @@ const Rooms = ({ navigation }) => {
             if (!isAdmin) {
               const ownerId = _.get(documentSnapshot.data(), 'ownerId');
               return (
-                (!isEmpty &&
-                  ownerId === user.id &&
-                  type !== ROOM_TYPES.SYSTEM) ||
+                (!isEmpty && ownerId === user.id) ||
                 thisRoomHasMe ||
-                documentSnapshot.id.includes('DEFAULT_ROOM')
+                documentSnapshot.id.includes('DEFAULT_ROOM') ||
+                type === ROOM_TYPES.SYSTEM
               );
             } else {
               return (
                 (!isEmpty && type === ROOM_TYPES.MEVSADMIN) ||
                 thisRoomHasMe ||
-                _.get(documentSnapshot.data(), 'ownerId') === 'ADMIN_ID'
+                _.get(documentSnapshot.data(), 'ownerId') === 'ADMIN_ID' ||
+                type === ROOM_TYPES.SYSTEM
               );
             }
           })
@@ -174,7 +173,7 @@ const Rooms = ({ navigation }) => {
       case ROOM_TYPES.SYSTEM:
         return (
           <Image
-            source={require('../../assets/system_notification.png')}
+            source={require('../../assets/system_notification.png')} // value = 3
             style={styles.roomAvatar}
             resizeMethod="auto"
           />
@@ -293,7 +292,9 @@ const Rooms = ({ navigation }) => {
                       }}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {user.role === 'admin' || item.type === ROOM_TYPES.GROUP
+                      {user.role === 'admin' ||
+                      item.type === ROOM_TYPES.GROUP ||
+                      item.type === ROOM_TYPES.SYSTEM
                         ? item.name
                         : 'Admin'}
                     </Text>

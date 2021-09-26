@@ -8,7 +8,6 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  ScrollView,
 } from 'react-native';
 import { Badge } from 'react-native-paper';
 import Skeleton from '@thevsstech/react-native-skeleton';
@@ -17,14 +16,43 @@ import { Dimensions } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import DebounceInput from '../../components/DebounceInput';
+import { InterstitialAd, AdEventType } from '@react-native-firebase/admob';
+import { AD_UNIT_IDS, INTERSTITIAL_KEYWORDS } from '../../constants/ads';
+const interstitial = InterstitialAd.createForAdRequest(
+  AD_UNIT_IDS.INTERSTITIAL,
+  {
+    requestNonPersonalizedAdsOnly: false,
+    keywords: INTERSTITIAL_KEYWORDS,
+  },
+);
 export default function Dictionary({ navigation }) {
-  useEffect(() => {
-    navigation.setOptions({ headerProps: { title: 'Từ điển' } });
-  }, [navigation]);
   const [keyWord, setKeyWord] = useState('');
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState([]);
   const [selected, setSelected] = useState('dictionary');
+  const [adLoaded, setAdLoaded] = useState(false);
+  useEffect(() => {
+    navigation.setOptions({ headerProps: { title: 'Từ điển' } });
+    // ads
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        setAdLoaded(true);
+      }
+    });
+
+    // Start loading the interstitial straight away
+    interstitial.load();
+    return () => {
+      eventListener();
+    };
+  }, [navigation]);
+
+  useEffect(() => {
+    if (adLoaded !== false && interstitial.loaded) {
+      interstitial.show();
+    }
+  }, [adLoaded]);
+
   useEffect(() => {
     function clean(object) {
       const obj = Object.assign({}, object);

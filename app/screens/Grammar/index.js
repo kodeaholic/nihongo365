@@ -12,6 +12,15 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import _ from 'lodash';
 import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
+import { InterstitialAd, AdEventType } from '@react-native-firebase/admob';
+import { AD_UNIT_IDS, INTERSTITIAL_KEYWORDS } from '../../constants/ads';
+const interstitial = InterstitialAd.createForAdRequest(
+  AD_UNIT_IDS.INTERSTITIAL,
+  {
+    requestNonPersonalizedAdsOnly: false,
+    keywords: INTERSTITIAL_KEYWORDS,
+  },
+);
 const ActivityIndicatorElement = () => {
   return (
     <View style={styles.activityIndicatorStyle}>
@@ -31,6 +40,7 @@ export const Grammar = ({ route, navigation }) => {
   );
   const user = useSelector(state => state.userReducer.user);
   const [completed, setCompleted] = useState(false);
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     // check if this is a completed item
     let unsubscribe;
@@ -84,8 +94,28 @@ export const Grammar = ({ route, navigation }) => {
       });
     }
 
-    return () => unsubscribe && unsubscribe();
+    // ads
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        setAdLoaded(true);
+      }
+    });
+
+    // Start loading the interstitial straight away
+    interstitial.load();
+
+    return () => {
+      unsubscribe && unsubscribe();
+      eventListener();
+    };
   }, [navigation, selectedLevel, selectedGrammarLesson, user, completed]);
+
+  useEffect(() => {
+    if (adLoaded !== false && interstitial.loaded) {
+      interstitial.show();
+    }
+  }, [adLoaded]);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>

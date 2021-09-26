@@ -15,6 +15,15 @@ import firestore from '@react-native-firebase/firestore';
 import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { STATUS } from '../../constants/payment.constants';
 import { RegisterPopup } from '../../components/registerPopup';
+import { InterstitialAd, AdEventType } from '@react-native-firebase/admob';
+import { AD_UNIT_IDS, INTERSTITIAL_KEYWORDS } from '../../constants/ads';
+const interstitial = InterstitialAd.createForAdRequest(
+  AD_UNIT_IDS.INTERSTITIAL,
+  {
+    requestNonPersonalizedAdsOnly: false,
+    keywords: INTERSTITIAL_KEYWORDS,
+  },
+);
 const windowWidth = Dimensions.get('window').width;
 const floorW = Math.floor(windowWidth);
 const falseColor = '#f00';
@@ -72,6 +81,7 @@ export const ListeningLesson = ({ route, navigation }) => {
   const [completed, setCompleted] = useState(false);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   const isFocused = useIsFocused();
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {
       async function getDoc() {
@@ -207,8 +217,28 @@ export const ListeningLesson = ({ route, navigation }) => {
         },
       },
     });
-    return () => unsubscribe && unsubscribe();
+    // ads
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        setAdLoaded(true);
+      }
+    });
+
+    // Start loading the interstitial straight away
+    interstitial.load();
+
+    return () => {
+      unsubscribe && unsubscribe();
+      eventListener();
+    };
   }, [navigation, selectedLevel, selectedListeningLesson, user, completed]);
+
+  useEffect(() => {
+    if (adLoaded !== false && interstitial.loaded) {
+      interstitial.show();
+    }
+  }, [adLoaded]);
+
   let myInjectedJs = `(function(){let e=document.querySelectorAll("img");for(let t=0;t<e.length;t++)e[t]&&e[t].setAttribute("style", "width:${floorW}px;height:auto;margin-top:15px;margin-bottom:15px;")})()`;
   return (
     <>

@@ -16,6 +16,15 @@ import firestore from '@react-native-firebase/firestore';
 import { useIsFocused } from '@react-navigation/native';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+import { InterstitialAd, AdEventType } from '@react-native-firebase/admob';
+import { AD_UNIT_IDS, INTERSTITIAL_KEYWORDS } from '../../constants/ads';
+const interstitial = InterstitialAd.createForAdRequest(
+  AD_UNIT_IDS.INTERSTITIAL,
+  {
+    requestNonPersonalizedAdsOnly: false,
+    keywords: INTERSTITIAL_KEYWORDS,
+  },
+);
 export const VocabLesson = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [vocabs, setVocabs] = useState([]);
@@ -29,6 +38,7 @@ export const VocabLesson = ({ navigation }) => {
   const [html, setHtml] = useState('');
   const [completed, setCompleted] = useState(false);
   const isFocused = useIsFocused();
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     async function getVocabs() {
       const headers = await authHeader();
@@ -99,8 +109,28 @@ export const VocabLesson = ({ navigation }) => {
           }
         });
     }
-    return () => unsubscribe && unsubscribe();
+
+    // ads
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        setAdLoaded(true);
+      }
+    });
+
+    // Start loading the interstitial straight away
+    interstitial.load();
+
+    return () => {
+      unsubscribe && unsubscribe();
+      eventListener();
+    };
   }, [selectedVocabLesson.id, user]);
+
+  useEffect(() => {
+    if (adLoaded !== false && interstitial.loaded) {
+      interstitial.show();
+    }
+  }, [adLoaded]);
 
   /* Update headerProps onMounted */
   useEffect(() => {

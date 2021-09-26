@@ -23,6 +23,15 @@ import firestore from '@react-native-firebase/firestore';
 import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+import { InterstitialAd, AdEventType } from '@react-native-firebase/admob';
+import { AD_UNIT_IDS, INTERSTITIAL_KEYWORDS } from '../../constants/ads';
+const interstitial = InterstitialAd.createForAdRequest(
+  AD_UNIT_IDS.INTERSTITIAL,
+  {
+    requestNonPersonalizedAdsOnly: false,
+    keywords: INTERSTITIAL_KEYWORDS,
+  },
+);
 export const ChuHanLesson = ({ navigation }) => {
   const selectedChuHanLesson = useSelector(
     state => state.programReducer.selectedChuHanLesson,
@@ -49,6 +58,7 @@ export const ChuHanLesson = ({ navigation }) => {
   );
   const user = useSelector(state => state.userReducer.user);
   const [completed, setCompleted] = useState(false);
+  const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
     // check if this is a completed item
     let unsubscribe;
@@ -112,8 +122,28 @@ export const ChuHanLesson = ({ navigation }) => {
       },
     });
 
-    return () => unsubscribe && unsubscribe();
+    // ads
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        setAdLoaded(true);
+      }
+    });
+
+    // Start loading the interstitial straight away
+    interstitial.load();
+
+    return () => {
+      unsubscribe && unsubscribe();
+      eventListener();
+    };
   }, [navigation, selectedChuHanLesson, selectedLevel, user, completed]);
+
+  useEffect(() => {
+    if (adLoaded !== false && interstitial.loaded) {
+      interstitial.show();
+    }
+  }, [adLoaded]);
+
   const renderQuizItem = ({ item, index }) => {
     const quiz = item;
     const screenWidth = Dimensions.get('window').width;

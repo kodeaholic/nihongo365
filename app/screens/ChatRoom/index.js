@@ -12,6 +12,7 @@ import {
   //   ActivityIndicator,
   Image,
   RefreshControl,
+  ActivityIndicator,
   //   RefreshControl,
 } from 'react-native';
 // import Modal from 'react-native-modal';
@@ -19,7 +20,7 @@ import Skeleton from '@thevsstech/react-native-skeleton';
 import _ from 'lodash';
 import { Dimensions } from 'react-native';
 // import DebounceInput from '../../components/DebounceInput';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import { ROOM_TYPES } from '../../constants/chat.constants';
 const windowWidth = Dimensions.get('window').width;
@@ -27,6 +28,7 @@ const windowWidth = Dimensions.get('window').width;
 const floorW = Math.floor(windowWidth);
 import { FAB } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+const DAY_IN_MS = 86400000;
 const TimeCounter = ({ time }) => {
   const [timeInMillis, setTimeInMillis] = useState(Date.now());
   useEffect(() => {
@@ -93,16 +95,14 @@ const TimeCounter = ({ time }) => {
 };
 const Rooms = ({ navigation }) => {
   const user = useSelector(state => state.userReducer.user);
-  const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
-  const [title] = useState('');
+  const [search, setSearch] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refresh, setRefresh] = useState(0);
-
+  const [currentMs, setCurrentMs] = useState(Date.now());
+  const [loadingMore, setLoadingMore] = useState(false);
   useEffect(() => {
-    setLoading(true);
-    setRefreshing(false);
     navigation.setOptions({
       headerProps: {
         title: 'Nihongo365 Chat',
@@ -115,8 +115,10 @@ const Rooms = ({ navigation }) => {
       .onSnapshot(querySnapshot => {
         const rooms = querySnapshot.docs
           .filter(documentSnapshot => {
-            const type = _.get(documentSnapshot.data(), 'type');
-            const members = _.get(documentSnapshot.data(), 'members');
+            const data = documentSnapshot.data();
+            const time = _.get(data, 'lastMessage.time');
+            const type = _.get(data, 'type');
+            const members = _.get(data, 'members');
             const isEmpty = _.isEmpty(documentSnapshot);
             const index = _.findIndex(members, function(mb) {
               return mb.id === user.id;
@@ -125,17 +127,19 @@ const Rooms = ({ navigation }) => {
             if (!isAdmin) {
               const ownerId = _.get(documentSnapshot.data(), 'ownerId');
               return (
-                (!isEmpty && ownerId === user.id) ||
-                thisRoomHasMe ||
-                documentSnapshot.id.includes('DEFAULT_ROOM') ||
-                type === ROOM_TYPES.SYSTEM
+                ((!isEmpty && ownerId === user.id) ||
+                  thisRoomHasMe ||
+                  documentSnapshot.id.includes('DEFAULT_ROOM') ||
+                  type === ROOM_TYPES.SYSTEM) &&
+                time > currentMs - DAY_IN_MS
               );
             } else {
               return (
-                (!isEmpty && type === ROOM_TYPES.MEVSADMIN) ||
-                thisRoomHasMe ||
-                _.get(documentSnapshot.data(), 'ownerId') === 'ADMIN_ID' ||
-                type === ROOM_TYPES.SYSTEM
+                ((!isEmpty && type === ROOM_TYPES.MEVSADMIN) ||
+                  thisRoomHasMe ||
+                  _.get(documentSnapshot.data(), 'ownerId') === 'ADMIN_ID' ||
+                  type === ROOM_TYPES.SYSTEM) &&
+                time > currentMs - DAY_IN_MS
               );
             }
           })
@@ -144,28 +148,27 @@ const Rooms = ({ navigation }) => {
               id: filteredSnapshot.id,
               ...filteredSnapshot.data(),
             };
-            // setItems(channels => {
-            //   const index = _.findIndex(channels, function(channel) {
-            //     return channel.id === item.id;
-            //   });
-            //   if (index < 0) {
-            //     return [...channels, item];
-            //   } else {
-            //     return channels;
-            //   }
-            // });
-            // console.log(item);
             return item;
           });
         setItems(rooms);
-        // console.log(rooms);
-        setLoading(false);
+        setRefreshing(false);
+        setLoadingMore(false);
       });
     /**
      * unsubscribe listener
      */
     return () => unsubscribe();
-  }, [user, refresh, navigation]);
+  }, [user, refresh, navigation, currentMs]);
+
+  useEffect(() => {
+    setCurrentMs(Date.now());
+  }, [refresh]);
+
+  // loadmore
+  const loadMore = () => {
+    setLoadingMore(true);
+    setCurrentMs(ms => ms - DAY_IN_MS);
+  };
 
   const renderImage = room => {
     const isAdmin = user.role === 'admin';
@@ -244,6 +247,8 @@ const Rooms = ({ navigation }) => {
         )}
         {!_.isEmpty(items) && !_.isEmpty(items) && (
           <FlatList
+            showsVerticalScrollIndicator={true}
+            persistentScrollbar={true}
             data={items}
             renderItem={({ item, index }) => {
               // console.log(item);
@@ -313,20 +318,6 @@ const Rooms = ({ navigation }) => {
                     {lastMessage?.time && (
                       <TimeCounter time={lastMessage?.time} />
                     )}
-                    {/* <Text
-                      style={{
-                        fontFamily: 'SF-Pro-Display-Regular',
-                        textAlign: 'left',
-                        color: '#000',
-                        fontWeight: '400',
-                        fontSize: 12,
-                      }}
-                      numberOfLines={1}
-                      ellipsizeMode="tail">
-                      {getPostTimeFromCreatedAt(
-                        new Date((lastMessage?.time)),
-                      )}
-                    </Text> */}
                   </View>
                 </TouchableOpacity>
               );
@@ -334,16 +325,19 @@ const Rooms = ({ navigation }) => {
             keyExtractor={(item, index) => {
               return item.id;
             }}
-            // ListFooterComponent={() => {
-            //   return loadingMore ? (
-            //     <ActivityIndicator size="small" style={{ marginBottom: 10 }} />
-            //   ) : null;
-            // }}
+            ListFooterComponent={() => {
+              return loadingMore ? (
+                <ActivityIndicator
+                  size="small"
+                  style={{ marginVertical: 10 }}
+                />
+              ) : null;
+            }}
             onEndReachedThreshold={0.01}
             scrollEventThrottle={0} // 250
             onEndReached={info => {
               if (scrolled) {
-                // loadMore();
+                loadMore();
               }
             }}
             refreshControl={

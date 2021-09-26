@@ -21,6 +21,7 @@ import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
 import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import { AD_UNIT_IDS } from '../../constants/ads';
 const windowHeight = Dimensions.get('window').height;
 export const ListeningLessonSelection = ({ navigation }) => {
   const [items, setItems] = useState([]);
@@ -181,8 +182,8 @@ export const ListeningLessonSelection = ({ navigation }) => {
         <View
           style={{
             backgroundColor: '#e5dfd7',
-            height: windowHeight - 56 * 2 - 70,
-            // paddingBottom: 70,
+            height: windowHeight - 56 * 2 - (adLoaded ? 70 : 0),
+            paddingBottom: 16,
           }}>
           {!isLoading && !_.isEmpty(items) && (
             <>
@@ -274,21 +275,23 @@ export const ListeningLessonSelection = ({ navigation }) => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           )}
         </View>
-        <View style={{ height: 70 }}>
-          <BannerAd
-            unitId={TestIds.BANNER}
-            size={BannerAdSize.SMART_BANNER}
-            requestOptions={{
-              requestNonPersonalizedAdsOnly: false,
-            }}
-            onAdLoaded={() => {
-              setAdLoaded(true);
-            }}
-            onAdFailedToLoad={error => {
-              // console.error('Advert failed to load: ', error);
-            }}
-          />
-        </View>
+        {user.role !== 'admin' && (
+          <View style={{ height: 70 }}>
+            <BannerAd
+              unitId={AD_UNIT_IDS.BANNER}
+              size={BannerAdSize.SMART_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: false,
+              }}
+              onAdLoaded={() => {
+                setAdLoaded(true);
+              }}
+              onAdFailedToLoad={error => {
+                // console.error('Advert failed to load: ', error);
+              }}
+            />
+          </View>
+        )}
       </SafeAreaView>
     </>
   );

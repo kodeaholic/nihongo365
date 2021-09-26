@@ -9,11 +9,12 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
-import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 import _ from 'lodash';
 import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
+import { AD_UNIT_IDS } from '../../constants/ads';
 const windowHeight = Dimensions.get('window').height;
 export const VocabTopicSelection = ({ navigation }) => {
   const [topics, setTopics] = useState([]);
@@ -192,7 +193,8 @@ export const VocabTopicSelection = ({ navigation }) => {
         <View
           style={{
             backgroundColor: '#e5dfd7',
-            height: windowHeight - 56 * 2 - 70,
+            height: windowHeight - 56 * 2 - (adLoaded ? 70 : 0),
+            paddingBottom: 30,
           }}>
           <ScrollView>
             {!isLoading &&
@@ -223,21 +225,23 @@ export const VocabTopicSelection = ({ navigation }) => {
             )}
           </ScrollView>
         </View>
-        <View style={{ height: 70 }}>
-          <BannerAd
-            unitId={TestIds.BANNER}
-            size={BannerAdSize.SMART_BANNER}
-            requestOptions={{
-              requestNonPersonalizedAdsOnly: false,
-            }}
-            onAdLoaded={() => {
-              setAdLoaded(true);
-            }}
-            onAdFailedToLoad={error => {
-              // console.error('Advert failed to load: ', error);
-            }}
-          />
-        </View>
+        {user.role !== 'admin' && (
+          <View style={{ height: 70 }}>
+            <BannerAd
+              unitId={AD_UNIT_IDS.BANNER}
+              size={BannerAdSize.SMART_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: false,
+              }}
+              onAdLoaded={() => {
+                setAdLoaded(true);
+              }}
+              onAdFailedToLoad={error => {
+                // console.error('Advert failed to load: ', error);
+              }}
+            />
+          </View>
+        )}
       </SafeAreaView>
     </>
   );

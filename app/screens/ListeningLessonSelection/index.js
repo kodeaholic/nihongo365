@@ -183,7 +183,6 @@ export const ListeningLessonSelection = ({ navigation }) => {
           style={{
             backgroundColor: '#e5dfd7',
             height: windowHeight - 56 * 2 - (adLoaded ? 70 : 0),
-            paddingBottom: 16,
           }}>
           {!isLoading && !_.isEmpty(items) && (
             <>

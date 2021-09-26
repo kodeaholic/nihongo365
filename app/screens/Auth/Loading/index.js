@@ -6,14 +6,32 @@ import {
   ToastAndroid,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Linking } from 'react-native';
+import VersionCheck from 'react-native-version-check';
 import { apiConfig } from '../../../api/config/apiConfig';
 import { authHeader } from '../../../api/authHeader';
 import _ from 'lodash';
 class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
+    this._versionCheck();
     this._bootstrapAsync();
   }
+
+  _versionCheck = async () => {
+    VersionCheck.needUpdate().then(async res => {
+      if (res.isNeeded && res.storeUrl) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Ứng dụng đã có phiên bản mới. Vui lòng cập nhật phiên bản mới nhất',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+        Linking.openURL(res.storeUrl);
+      }
+    });
+  };
 
   _apiTest = async () => {
     let flag = true;

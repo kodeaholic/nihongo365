@@ -232,6 +232,7 @@ dependencies {
         implementation jscFlavor
     }
     compile project(':react-native-sound')
+    compile project(':react-native-version-check')
 }
 
 android {

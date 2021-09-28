@@ -210,7 +210,8 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                     dispatch(userActions.socialLoginSucceeded({ user }));
                   } else {
                     // không trùng
-                    if (user.role && user.role === 'user') {
+                    if (false) {
+                      // if (user.role && user.role === 'user') {
                       try {
                         await GoogleSignin.signInSilently();
                         try {
@@ -533,7 +534,8 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                                       setLoading(false);
                                     } else {
                                       // không trùng
-                                      if (user.role && user.role === 'user') {
+                                      if (false) {
+                                        // if (user.role && user.role === 'user') {
                                         setResult({ code: 409 });
                                         setLoading(false);
                                         dispatch(

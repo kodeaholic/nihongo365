@@ -81,7 +81,7 @@ export const More = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             if (user.role !== 'admin') {
               navigation.navigate('Services');
@@ -116,7 +116,7 @@ export const More = ({ navigation }) => {
             }}>
             {user.role === 'admin' ? 'Đơn đăng ký gói học' : 'Đăng ký gói học'}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => alertFeatureUnavailable()}
           style={{
@@ -179,7 +179,7 @@ export const More = ({ navigation }) => {
               : 'Tư vấn du học và XKLĐ'}
           </Text>
         </TouchableOpacity>
-        {user.role !== 'admin' && (
+        {/* {user.role !== 'admin' && (
           <TouchableOpacity
             onPress={() => alertFeatureUnavailable()}
             style={{
@@ -209,7 +209,7 @@ export const More = ({ navigation }) => {
               Chuyển đổi thiết bị đăng nhập
             </Text>
           </TouchableOpacity>
-        )}
+        )} */}
         {!exiting && (
           <TouchableOpacity
             onPress={() => {

@@ -122,7 +122,7 @@ export const ReadingLesson = ({ route, navigation }) => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
-    if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {
+    if (selectedLevel !== 'N5' && lesson && false) { //lesson.free !== 1
       async function getDoc() {
         let docRef;
         if (user && user.id) {

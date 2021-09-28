@@ -84,7 +84,7 @@ export const ListeningLesson = ({ route, navigation }) => {
   const isFocused = useIsFocused();
   const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
-    if (selectedLevel !== 'N5' && lesson && lesson.free !== 1) {
+    if (selectedLevel !== 'N5' && lesson && false) { //lesson.free !== 1
       async function getDoc() {
         let docRef;
         if (user && user.id) {

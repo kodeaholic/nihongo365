@@ -25,6 +25,7 @@ const interstitial = InterstitialAd.createForAdRequest(
   },
 );
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const floorW = Math.floor(windowWidth);
 const falseColor = '#f00';
 const trueColor = '#5cdb5e';
@@ -296,7 +297,7 @@ export const ListeningLesson = ({ route, navigation }) => {
                               borderRadius: 5,
                               borderColor: '#964B00',
                               borderWidth: 0.5,
-                              height: 350,
+                              minHeight: 350,
                             }}>
                             {isFocused && (
                               <WebView
@@ -590,7 +591,8 @@ export const ListeningLesson = ({ route, navigation }) => {
                       borderRadius: 5,
                       borderColor: '#964B00',
                       borderWidth: 0.5,
-                      height: 500,
+                      maxHeight: windowHeight,
+                      height: windowHeight,
                     }}>
                     {!displaySubtitle && (
                       <>
@@ -598,11 +600,23 @@ export const ListeningLesson = ({ route, navigation }) => {
                           <WebView
                             injectJavaScript={myInjectedJs}
                             injectedJavaScript={myInjectedJs}
-                            style={{ flex: 1, backgroundColor: '#dbd4c8' }}
+                            style={{
+                              flex: 1,
+                              backgroundColor: '#dbd4c8',
+                              width: windowWidth - 10,
+                              maxHeight: windowHeight,
+                            }}
                             source={{
                               html: script
                                 ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
-                                    10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${script}</div> </main></body></html>`
+                                    10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">
+                                        <audio controls controlsList="nodownload" style="width: calc(100% - 10px); margin-left: 5px;">
+                                          <source src="${
+                                            selectedListeningLesson.board
+                                              .audioSrc
+                                          }">
+                                        </audio>
+                                    ${script}</div> </main></body></html>`
                                 : '',
                             }}
                             javaScriptEnabled={true}
@@ -618,11 +632,23 @@ export const ListeningLesson = ({ route, navigation }) => {
                           <WebView
                             injectJavaScript={myInjectedJs}
                             injectedJavaScript={myInjectedJs}
-                            style={{ flex: 1 }}
+                            style={{
+                              flex: 1,
+                              backgroundColor: '#dbd4c8',
+                              width: windowWidth - 10,
+                              maxHeight: windowHeight,
+                            }}
                             source={{
                               html: subtitle
                                 ? `<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
-                                    10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${subtitle}</div> </main></body></html>`
+                                    10}px;margin:5px;height:auto}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">
+                                    <audio controls controlsList="nodownload" style="width: calc(100% - 10px); margin-left: 5px;">
+                                          <source src="${
+                                            selectedListeningLesson.board
+                                              .audioSrc
+                                          }">
+                                        </audio>
+                                    ${subtitle}</div> </main></body></html>`
                                 : '',
                             }}
                             javaScriptEnabled={true}

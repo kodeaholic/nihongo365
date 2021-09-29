@@ -54,6 +54,7 @@ import { Room } from '../screens/ChatRoom/room';
 import { ListeningProgramGuideline } from '../screens/ProgramGuideline/Listening';
 import { GrammarProgramGuideline } from '../screens/ProgramGuideline/Grammar';
 import { ReadingProgramGuideline } from '../screens/ProgramGuideline/Reading';
+import Maintenance from '../screens/Maintenance';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -265,6 +266,7 @@ function ChatStackScreen() {
           return <Header {...headerProps} />;
         },
       }}>
+      <ChatStack.Screen name="Maintenance" component={Maintenance} />
       <ChatStack.Screen name="ChatRooms" component={Rooms} />
       <ChatStack.Screen name="Chat" component={Chat} />
       <ChatStack.Screen name="Room" component={Room} />

@@ -113,143 +113,144 @@ export default function StartScreen({ navigation }) {
             ) {
               user.socialUserDetails = JSON.parse(user.socialUserDetails);
             }
+            dispatch(userActions.socialLoginSucceeded({ user }));
             // add or update users collection in firestore
-            try {
-              let clone = Object.assign({}, user);
-              delete clone.id;
-              let uniqueId = deviceInfoModule.getUniqueId();
-              const res = await firestore()
-                .collection('USERS')
-                .doc(user.id)
-                .get();
-              if (_.isEmpty(res.data())) {
-                //chưa đăng nhập bao giờ
-                await firestore()
-                  .collection('USERS')
-                  .doc(user.id)
-                  .set({
-                    ...clone,
-                    device: { id: uniqueId, platform: Platform.OS },
-                  });
-                if (user.role === 'user') {
-                  const time = Date.now();
-                  const lastMessage = {
-                    type: 'text',
-                    content: `Chào mừng bạn đã đến với Nihongo365 !
-Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng theo thời gian. Mong rằng sẽ là cánh tay đắc lực cùng bạn chinh phục tiếng Nhật một cách hiệu quả nhất. Hãy để lại ý kiến đóng góp của bạn bằng cách trả lời tin nhắn này. Trân trọng !`,
-                    targetId: 'ADMIN_ID', // ID of the person sent this message
-                    chatInfo: {
-                      // sender information
-                      avatar: require('../../../assets/logo.png'),
-                      id: 'ADMIN_ID',
-                      nickName: 'Admin',
-                    },
-                    renderTime: true,
-                    sendStatus: 1,
-                    time: time,
-                    isIPhoneX: isIPX,
-                  };
-                  const newRoom = {
-                    type: ROOM_TYPES.MEVSADMIN,
-                    name: user.name,
-                    avatar: user.photo,
-                    lastMessage,
-                  };
-                  newRoom.ownerId = user.id;
-                  newRoom.ownerRef = firestore().doc('USERS/' + user.id);
-                  try {
-                    await firestore()
-                      .collection('rooms')
-                      .add(newRoom)
-                      .then(docRef => {
-                        firestore()
-                          .collection('rooms')
-                          .doc(docRef.id)
-                          .collection('MESSAGES')
-                          .doc(time + RANDOM_STR(5))
-                          .set(lastMessage)
-                          .then(() => {});
-                      });
-                  } catch (e) {
-                    // console.log(e);
-                  }
-                }
-                dispatch(userActions.socialLoginSucceeded({ user }));
-              } else {
-                // đã từng đăng nhập
-                const { device } = res.data();
-                if (_.isEmpty(device)) {
-                  // hiện tại chưa dùng thiết bị nào
-                  if (true) {
-                    await firestore()
-                      .collection('USERS')
-                      .doc(user.id)
-                      .set(
-                        {
-                          ...clone,
-                          device: { id: uniqueId, platform: Platform.OS },
-                        },
-                        { merge: true },
-                      );
-                    dispatch(userActions.socialLoginSucceeded({ user }));
-                  }
-                } else {
-                  // đã dùng 1 thiết bị
-                  if (device.id === uniqueId) {
-                    // trùng thiết bị này
-                    await firestore()
-                      .collection('USERS')
-                      .doc(user.id)
-                      .set(
-                        {
-                          ...clone,
-                          device: { id: uniqueId, platform: Platform.OS },
-                        },
-                        { merge: true },
-                      );
-                    dispatch(userActions.socialLoginSucceeded({ user }));
-                  } else {
-                    // không trùng
-                    if (false) {
-                      // if (user.role && user.role === 'user') {
-                      try {
-                        await GoogleSignin.signInSilently();
-                        try {
-                          await GoogleSignin.revokeAccess();
-                          await GoogleSignin.signOut();
-                        } catch (error) {
-                          // console.error(error);
-                        }
-                        ToastAndroid.showWithGravityAndOffset(
-                          'Bạn đã đăng nhập trước đó trên thiết bị khác. Vui lòng liên hệ Admin để biết thêm chi tiết',
-                          ToastAndroid.LONG,
-                          ToastAndroid.TOP,
-                          0,
-                          100,
-                        );
-                      } catch (error) {
-                        if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-                          // user has not signed in yet
-                        } else {
-                          // some other error
-                        }
-                      }
-                      setResult({ code: 409 });
-                      setLoading(false);
-                      dispatch(userActions.socialLoginFailed());
-                    } else {
-                      // admin login anywhere
-                      setResult(data);
-                      setLoading(false);
-                      dispatch(userActions.socialLoginSucceeded({ user }));
-                    }
-                    return;
-                  }
-                }
-              }
-            } catch (error) {
-              dispatch(userActions.socialLoginFailed());
-            }
+            //             try {
+            //               let clone = Object.assign({}, user);
+            //               delete clone.id;
+            //               let uniqueId = deviceInfoModule.getUniqueId();
+            //               const res = await firestore()
+            //                 .collection('USERS')
+            //                 .doc(user.id)
+            //                 .get();
+            //               if (_.isEmpty(res.data())) {
+            //                 //chưa đăng nhập bao giờ
+            //                 await firestore()
+            //                   .collection('USERS')
+            //                   .doc(user.id)
+            //                   .set({
+            //                     ...clone,
+            //                     device: { id: uniqueId, platform: Platform.OS },
+            //                   });
+            //                 if (user.role === 'user') {
+            //                   const time = Date.now();
+            //                   const lastMessage = {
+            //                     type: 'text',
+            //                     content: `Chào mừng bạn đã đến với Nihongo365 !
+            // Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng theo thời gian. Mong rằng sẽ là cánh tay đắc lực cùng bạn chinh phục tiếng Nhật một cách hiệu quả nhất. Hãy để lại ý kiến đóng góp của bạn bằng cách trả lời tin nhắn này. Trân trọng !`,
+            //                     targetId: 'ADMIN_ID', // ID of the person sent this message
+            //                     chatInfo: {
+            //                       // sender information
+            //                       avatar: require('../../../assets/logo.png'),
+            //                       id: 'ADMIN_ID',
+            //                       nickName: 'Admin',
+            //                     },
+            //                     renderTime: true,
+            //                     sendStatus: 1,
+            //                     time: time,
+            //                     isIPhoneX: isIPX,
+            //                   };
+            //                   const newRoom = {
+            //                     type: ROOM_TYPES.MEVSADMIN,
+            //                     name: user.name,
+            //                     avatar: user.photo,
+            //                     lastMessage,
+            //                   };
+            //                   newRoom.ownerId = user.id;
+            //                   newRoom.ownerRef = firestore().doc('USERS/' + user.id);
+            //                   try {
+            //                     await firestore()
+            //                       .collection('rooms')
+            //                       .add(newRoom)
+            //                       .then(docRef => {
+            //                         firestore()
+            //                           .collection('rooms')
+            //                           .doc(docRef.id)
+            //                           .collection('MESSAGES')
+            //                           .doc(time + RANDOM_STR(5))
+            //                           .set(lastMessage)
+            //                           .then(() => {});
+            //                       });
+            //                   } catch (e) {
+            //                     // console.log(e);
+            //                   }
+            //                 }
+            //                 dispatch(userActions.socialLoginSucceeded({ user }));
+            //               } else {
+            //                 // đã từng đăng nhập
+            //                 const { device } = res.data();
+            //                 if (_.isEmpty(device)) {
+            //                   // hiện tại chưa dùng thiết bị nào
+            //                   if (true) {
+            //                     await firestore()
+            //                       .collection('USERS')
+            //                       .doc(user.id)
+            //                       .set(
+            //                         {
+            //                           ...clone,
+            //                           device: { id: uniqueId, platform: Platform.OS },
+            //                         },
+            //                         { merge: true },
+            //                       );
+            //                     dispatch(userActions.socialLoginSucceeded({ user }));
+            //                   }
+            //                 } else {
+            //                   // đã dùng 1 thiết bị
+            //                   if (device.id === uniqueId) {
+            //                     // trùng thiết bị này
+            //                     await firestore()
+            //                       .collection('USERS')
+            //                       .doc(user.id)
+            //                       .set(
+            //                         {
+            //                           ...clone,
+            //                           device: { id: uniqueId, platform: Platform.OS },
+            //                         },
+            //                         { merge: true },
+            //                       );
+            //                     dispatch(userActions.socialLoginSucceeded({ user }));
+            //                   } else {
+            //                     // không trùng
+            //                     if (false) {
+            //                       // if (user.role && user.role === 'user') {
+            //                       try {
+            //                         await GoogleSignin.signInSilently();
+            //                         try {
+            //                           await GoogleSignin.revokeAccess();
+            //                           await GoogleSignin.signOut();
+            //                         } catch (error) {
+            //                           // console.error(error);
+            //                         }
+            //                         ToastAndroid.showWithGravityAndOffset(
+            //                           'Bạn đã đăng nhập trước đó trên thiết bị khác. Vui lòng liên hệ Admin để biết thêm chi tiết',
+            //                           ToastAndroid.LONG,
+            //                           ToastAndroid.TOP,
+            //                           0,
+            //                           100,
+            //                         );
+            //                       } catch (error) {
+            //                         if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+            //                           // user has not signed in yet
+            //                         } else {
+            //                           // some other error
+            //                         }
+            //                       }
+            //                       setResult({ code: 409 });
+            //                       setLoading(false);
+            //                       dispatch(userActions.socialLoginFailed());
+            //                     } else {
+            //                       // admin login anywhere
+            //                       setResult(data);
+            //                       setLoading(false);
+            //                       dispatch(userActions.socialLoginSucceeded({ user }));
+            //                     }
+            //                     return;
+            //                   }
+            //                 }
+            //               }
+            //             } catch (error) {
+            //               dispatch(userActions.socialLoginFailed());
+            //             }
           }
           setResult(data);
           setLoading(false);
@@ -413,167 +414,170 @@ Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng 
                                   user.socialUserDetails,
                                 );
                               }
+                              dispatch(
+                                userActions.socialLoginSucceeded({ user }),
+                              );
                               // add or update users collection in firestore
-                              try {
-                                let clone = Object.assign({}, user);
-                                delete clone.id;
-                                let uniqueId = deviceInfoModule.getUniqueId();
-                                const res = await firestore()
-                                  .collection('USERS')
-                                  .doc(user.id)
-                                  .get();
-                                if (_.isEmpty(res.data())) {
-                                  //chưa đăng nhập bao giờ
-                                  await firestore()
-                                    .collection('USERS')
-                                    .doc(user.id)
-                                    .set({
-                                      ...clone,
-                                      device: {
-                                        id: uniqueId,
-                                        platform: Platform.OS,
-                                      },
-                                    });
-                                  if (user.role === 'user') {
-                                    const time = Date.now();
-                                    const lastMessage = {
-                                      type: 'text',
-                                      content: `Chào mừng bạn đã đến với Nihongo365 !
-Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng theo thời gian. Mong rằng sẽ là cánh tay đắc lực cùng bạn chinh phục tiếng Nhật một cách hiệu quả nhất. Hãy để lại ý kiến đóng góp của bạn bằng cách trả lời tin nhắn này. Trân trọng !`,
-                                      targetId: 'ADMIN_ID', // ID of the person sent this message
-                                      chatInfo: {
-                                        // sender information
-                                        avatar: require('../../../assets/logo.png'),
-                                        id: 'ADMIN_ID',
-                                        nickName: 'Admin',
-                                      },
-                                      renderTime: true,
-                                      sendStatus: 1,
-                                      time: time,
-                                      isIPhoneX: isIPX,
-                                    };
-                                    const newRoom = {
-                                      type: ROOM_TYPES.MEVSADMIN,
-                                      name: user.name,
-                                      avatar: user.photo,
-                                      lastMessage,
-                                    };
-                                    newRoom.ownerId = user.id;
-                                    newRoom.ownerRef = firestore().doc(
-                                      'USERS/' + user.id,
-                                    );
-                                    try {
-                                      await firestore()
-                                        .collection('rooms')
-                                        .add(newRoom)
-                                        .then(docRef => {
-                                          firestore()
-                                            .collection('rooms')
-                                            .doc(docRef.id)
-                                            .collection('MESSAGES')
-                                            .doc(time + RANDOM_STR(5))
-                                            .set(lastMessage)
-                                            .then(() => {});
-                                        });
-                                    } catch (e) {
-                                      // console.log(e);
-                                    }
-                                  }
-                                  setLoading(false);
-                                  dispatch(
-                                    userActions.socialLoginSucceeded({ user }),
-                                  );
-                                } else {
-                                  // đã từng đăng nhập
-                                  const { device } = res.data();
-                                  if (_.isEmpty(device)) {
-                                    // hiện tại chưa dùng thiết bị nào
-                                    if (true) {
-                                      await firestore()
-                                        .collection('USERS')
-                                        .doc(user.id)
-                                        .set(
-                                          {
-                                            ...clone,
-                                            device: {
-                                              id: uniqueId,
-                                              platform: Platform.OS,
-                                            },
-                                          },
-                                          { merge: true },
-                                        );
-                                      dispatch(
-                                        userActions.socialLoginSucceeded({
-                                          user,
-                                        }),
-                                      );
-                                      setLoading(false);
-                                    }
-                                  } else {
-                                    // đã dùng 1 thiết bị
-                                    if (device.id === uniqueId) {
-                                      // trùng thiết bị này
-                                      await firestore()
-                                        .collection('USERS')
-                                        .doc(user.id)
-                                        .set(
-                                          {
-                                            ...clone,
-                                            device: {
-                                              id: uniqueId,
-                                              platform: Platform.OS,
-                                            },
-                                          },
-                                          { merge: true },
-                                        );
-                                      dispatch(
-                                        userActions.socialLoginSucceeded({
-                                          user,
-                                        }),
-                                      );
-                                      setLoading(false);
-                                    } else {
-                                      // không trùng
-                                      if (false) {
-                                        // if (user.role && user.role === 'user') {
-                                        setResult({ code: 409 });
-                                        setLoading(false);
-                                        dispatch(
-                                          userActions.socialLoginFailed(),
-                                        );
-                                        ToastAndroid.showWithGravityAndOffset(
-                                          'Tài khoản gắn với email hoặc SĐT của bạn đã được sử dụng để đăng nhập ở một thiết bị khác',
-                                          ToastAndroid.LONG,
-                                          ToastAndroid.TOP,
-                                          0,
-                                          100,
-                                        );
-                                      } else {
-                                        // admin login anywhere
-                                        setResult(data);
-                                        setLoading(false);
-                                        dispatch(
-                                          userActions.socialLoginSucceeded({
-                                            user,
-                                          }),
-                                        );
-                                      }
-                                      return;
-                                    }
-                                  }
-                                }
-                              } catch (error) {
-                                setLoading(false);
-                                dispatch(userActions.socialLoginFailed());
-                                ToastAndroid.showWithGravityAndOffset(
-                                  'Có lỗi trong quá trình đăng nhập. Vui lòng thử lại',
-                                  ToastAndroid.LONG,
-                                  ToastAndroid.TOP,
-                                  0,
-                                  100,
-                                );
-                                return error;
-                              }
+                              //                               try {
+                              //                                 let clone = Object.assign({}, user);
+                              //                                 delete clone.id;
+                              //                                 let uniqueId = deviceInfoModule.getUniqueId();
+                              //                                 const res = await firestore()
+                              //                                   .collection('USERS')
+                              //                                   .doc(user.id)
+                              //                                   .get();
+                              //                                 if (_.isEmpty(res.data())) {
+                              //                                   //chưa đăng nhập bao giờ
+                              //                                   await firestore()
+                              //                                     .collection('USERS')
+                              //                                     .doc(user.id)
+                              //                                     .set({
+                              //                                       ...clone,
+                              //                                       device: {
+                              //                                         id: uniqueId,
+                              //                                         platform: Platform.OS,
+                              //                                       },
+                              //                                     });
+                              //                                   if (user.role === 'user') {
+                              //                                     const time = Date.now();
+                              //                                     const lastMessage = {
+                              //                                       type: 'text',
+                              //                                       content: `Chào mừng bạn đã đến với Nihongo365 !
+                              // Nihongo365 sẽ luôn luôn đổi mới, tài liệu sẽ không ngừng tăng theo thời gian. Mong rằng sẽ là cánh tay đắc lực cùng bạn chinh phục tiếng Nhật một cách hiệu quả nhất. Hãy để lại ý kiến đóng góp của bạn bằng cách trả lời tin nhắn này. Trân trọng !`,
+                              //                                       targetId: 'ADMIN_ID', // ID of the person sent this message
+                              //                                       chatInfo: {
+                              //                                         // sender information
+                              //                                         avatar: require('../../../assets/logo.png'),
+                              //                                         id: 'ADMIN_ID',
+                              //                                         nickName: 'Admin',
+                              //                                       },
+                              //                                       renderTime: true,
+                              //                                       sendStatus: 1,
+                              //                                       time: time,
+                              //                                       isIPhoneX: isIPX,
+                              //                                     };
+                              //                                     const newRoom = {
+                              //                                       type: ROOM_TYPES.MEVSADMIN,
+                              //                                       name: user.name,
+                              //                                       avatar: user.photo,
+                              //                                       lastMessage,
+                              //                                     };
+                              //                                     newRoom.ownerId = user.id;
+                              //                                     newRoom.ownerRef = firestore().doc(
+                              //                                       'USERS/' + user.id,
+                              //                                     );
+                              //                                     try {
+                              //                                       await firestore()
+                              //                                         .collection('rooms')
+                              //                                         .add(newRoom)
+                              //                                         .then(docRef => {
+                              //                                           firestore()
+                              //                                             .collection('rooms')
+                              //                                             .doc(docRef.id)
+                              //                                             .collection('MESSAGES')
+                              //                                             .doc(time + RANDOM_STR(5))
+                              //                                             .set(lastMessage)
+                              //                                             .then(() => {});
+                              //                                         });
+                              //                                     } catch (e) {
+                              //                                       // console.log(e);
+                              //                                     }
+                              //                                   }
+                              //                                   setLoading(false);
+                              //                                   dispatch(
+                              //                                     userActions.socialLoginSucceeded({ user }),
+                              //                                   );
+                              //                                 } else {
+                              //                                   // đã từng đăng nhập
+                              //                                   const { device } = res.data();
+                              //                                   if (_.isEmpty(device)) {
+                              //                                     // hiện tại chưa dùng thiết bị nào
+                              //                                     if (true) {
+                              //                                       await firestore()
+                              //                                         .collection('USERS')
+                              //                                         .doc(user.id)
+                              //                                         .set(
+                              //                                           {
+                              //                                             ...clone,
+                              //                                             device: {
+                              //                                               id: uniqueId,
+                              //                                               platform: Platform.OS,
+                              //                                             },
+                              //                                           },
+                              //                                           { merge: true },
+                              //                                         );
+                              //                                       dispatch(
+                              //                                         userActions.socialLoginSucceeded({
+                              //                                           user,
+                              //                                         }),
+                              //                                       );
+                              //                                       setLoading(false);
+                              //                                     }
+                              //                                   } else {
+                              //                                     // đã dùng 1 thiết bị
+                              //                                     if (device.id === uniqueId) {
+                              //                                       // trùng thiết bị này
+                              //                                       await firestore()
+                              //                                         .collection('USERS')
+                              //                                         .doc(user.id)
+                              //                                         .set(
+                              //                                           {
+                              //                                             ...clone,
+                              //                                             device: {
+                              //                                               id: uniqueId,
+                              //                                               platform: Platform.OS,
+                              //                                             },
+                              //                                           },
+                              //                                           { merge: true },
+                              //                                         );
+                              //                                       dispatch(
+                              //                                         userActions.socialLoginSucceeded({
+                              //                                           user,
+                              //                                         }),
+                              //                                       );
+                              //                                       setLoading(false);
+                              //                                     } else {
+                              //                                       // không trùng
+                              //                                       if (false) {
+                              //                                         // if (user.role && user.role === 'user') {
+                              //                                         setResult({ code: 409 });
+                              //                                         setLoading(false);
+                              //                                         dispatch(
+                              //                                           userActions.socialLoginFailed(),
+                              //                                         );
+                              //                                         ToastAndroid.showWithGravityAndOffset(
+                              //                                           'Tài khoản gắn với email hoặc SĐT của bạn đã được sử dụng để đăng nhập ở một thiết bị khác',
+                              //                                           ToastAndroid.LONG,
+                              //                                           ToastAndroid.TOP,
+                              //                                           0,
+                              //                                           100,
+                              //                                         );
+                              //                                       } else {
+                              //                                         // admin login anywhere
+                              //                                         setResult(data);
+                              //                                         setLoading(false);
+                              //                                         dispatch(
+                              //                                           userActions.socialLoginSucceeded({
+                              //                                             user,
+                              //                                           }),
+                              //                                         );
+                              //                                       }
+                              //                                       return;
+                              //                                     }
+                              //                                   }
+                              //                                 }
+                              //                               } catch (error) {
+                              //                                 setLoading(false);
+                              //                                 dispatch(userActions.socialLoginFailed());
+                              //                                 ToastAndroid.showWithGravityAndOffset(
+                              //                                   'Có lỗi trong quá trình đăng nhập. Vui lòng thử lại',
+                              //                                   ToastAndroid.LONG,
+                              //                                   ToastAndroid.TOP,
+                              //                                   0,
+                              //                                   100,
+                              //                                 );
+                              //                                 return error;
+                              //                               }
                             }
                             setResult(data);
                             setLoading(false);

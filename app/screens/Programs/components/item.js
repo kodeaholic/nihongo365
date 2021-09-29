@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
@@ -82,7 +83,8 @@ const Item = ({ item, first, last }) => {
               buttonColor: COLORS[itx],
             };
             const onLevelButtonPressed = async () => {
-              firestore()
+              {
+                /* firestore()
                 .collection('logs')
                 .add({
                   time: Date.now(),
@@ -93,7 +95,8 @@ const Item = ({ item, first, last }) => {
                     photo: user.photo,
                   },
                   content: `Học > ${PROGRAM_TYPES[id]} > ${itx}`,
-                });
+                }); */
+              }
               dispatch(
                 programActions.levelSelected({
                   selectedID: id,

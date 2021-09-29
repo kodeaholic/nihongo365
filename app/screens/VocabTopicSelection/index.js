@@ -68,31 +68,31 @@ export const VocabTopicSelection = ({ navigation }) => {
 
     /** Get list completed items */
     let unsubscribe;
-    if (user && user.id) {
-      try {
-        unsubscribe = firestore()
-          .collection('USERS')
-          .doc(user.id)
-          .collection('COMPLETED_ITEMS')
-          .onSnapshot(querySnapshot => {
-            if (querySnapshot) {
-              const items = querySnapshot.docs
-                .filter(documentSnapshot => {
-                  const level = _.get(documentSnapshot.data(), 'level');
-                  const program = _.get(documentSnapshot.data(), 'program');
-                  return (
-                    level === selectedLevel &&
-                    program === PROGRAM_TYPES[PROGRAM_IDS.TUVUNG]
-                  );
-                })
-                .map(filteredSnapshot => {
-                  return filteredSnapshot.id;
-                });
-              setCompletedItems(items);
-            }
-          });
-      } catch (e) {}
-    }
+    // if (user && user.id) {
+    //   try {
+    //     unsubscribe = firestore()
+    //       .collection('USERS')
+    //       .doc(user.id)
+    //       .collection('COMPLETED_ITEMS')
+    //       .onSnapshot(querySnapshot => {
+    //         if (querySnapshot) {
+    //           const items = querySnapshot.docs
+    //             .filter(documentSnapshot => {
+    //               const level = _.get(documentSnapshot.data(), 'level');
+    //               const program = _.get(documentSnapshot.data(), 'program');
+    //               return (
+    //                 level === selectedLevel &&
+    //                 program === PROGRAM_TYPES[PROGRAM_IDS.TUVUNG]
+    //               );
+    //             })
+    //             .map(filteredSnapshot => {
+    //               return filteredSnapshot.id;
+    //             });
+    //           setCompletedItems(items);
+    //         }
+    //       });
+    //   } catch (e) {}
+    // }
     return () => unsubscribe && unsubscribe();
   }, [navigation, selectedLevel, user]);
 

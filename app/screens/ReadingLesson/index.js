@@ -49,40 +49,40 @@ export const ReadingLesson = ({ route, navigation }) => {
   useEffect(() => {
     // check if this is a completed item
     let unsubscribe;
-    if (user && user.id) {
-      try {
-        unsubscribe = firestore()
-          .collection('USERS')
-          .doc(user.id)
-          .collection('COMPLETED_ITEMS')
-          .onSnapshot(querySnapshot => {
-            const items = querySnapshot.docs
-              .filter(documentSnapshot => {
-                return documentSnapshot.id === selectedReadingLesson.board.id;
-              })
-              .map(filteredSnapshot => {
-                const item = {
-                  id: filteredSnapshot.id,
-                  ...filteredSnapshot.data(),
-                };
-                return item;
-              });
-            if (!_.isEmpty(items)) {
-              setCompleted(true);
-            } else {
-              setCompleted(false);
-            }
-          });
-      } catch (e) {
-        ToastAndroid.showWithGravityAndOffset(
-          'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-          0,
-          100,
-        );
-      }
-    }
+    // if (user && user.id) {
+    //   try {
+    //     unsubscribe = firestore()
+    //       .collection('USERS')
+    //       .doc(user.id)
+    //       .collection('COMPLETED_ITEMS')
+    //       .onSnapshot(querySnapshot => {
+    //         const items = querySnapshot.docs
+    //           .filter(documentSnapshot => {
+    //             return documentSnapshot.id === selectedReadingLesson.board.id;
+    //           })
+    //           .map(filteredSnapshot => {
+    //             const item = {
+    //               id: filteredSnapshot.id,
+    //               ...filteredSnapshot.data(),
+    //             };
+    //             return item;
+    //           });
+    //         if (!_.isEmpty(items)) {
+    //           setCompleted(true);
+    //         } else {
+    //           setCompleted(false);
+    //         }
+    //       });
+    //   } catch (e) {
+    //     ToastAndroid.showWithGravityAndOffset(
+    //       'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+    //       ToastAndroid.LONG,
+    //       ToastAndroid.TOP,
+    //       0,
+    //       100,
+    //     );
+    //   }
+    // }
     let item = { ...selectedReadingLesson.board };
     delete item.content;
     delete item.content_vn;

@@ -113,31 +113,31 @@ export const DialogLessonSelection = ({ navigation }) => {
 
     /** Get list completed items */
     let unsubscribe;
-    if (user && user.id) {
-      try {
-        unsubscribe = firestore()
-          .collection('USERS')
-          .doc(user.id)
-          .collection('COMPLETED_ITEMS')
-          .onSnapshot(querySnapshot => {
-            if (querySnapshot) {
-              const results = querySnapshot.docs
-                .filter(documentSnapshot => {
-                  const level = _.get(documentSnapshot.data(), 'level');
-                  const program = _.get(documentSnapshot.data(), 'program');
-                  return (
-                    level === selectedLevel &&
-                    program === PROGRAM_TYPES[PROGRAM_IDS.HOITHOAI]
-                  );
-                })
-                .map(filteredSnapshot => {
-                  return filteredSnapshot.id;
-                });
-              setCompletedItems(results);
-            }
-          });
-      } catch (e) {}
-    }
+    // if (user && user.id) {
+    //   try {
+    //     unsubscribe = firestore()
+    //       .collection('USERS')
+    //       .doc(user.id)
+    //       .collection('COMPLETED_ITEMS')
+    //       .onSnapshot(querySnapshot => {
+    //         if (querySnapshot) {
+    //           const results = querySnapshot.docs
+    //             .filter(documentSnapshot => {
+    //               const level = _.get(documentSnapshot.data(), 'level');
+    //               const program = _.get(documentSnapshot.data(), 'program');
+    //               return (
+    //                 level === selectedLevel &&
+    //                 program === PROGRAM_TYPES[PROGRAM_IDS.HOITHOAI]
+    //               );
+    //             })
+    //             .map(filteredSnapshot => {
+    //               return filteredSnapshot.id;
+    //             });
+    //           setCompletedItems(results);
+    //         }
+    //       });
+    //   } catch (e) {}
+    // }
     return () => unsubscribe && unsubscribe();
   }, [navigation, selectedLevel, user]);
 

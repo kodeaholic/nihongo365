@@ -241,9 +241,9 @@ export const Header = props => {
           )}
         </>
       )}
-      {!_.isEmpty(rightAction.lessonCheck) && (
+      {/* {!_.isEmpty(rightAction.lessonCheck) && (
         <RightMenuButtonCheck {...rightAction.lessonCheck} />
-      )}
+      )} */}
     </Appbar.Header>
   );
 };

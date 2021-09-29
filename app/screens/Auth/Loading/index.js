@@ -14,9 +14,38 @@ import _ from 'lodash';
 class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
+    this._maintenanceCheck();
     this._versionCheck();
     this._bootstrapAsync();
   }
+
+  _maintenanceCheck = async () => {
+    let flag = true;
+    const headers = await authHeader();
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    let url = `${apiConfig.baseUrl}${
+      apiConfig.apiEndpoint
+    }/mobile-app/maintenance`;
+    try {
+      const response = await fetch(url, requestOptions);
+      const data = await response.json();
+      if (data.code) {
+        flag = true;
+      } else {
+        if (data.maintenance) {
+          flag = true;
+        } else {
+          flag = false;
+        }
+      }
+    } catch (error) {
+      flag = true;
+    }
+    return flag;
+  };
 
   _versionCheck = async () => {
     VersionCheck.needUpdate().then(async res => {
@@ -76,14 +105,23 @@ class AuthLoadingScreen extends React.Component {
       index: 0,
       routes: [{ name: 'StartScreen' }],
     };
+    const navigateMaintenanceStartScreen = {
+      index: 0,
+      routes: [{ name: 'MaintenanceStartScreen' }],
+    };
     let target;
-    let apiTest = await this._apiTest();
-    if (_.isEmpty(userToken)) {
-      target = navigateStartScreen;
+    let maintenanceCheck = await this._maintenanceCheck();
+    if (maintenanceCheck) {
+      this.props.navigation.reset(navigateMaintenanceStartScreen);
     } else {
-      target = apiTest ? navigateHome : navigateStartScreen;
+      let apiTest = await this._apiTest();
+      if (_.isEmpty(userToken)) {
+        target = navigateStartScreen;
+      } else {
+        target = apiTest ? navigateHome : navigateStartScreen;
+      }
+      this.props.navigation.reset(target);
     }
-    this.props.navigation.reset(target);
   };
 
   // Render any loading content that you like here

@@ -55,6 +55,7 @@ import { ListeningProgramGuideline } from '../screens/ProgramGuideline/Listening
 import { GrammarProgramGuideline } from '../screens/ProgramGuideline/Grammar';
 import { ReadingProgramGuideline } from '../screens/ProgramGuideline/Reading';
 import Maintenance from '../screens/Maintenance';
+import MaintenanceStartScreen from '../screens/Maintenance/MaintenanceStartScreen';
 const LearnStack = createStackNavigator();
 function LearnStackScreen() {
   const stackProps = DeviceInfo.isTablet()
@@ -427,8 +428,10 @@ function App() {
         }}>
         <AppStack.Screen name="AuthLoading" component={AuthLoadingScreen} />
         <AppStack.Screen name="StartScreen" component={StartScreen} />
-        {/* <AppStack.Screen name="LoginScreen" component={LoginScreen} />
-        <AppStack.Screen name="RegisterScreen" component={RegisterScreen} /> */}
+        <AppStack.Screen
+          name="MaintenanceStartScreen"
+          component={MaintenanceStartScreen}
+        />
         <AppStack.Screen name="Main" component={MainStackScreen} />
       </AppStack.Navigator>
     </NavigationContainer>

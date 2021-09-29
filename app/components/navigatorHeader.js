@@ -20,29 +20,49 @@ import firestore from '@react-native-firebase/firestore';
 const completeItem = async (user, item, level, program) => {
   let clone = { ...item };
   delete clone.id;
-  await firestore()
-    .collection('USERS')
-    .doc(user.id)
-    .collection('COMPLETED_ITEMS')
-    .doc(item.id)
-    .set(
-      {
-        ...clone,
-        level,
-        program,
-        createdAt: Date.now(),
-      },
-      { merge: true },
+  try {
+    await firestore()
+      .collection('USERS')
+      .doc(user.id)
+      .collection('COMPLETED_ITEMS')
+      .doc(item.id)
+      .set(
+        {
+          ...clone,
+          level,
+          program,
+          createdAt: Date.now(),
+        },
+        { merge: true },
+      );
+  } catch (e) {
+    ToastAndroid.showWithGravityAndOffset(
+      'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      0,
+      100,
     );
+  }
 };
 
 const uncompleteItem = async (user, item) => {
-  await firestore()
-    .collection('USERS')
-    .doc(user.id)
-    .collection('COMPLETED_ITEMS')
-    .doc(item.id)
-    .delete();
+  try {
+    await firestore()
+      .collection('USERS')
+      .doc(user.id)
+      .collection('COMPLETED_ITEMS')
+      .doc(item.id)
+      .delete();
+  } catch (e) {
+    ToastAndroid.showWithGravityAndOffset(
+      'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      0,
+      100,
+    );
+  }
 };
 
 const RightMenuButtonCheck = props => {

@@ -116,25 +116,35 @@ export const ChuHanBoardSelection = ({ navigation }) => {
     /** Get list completed items */
     let unsubscribe;
     if (user && user.id) {
-      unsubscribe = firestore()
-        .collection('USERS')
-        .doc(user.id)
-        .collection('COMPLETED_ITEMS')
-        .onSnapshot(querySnapshot => {
-          const results = querySnapshot.docs
-            .filter(documentSnapshot => {
-              const level = _.get(documentSnapshot.data(), 'level');
-              const program = _.get(documentSnapshot.data(), 'program');
-              return (
-                level === selectedLevel &&
-                program === PROGRAM_TYPES[PROGRAM_IDS.CHUHAN]
-              );
-            })
-            .map(filteredSnapshot => {
-              return filteredSnapshot.id;
-            });
-          setCompletedItems(results);
-        });
+      try {
+        unsubscribe = firestore()
+          .collection('USERS')
+          .doc(user.id)
+          .collection('COMPLETED_ITEMS')
+          .onSnapshot(querySnapshot => {
+            const results = querySnapshot.docs
+              .filter(documentSnapshot => {
+                const level = _.get(documentSnapshot.data(), 'level');
+                const program = _.get(documentSnapshot.data(), 'program');
+                return (
+                  level === selectedLevel &&
+                  program === PROGRAM_TYPES[PROGRAM_IDS.CHUHAN]
+                );
+              })
+              .map(filteredSnapshot => {
+                return filteredSnapshot.id;
+              });
+            setCompletedItems(results);
+          });
+      } catch (e) {
+        // ToastAndroid.showWithGravityAndOffset(
+        //   'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+        //   ToastAndroid.LONG,
+        //   ToastAndroid.TOP,
+        //   0,
+        //   100,
+        // );
+      }
     }
     return () => unsubscribe && unsubscribe();
   }, [navigation, selectedLevel, user]);

@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ToastAndroid, Dimensions } from 'react-native';
@@ -11,9 +12,8 @@ import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 import _ from 'lodash';
-import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
+import { PROGRAM_TYPES } from '../Programs/data';
 import { AD_UNIT_IDS, BANNER_HEIGHT } from '../../constants/ads';
 const windowHeight = Dimensions.get('window').height;
 export const VocabTopicSelection = ({ navigation }) => {
@@ -27,7 +27,6 @@ export const VocabTopicSelection = ({ navigation }) => {
   const selectedID = useSelector(state => state.programReducer.selectedID);
   const user = useSelector(state => state.userReducer.user);
   const [adLoaded, setAdLoaded] = useState(false);
-  const [completedItems, setCompletedItems] = useState([]);
   useEffect(() => {
     async function getTopics() {
       const headers = await authHeader();
@@ -65,35 +64,6 @@ export const VocabTopicSelection = ({ navigation }) => {
     /** Update header */
     const title = `Học từ vựng ${selectedLevel}`;
     navigation.setOptions({ headerProps: { title } });
-
-    /** Get list completed items */
-    let unsubscribe;
-    // if (user && user.id) {
-    //   try {
-    //     unsubscribe = firestore()
-    //       .collection('USERS')
-    //       .doc(user.id)
-    //       .collection('COMPLETED_ITEMS')
-    //       .onSnapshot(querySnapshot => {
-    //         if (querySnapshot) {
-    //           const items = querySnapshot.docs
-    //             .filter(documentSnapshot => {
-    //               const level = _.get(documentSnapshot.data(), 'level');
-    //               const program = _.get(documentSnapshot.data(), 'program');
-    //               return (
-    //                 level === selectedLevel &&
-    //                 program === PROGRAM_TYPES[PROGRAM_IDS.TUVUNG]
-    //               );
-    //             })
-    //             .map(filteredSnapshot => {
-    //               return filteredSnapshot.id;
-    //             });
-    //           setCompletedItems(items);
-    //         }
-    //       });
-    //   } catch (e) {}
-    // }
-    return () => unsubscribe && unsubscribe();
   }, [navigation, selectedLevel, user]);
 
   const Chapter = props => {
@@ -115,22 +85,6 @@ export const VocabTopicSelection = ({ navigation }) => {
             const name = lesson.meaning;
             const chapterDescription = data.description;
             const audioSrc = lesson.audioSrc;
-            try {
-              firestore()
-                .collection('logs')
-                .add({
-                  time: Date.now(),
-                  user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    photo: user.photo,
-                  },
-                  content: `Học > ${
-                    PROGRAM_TYPES[selectedID]
-                  } > ${selectedLevel} > ${chapterName} > ${lesson.name}`,
-                });
-            } catch (e) {}
             dispatch(
               programActions.vocabLessonSelected({
                 selectedVocabLesson: {
@@ -144,8 +98,15 @@ export const VocabTopicSelection = ({ navigation }) => {
             );
             navigation.navigate('VocabLesson');
           };
-          const completed =
-            completedItems && completedItems.includes(lesson.id);
+          const completedItems = user.completedItems || [];
+          const index = _.findIndex(completedItems, function(itm) {
+            return (
+              itm.itemId === lesson.id &&
+              itm.level === selectedLevel &&
+              itm.program === PROGRAM_TYPES[selectedID]
+            );
+          });
+          const completed = index >= 0;
           return (
             <List.Item
               title={

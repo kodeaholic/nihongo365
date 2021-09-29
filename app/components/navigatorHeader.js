@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   BackHandler,
@@ -7,56 +7,67 @@ import {
   Text,
   Image,
   View,
-  Platform,
+  // Platform,
   ToastAndroid,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Appbar, Menu } from 'react-native-paper';
 import _ from 'lodash';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getPostTimeFromCreatedAt } from '../helpers/time';
-import firestore from '@react-native-firebase/firestore';
+import { apiConfig } from '../api/config/apiConfig';
+import { authHeader } from '../api/authHeader';
+import { userActions } from '../actions/userActions';
 
-const completeItem = async (user, item, level, program) => {
-  let clone = { ...item };
-  delete clone.id;
-  try {
-    await firestore()
-      .collection('USERS')
-      .doc(user.id)
-      .collection('COMPLETED_ITEMS')
-      .doc(item.id)
-      .set(
-        {
-          ...clone,
-          level,
-          program,
-          createdAt: Date.now(),
-        },
-        { merge: true },
-      );
-  } catch (e) {
-    ToastAndroid.showWithGravityAndOffset(
-      'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
-      ToastAndroid.LONG,
-      ToastAndroid.TOP,
-      0,
-      100,
-    );
+const updateCompletedItems = async (
+  user,
+  item,
+  level,
+  program,
+  dispatch,
+  type = 'add',
+) => {
+  let completedItems = _.isArray(user.completedItems)
+    ? [...user.completedItems]
+    : [];
+  completedItems = completedItems.filter(
+    itm =>
+      itm.itemId !== item.id && itm.level !== level && itm.program !== program,
+  );
+  if (type === 'add') {
+    completedItems.push({
+      itemId: item.id,
+      level,
+      program,
+      content: program + '-' + level,
+      time: Date.now(),
+    });
   }
-};
-
-const uncompleteItem = async (user, item) => {
+  const headers = await authHeader();
+  const requestOptions = {
+    method: 'PATCH',
+    headers: headers,
+    body: JSON.stringify({ completedItems }),
+  };
+  let url = `${apiConfig.baseUrl}${apiConfig.apiEndpoint}/users/${user.id}`;
   try {
-    await firestore()
-      .collection('USERS')
-      .doc(user.id)
-      .collection('COMPLETED_ITEMS')
-      .doc(item.id)
-      .delete();
-  } catch (e) {
+    const response = await fetch(url, requestOptions);
+    const data = await response.json();
+    if (data.code) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Có lỗi trong quá trình lưu. Thử lại sau',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        0,
+        100,
+      );
+    } else {
+      // trigger store update
+      dispatch(userActions.completedItemsUpdated({ completedItems }));
+    }
+  } catch (error) {
     ToastAndroid.showWithGravityAndOffset(
-      'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+      'Có lỗi trong quá trình lưu. Thử lại sau',
       ToastAndroid.LONG,
       ToastAndroid.TOP,
       0,
@@ -66,14 +77,20 @@ const uncompleteItem = async (user, item) => {
 };
 
 const RightMenuButtonCheck = props => {
-  const user = useSelector(state => state.userReducer.user);
-  const { completed, item, level, program } = props;
+  const { item, level, program, user } = props;
+  const completedItems = user.completedItems || [];
+  const index = _.findIndex(completedItems, function(itm) {
+    return (
+      itm.itemId === item.id && itm.level === level && itm.program === program
+    );
+  });
+  const completed = index >= 0;
   const [visible, setVisible] = React.useState(false);
-  const openMenu = () => setVisible(true);
+  // const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
-  const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
   const starIcon = completed ? 'star' : 'star-outline';
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   return (
     <Menu
       visible={visible}
@@ -84,22 +101,16 @@ const RightMenuButtonCheck = props => {
           color="white"
           onPress={() => {
             if (!completed) {
-              completeItem(user, item, level, program);
-              ToastAndroid.showWithGravityAndOffset(
-                'Đã đánh dấu hoàn thành bài',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100,
-              );
+              updateCompletedItems(user, item, level, program, dispatch, 'add');
+              navigation.goBack();
             } else {
-              uncompleteItem(user, item);
-              ToastAndroid.showWithGravityAndOffset(
-                'Đã đánh dấu chưa hoàn thành bài',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100,
+              updateCompletedItems(
+                user,
+                item,
+                level,
+                program,
+                dispatch,
+                'remove',
               );
             }
           }}
@@ -172,7 +183,6 @@ export const Header = props => {
       ...contentProps,
       title: user.name,
     };
-    // console.log(user);
   }
   return (
     <Appbar.Header style={[styles.header, customStyles]}>
@@ -241,9 +251,9 @@ export const Header = props => {
           )}
         </>
       )}
-      {/* {!_.isEmpty(rightAction.lessonCheck) && (
-        <RightMenuButtonCheck {...rightAction.lessonCheck} />
-      )} */}
+      {!_.isEmpty(rightAction.lessonCheck) && (
+        <RightMenuButtonCheck {...rightAction.lessonCheck} user={user} />
+      )}
     </Appbar.Header>
   );
 };

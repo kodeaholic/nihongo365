@@ -36,7 +36,6 @@ export const VocabLesson = ({ navigation }) => {
   );
   const user = useSelector(state => state.userReducer.user);
   const [html, setHtml] = useState('');
-  const [completed, setCompleted] = useState(false);
   const isFocused = useIsFocused();
   const [adLoaded, setAdLoaded] = useState(false);
   useEffect(() => {
@@ -161,12 +160,11 @@ export const VocabLesson = ({ navigation }) => {
             program: PROGRAM_TYPES[PROGRAM_IDS.TUVUNG],
             item: item,
             level: selectedLevel,
-            completed: completed,
           },
         },
       },
     });
-  }, [navigation, selectedLevel, selectedVocabLesson, completed]);
+  }, [navigation, selectedLevel, selectedVocabLesson]);
   useEffect(() => {
     if (vocabs && vocabs.length) {
       let content = '';

@@ -39,4 +39,14 @@ export const userReducer = createReducer(initialState, {
       user,
     };
   },
+  [types.COMPLETED_ITEMS_UPDATED](state, action) {
+    const payload = action.actionPayload;
+    const { completedItems } = payload;
+    const { user } = state;
+    let newData = { ...user, completedItems };
+    return {
+      ...state,
+      user: newData,
+    };
+  },
 });

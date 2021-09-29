@@ -22,8 +22,16 @@ function socialLoginSucceeded(actionPayload) {
   };
 }
 
+function completedItemsUpdated(actionPayload) {
+  return {
+    type: types.COMPLETED_ITEMS_UPDATED,
+    actionPayload,
+  };
+}
+
 export const userActions = {
   socialLogin,
   socialLoginFailed,
   socialLoginSucceeded,
+  completedItemsUpdated,
 };

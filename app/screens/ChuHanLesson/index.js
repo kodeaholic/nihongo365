@@ -13,6 +13,7 @@ import {
   Dimensions,
   ActivityIndicator,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import { htmlEntityDecode } from '../../helpers/htmlentities';
 import _ from 'lodash';
@@ -63,28 +64,38 @@ export const ChuHanLesson = ({ navigation }) => {
     // check if this is a completed item
     let unsubscribe;
     if (user && user.id) {
-      unsubscribe = firestore()
-        .collection('USERS')
-        .doc(user.id)
-        .collection('COMPLETED_ITEMS')
-        .onSnapshot(querySnapshot => {
-          const items = querySnapshot.docs
-            .filter(documentSnapshot => {
-              return documentSnapshot.id === selectedChuHanLesson.board.id;
-            })
-            .map(filteredSnapshot => {
-              const item = {
-                id: filteredSnapshot.id,
-                ...filteredSnapshot.data(),
-              };
-              return item;
-            });
-          if (!_.isEmpty(items)) {
-            setCompleted(true);
-          } else {
-            setCompleted(false);
-          }
-        });
+      try {
+        unsubscribe = firestore()
+          .collection('USERS')
+          .doc(user.id)
+          .collection('COMPLETED_ITEMS')
+          .onSnapshot(querySnapshot => {
+            const items = querySnapshot.docs
+              .filter(documentSnapshot => {
+                return documentSnapshot.id === selectedChuHanLesson.board.id;
+              })
+              .map(filteredSnapshot => {
+                const item = {
+                  id: filteredSnapshot.id,
+                  ...filteredSnapshot.data(),
+                };
+                return item;
+              });
+            if (!_.isEmpty(items)) {
+              setCompleted(true);
+            } else {
+              setCompleted(false);
+            }
+          });
+      } catch (e) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+      }
     }
 
     setLoading(false);

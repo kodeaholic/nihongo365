@@ -8,6 +8,7 @@ import {
   View,
   SafeAreaView,
   StyleSheet,
+  ToastAndroid,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import _ from 'lodash';
@@ -46,28 +47,38 @@ export const Grammar = ({ route, navigation }) => {
     let unsubscribe;
     if (selectedGrammarLesson && !_.isEmpty(selectedGrammarLesson.item)) {
       if (user && user.id) {
-        unsubscribe = firestore()
-          .collection('USERS')
-          .doc(user.id)
-          .collection('COMPLETED_ITEMS')
-          .onSnapshot(querySnapshot => {
-            const items = querySnapshot.docs
-              .filter(documentSnapshot => {
-                return documentSnapshot.id === selectedGrammarLesson.item.id;
-              })
-              .map(filteredSnapshot => {
-                const item = {
-                  id: filteredSnapshot.id,
-                  ...filteredSnapshot.data(),
-                };
-                return item;
-              });
-            if (!_.isEmpty(items)) {
-              setCompleted(true);
-            } else {
-              setCompleted(false);
-            }
-          });
+        try {
+          unsubscribe = firestore()
+            .collection('USERS')
+            .doc(user.id)
+            .collection('COMPLETED_ITEMS')
+            .onSnapshot(querySnapshot => {
+              const items = querySnapshot.docs
+                .filter(documentSnapshot => {
+                  return documentSnapshot.id === selectedGrammarLesson.item.id;
+                })
+                .map(filteredSnapshot => {
+                  const item = {
+                    id: filteredSnapshot.id,
+                    ...filteredSnapshot.data(),
+                  };
+                  return item;
+                });
+              if (!_.isEmpty(items)) {
+                setCompleted(true);
+              } else {
+                setCompleted(false);
+              }
+            });
+        } catch (e) {
+          ToastAndroid.showWithGravityAndOffset(
+            'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            0,
+            100,
+          );
+        }
       }
       let item = { ...selectedGrammarLesson.item };
       delete item.content;

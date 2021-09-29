@@ -7,6 +7,7 @@ import {
   View,
   SafeAreaView,
   StyleSheet,
+  ToastAndroid,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
@@ -47,28 +48,38 @@ export const DialogLesson = ({ route, navigation }) => {
     // check if this is a completed item
     let unsubscribe;
     if (user && user.id) {
-      unsubscribe = firestore()
-        .collection('USERS')
-        .doc(user.id)
-        .collection('COMPLETED_ITEMS')
-        .onSnapshot(querySnapshot => {
-          const items = querySnapshot.docs
-            .filter(documentSnapshot => {
-              return documentSnapshot.id === selectedDialogLesson.board.id;
-            })
-            .map(filteredSnapshot => {
-              const item = {
-                id: filteredSnapshot.id,
-                ...filteredSnapshot.data(),
-              };
-              return item;
-            });
-          if (!_.isEmpty(items)) {
-            setCompleted(true);
-          } else {
-            setCompleted(false);
-          }
-        });
+      try {
+        unsubscribe = firestore()
+          .collection('USERS')
+          .doc(user.id)
+          .collection('COMPLETED_ITEMS')
+          .onSnapshot(querySnapshot => {
+            const items = querySnapshot.docs
+              .filter(documentSnapshot => {
+                return documentSnapshot.id === selectedDialogLesson.board.id;
+              })
+              .map(filteredSnapshot => {
+                const item = {
+                  id: filteredSnapshot.id,
+                  ...filteredSnapshot.data(),
+                };
+                return item;
+              });
+            if (!_.isEmpty(items)) {
+              setCompleted(true);
+            } else {
+              setCompleted(false);
+            }
+          });
+      } catch (e) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Có lỗi trong quá trình lưu. Vui lòng thử lại sau',
+          ToastAndroid.LONG,
+          ToastAndroid.TOP,
+          0,
+          100,
+        );
+      }
     }
 
     let item = { ...selectedDialogLesson.board };
@@ -118,7 +129,8 @@ export const DialogLesson = ({ route, navigation }) => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [service, setService] = useState(selectedLevel); // fetch from fire-store
   useEffect(() => {
-    if (selectedLevel !== 'N5' && lesson && false) { // lesson.free !== 1
+    if (selectedLevel !== 'N5' && lesson && false) {
+      // lesson.free !== 1
       async function getDoc() {
         let docRef;
         if (user && user.id) {

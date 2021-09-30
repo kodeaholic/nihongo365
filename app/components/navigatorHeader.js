@@ -27,12 +27,16 @@ const updateCompletedItems = async (
   dispatch,
   type = 'add',
 ) => {
-  let completedItems = _.isArray(user.completedItems)
+  let completedItems = !_.isEmpty(user.completedItems)
     ? [...user.completedItems]
     : [];
   completedItems = completedItems.filter(
     itm =>
-      itm.itemId !== item.id && itm.level !== level && itm.program !== program,
+      !(
+        itm.itemId === item.id &&
+        itm.level === level &&
+        itm.program === program
+      ),
   );
   if (type === 'add') {
     completedItems.push({

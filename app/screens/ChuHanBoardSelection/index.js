@@ -10,17 +10,16 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { List } from 'react-native-paper';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import { BOARD_TYPE } from '../../constants/board';
 import _ from 'lodash';
-import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
-import firestore from '@react-native-firebase/firestore';
+import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
+import { PROGRAM_TYPES } from '../Programs/data';
 import { AD_UNIT_IDS, BANNER_HEIGHT } from '../../constants/ads';
 const windowHeight = Dimensions.get('window').height;
 export const ChuHanBoardSelection = ({ navigation }) => {
@@ -36,7 +35,6 @@ export const ChuHanBoardSelection = ({ navigation }) => {
   const [scrolled, setScrolled] = useState(false);
   const [page, setPage] = useState(1);
   const user = useSelector(state => state.userReducer.user);
-  const [completedItems, setCompletedItems] = useState([]);
   const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
@@ -112,34 +110,7 @@ export const ChuHanBoardSelection = ({ navigation }) => {
     /** Update header */
     const title = `Học chữ Hán ${selectedLevel}`;
     navigation.setOptions({ headerProps: { title } });
-
-    /** Get list completed items */
-    let unsubscribe;
-    // if (user && user.id) {
-    //   try {
-    //     unsubscribe = firestore()
-    //       .collection('USERS')
-    //       .doc(user.id)
-    //       .collection('COMPLETED_ITEMS')
-    //       .onSnapshot(querySnapshot => {
-    //         const results = querySnapshot.docs
-    //           .filter(documentSnapshot => {
-    //             const level = _.get(documentSnapshot.data(), 'level');
-    //             const program = _.get(documentSnapshot.data(), 'program');
-    //             return (
-    //               level === selectedLevel &&
-    //               program === PROGRAM_TYPES[PROGRAM_IDS.CHUHAN]
-    //             );
-    //           })
-    //           .map(filteredSnapshot => {
-    //             return filteredSnapshot.id;
-    //           });
-    //         setCompletedItems(results);
-    //       });
-    //   } catch (e) {}
-    // }
-    return () => unsubscribe && unsubscribe();
-  }, [navigation, selectedLevel, user]);
+  }, [navigation, selectedLevel]);
   const dispatch = useDispatch();
 
   const loadMore = () => {
@@ -194,22 +165,6 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                 data={items}
                 renderItem={({ item, index }) => {
                   const navigateToChuHanLesson = (type = BOARD_TYPE.THEORY) => {
-                    try {
-                      firestore()
-                        .collection('logs')
-                        .add({
-                          time: Date.now(),
-                          user: {
-                            id: user.id,
-                            name: user.name,
-                            email: user.email,
-                            photo: user.photo,
-                          },
-                          content: `Học > ${
-                            PROGRAM_TYPES[selectedID]
-                          } > ${selectedLevel} > ${item.title}`,
-                        });
-                    } catch (e) {}
                     dispatch(
                       programActions.chuHanLessonSelected({
                         selectedChuHanLesson: {
@@ -220,8 +175,15 @@ export const ChuHanBoardSelection = ({ navigation }) => {
                     );
                     navigation.navigate('ChuHanLesson');
                   };
-                  const completed =
-                    completedItems && completedItems.includes(item.id);
+                  const completedItems = user.completedItems || [];
+                  const found = _.findIndex(completedItems, function(itm) {
+                    return (
+                      itm.itemId === item.id &&
+                      itm.level === selectedLevel &&
+                      itm.program === PROGRAM_TYPES[selectedID]
+                    );
+                  });
+                  const completed = found >= 0;
                   return (
                     <List.Accordion
                       key={`${item.id}-board`}

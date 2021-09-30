@@ -18,12 +18,11 @@ import { apiConfig } from '../../api/config/apiConfig';
 import { authHeader } from '../../api/authHeader';
 import * as programActions from '../../actions/programActions';
 import _ from 'lodash';
-import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
+import { PROGRAM_TYPES } from '../Programs/data';
 import { getTestTypeName, TEST_TYPES } from '../../constants/test';
 import Skeleton from '@thevsstech/react-native-skeleton';
-import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 import { AD_UNIT_IDS, BANNER_HEIGHT } from '../../constants/ads';
 const windowHeight = Dimensions.get('window').height;
 export const SubTestSelection = ({ navigation }) => {
@@ -41,7 +40,6 @@ export const SubTestSelection = ({ navigation }) => {
   const [scrolled, setScrolled] = useState(false);
   const [page, setPage] = useState(1);
   const user = useSelector(state => state.userReducer.user);
-  const [completedItems, setCompletedItems] = useState([]);
   const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
@@ -133,38 +131,7 @@ export const SubTestSelection = ({ navigation }) => {
         headerProps: { title },
       });
     }
-
-    /** Get list completed items */
-    let unsubscribe;
-    // if (user && user.id) {
-    //   try {
-    //     unsubscribe = firestore()
-    //       .collection('USERS')
-    //       .doc(user.id)
-    //       .collection('COMPLETED_ITEMS')
-    //       .onSnapshot(querySnapshot => {
-    //         if (querySnapshot) {
-    //           const results = querySnapshot.docs
-    //             .filter(documentSnapshot => {
-    //               const level = _.get(documentSnapshot.data(), 'level');
-    //               const program = _.get(documentSnapshot.data(), 'program');
-    //               const type = _.get(documentSnapshot.data(), 'type');
-    //               return (
-    //                 level === selectedLevel &&
-    //                 program === PROGRAM_TYPES[PROGRAM_IDS.LUYENTHI] &&
-    //                 type === selectedTestType
-    //               );
-    //             })
-    //             .map(filteredSnapshot => {
-    //               return filteredSnapshot.id;
-    //             });
-    //           setCompletedItems(results);
-    //         }
-    //       });
-    //   } catch (e) {}
-    // }
-    return () => unsubscribe && unsubscribe();
-  }, [navigation, selectedLevel, selectedTestType, user]);
+  }, [navigation, selectedLevel, selectedTestType]);
 
   const loadMore = () => {
     const load = async () => {
@@ -278,24 +245,6 @@ export const SubTestSelection = ({ navigation }) => {
                     data={items}
                     renderItem={({ item, index }) => {
                       const navigateToSubTest = () => {
-                        try {
-                          firestore()
-                            .collection('logs')
-                            .add({
-                              time: Date.now(),
-                              user: {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email,
-                                photo: user.photo,
-                              },
-                              content: `Học > ${
-                                PROGRAM_TYPES[selectedID]
-                              } > ${selectedLevel} > ${getTestTypeName(
-                                selectedTestType,
-                              )} > ${item.title}`,
-                            });
-                        } catch (e) {}
                         dispatch(
                           programActions.subTestSelected({
                             subTest: {
@@ -309,8 +258,15 @@ export const SubTestSelection = ({ navigation }) => {
                           free: item.free,
                         });
                       };
-                      const completed =
-                        completedItems && completedItems.includes(item.id);
+                      const completedItems = user.completedItems || [];
+                      const found = _.findIndex(completedItems, function(itm) {
+                        return (
+                          itm.itemId === item.id &&
+                          itm.level === selectedLevel &&
+                          itm.program === PROGRAM_TYPES[selectedID]
+                        );
+                      });
+                      const completed = found >= 0;
                       return (
                         <List.Item
                           title={

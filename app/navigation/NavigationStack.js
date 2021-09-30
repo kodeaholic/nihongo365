@@ -340,7 +340,7 @@ function MainStackScreen() {
             ),
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Chat"
           component={ChatStackScreen}
           options={{
@@ -353,7 +353,7 @@ function MainStackScreen() {
               />
             ),
           }}
-        />
+        /> */}
         <Tab.Screen
           name="Bài viết"
           component={NewsStackScreen}

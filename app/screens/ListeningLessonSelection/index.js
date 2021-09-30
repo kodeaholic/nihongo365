@@ -17,10 +17,9 @@ import { authHeader } from '../../api/authHeader';
 import { ActivityIndicator } from 'react-native';
 import * as programActions from '../../actions/programActions';
 import _ from 'lodash';
-import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PROGRAM_IDS, PROGRAM_TYPES } from '../Programs/data';
-import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import { PROGRAM_TYPES } from '../Programs/data';
+import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 import { AD_UNIT_IDS, BANNER_HEIGHT } from '../../constants/ads';
 const windowHeight = Dimensions.get('window').height;
 export const ListeningLessonSelection = ({ navigation }) => {
@@ -36,7 +35,6 @@ export const ListeningLessonSelection = ({ navigation }) => {
   const [scrolled, setScrolled] = useState(false);
   const [page, setPage] = useState(1);
   const user = useSelector(state => state.userReducer.user);
-  const [completedItems, setCompletedItems] = useState([]);
   const fetchItems = async (filter, more = false) => {
     let list = [];
     const headers = await authHeader();
@@ -113,33 +111,7 @@ export const ListeningLessonSelection = ({ navigation }) => {
       const title = 'Luyện nghe ';
       navigation.setOptions({ headerProps: { title } });
     }
-    /** Get list completed items */
-    let unsubscribe;
-    // if (user && user.id) {
-    //   try {
-    //     unsubscribe = firestore()
-    //       .collection('USERS')
-    //       .doc(user.id)
-    //       .collection('COMPLETED_ITEMS')
-    //       .onSnapshot(querySnapshot => {
-    //         const results = querySnapshot.docs
-    //           .filter(documentSnapshot => {
-    //             const level = _.get(documentSnapshot.data(), 'level');
-    //             const program = _.get(documentSnapshot.data(), 'program');
-    //             return (
-    //               level === selectedLevel &&
-    //               program === PROGRAM_TYPES[PROGRAM_IDS.NGHE]
-    //             );
-    //           })
-    //           .map(filteredSnapshot => {
-    //             return filteredSnapshot.id;
-    //           });
-    //         setCompletedItems(results);
-    //       });
-    //   } catch (e) {}
-    // }
-    return () => unsubscribe && unsubscribe();
-  }, [navigation, selectedLevel, user]);
+  }, [navigation, selectedLevel]);
 
   const loadMore = () => {
     const load = async () => {
@@ -193,22 +165,6 @@ export const ListeningLessonSelection = ({ navigation }) => {
                 data={items}
                 renderItem={({ item, index }) => {
                   const navigateToListeningLesson = () => {
-                    try {
-                      firestore()
-                        .collection('logs')
-                        .add({
-                          time: Date.now(),
-                          user: {
-                            id: user.id,
-                            name: user.name,
-                            email: user.email,
-                            photo: user.photo,
-                          },
-                          content: `Học > ${
-                            PROGRAM_TYPES[selectedID]
-                          } > ${selectedLevel} > ${item.title}`,
-                        });
-                    } catch (e) {}
                     dispatch(
                       programActions.listeningLessonSelected({
                         selectedListeningLesson: {
@@ -218,8 +174,15 @@ export const ListeningLessonSelection = ({ navigation }) => {
                     );
                     navigation.navigate('ListeningLesson', { lesson: item });
                   };
-                  const completed =
-                    completedItems && completedItems.includes(item.id);
+                  const completedItems = user.completedItems || [];
+                  const found = _.findIndex(completedItems, function(itm) {
+                    return (
+                      itm.itemId === item.id &&
+                      itm.level === selectedLevel &&
+                      itm.program === PROGRAM_TYPES[selectedID]
+                    );
+                  });
+                  const completed = found >= 0;
                   return (
                     <List.Item
                       title={

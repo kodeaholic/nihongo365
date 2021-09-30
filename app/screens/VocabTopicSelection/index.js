@@ -64,11 +64,12 @@ export const VocabTopicSelection = ({ navigation }) => {
     /** Update header */
     const title = `Học từ vựng ${selectedLevel}`;
     navigation.setOptions({ headerProps: { title } });
-  }, [navigation, selectedLevel, user]);
+  }, [navigation, selectedLevel]);
 
   const Chapter = props => {
     const { data, listOfLessons } = props;
     const dispatch = useDispatch();
+    // const [expanded, setExpanded] = useState(false);
     return (
       <List.Accordion
         title={`${data.name} - ${data.description}`}
@@ -77,7 +78,10 @@ export const VocabTopicSelection = ({ navigation }) => {
           color: '#000',
         }}
         id={data.id}
-        left={() => <List.Icon {...props} icon="folder" />}>
+        left={() => <List.Icon {...props} icon="folder" />}
+        // expanded={expanded}
+        // onPress={() => setExpanded(!expanded)}
+      >
         {listOfLessons.map(lesson => {
           const navigateToVocabLesson = () => {
             const chapterName = data.name;

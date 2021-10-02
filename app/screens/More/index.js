@@ -39,9 +39,9 @@ const alertFeatureUnavailable = () => {
     100,
   );
 };
-const PRIVACY_URL = 'https://nihong0.herokuapp.com/privacy-policy.html';
+const PRIVACY_URL = 'https://www.nihongo365.com/privacy-policy.html';
 const TERMS_AND_CONDITIONS_URL =
-  'https://nihong0.herokuapp.com/terms-and-conditions.html';
+  'https://www.nihongo365.com/terms-and-conditions.html';
 export const More = ({ navigation }) => {
   const [exiting, setExiting] = useState(false);
   const dispatch = useDispatch();

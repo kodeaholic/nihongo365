@@ -1,4 +1,4 @@
 export const apiConfig = {
-  baseUrl: 'https://nihong0.herokuapp.com',
+  baseUrl: 'https://www.nihongo365.com',
   apiEndpoint: '/v1',
 };

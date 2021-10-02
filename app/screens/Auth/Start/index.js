@@ -35,9 +35,9 @@ import { isIphoneX } from '../../../lib/isIphoneX';
 import { ROOM_TYPES } from '../../../constants/chat.constants';
 import { RANDOM_STR } from '../../../helpers/random';
 const isIPX = isIphoneX();
-const PRIVACY_URL = 'https://nihong0.herokuapp.com/privacy-policy.html';
+const PRIVACY_URL = 'https://www.nihongo365.com/privacy-policy.html';
 const TERMS_AND_CONDITIONS_URL =
-  'https://nihong0.herokuapp.com/terms-and-conditions.html';
+  'https://www.nihongo365.com/terms-and-conditions.html';
 export default function StartScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState({});

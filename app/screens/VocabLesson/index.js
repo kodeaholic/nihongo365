@@ -189,10 +189,16 @@ export const VocabLesson = ({ navigation }) => {
             `;
       });
       content = `<html lang="en" style="scroll-behavior: smooth;"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"><style>body{padding:0;margin:0}*{max-width:calc(100vw - 10px);outline:none;word-break:break-word}*{scroll-behavior:smooth;font-family:'Source Sans Pro',serif}*{scroll-behavior:smooth}main{font-family:'Source Sans Pro',serif;padding:10px 0 80px 0;width:calc(100vw);height:calc(100vh);display:flex;flex-direction:column;font-weight:normal;overflow-y:scroll;margin:0}.content{font-family:'Source Sans Pro',serif;font-weight:bold;line-height:220%;word-break:break-word}img{max-width:${windowWidth -
-        10}px;margin:5px;height:auto}*{font-weight:normal;}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${content}</div><br/> </main></body></html>`;
+        10}px;margin:5px;height:auto}*{font-weight:normal;}</style></head><body cz-shortcut-listen="true" style="background-color: #dbd4c8;"> <main><div class="content">${content}
+        <audio controls controlsList="nodownload" style="width: calc(100% - 10px); margin-left: 5px; z-index: 1000; position: fixed; left: 0; bottom: 10px;">
+                                          <source src="${
+                                            selectedVocabLesson.audioSrc
+                                          }">
+                                        </audio>
+        </div><br/> </main></body></html>`;
       setHtml(content);
     }
-  }, [vocabs]);
+  }, [vocabs, selectedVocabLesson]);
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -218,7 +224,7 @@ export const VocabLesson = ({ navigation }) => {
             <ActivityIndicator size="large" style={{ marginTop: 20 }} />
           </>
         )}
-        {!_.isEmpty(selectedVocabLesson.audioSrc) && (
+        {/* {!_.isEmpty(selectedVocabLesson.audioSrc) && (
           <View
             style={{
               // position: 'absolute',
@@ -237,7 +243,7 @@ export const VocabLesson = ({ navigation }) => {
               </Text>
             )}
           </View>
-        )}
+        )} */}
       </SafeAreaView>
     </>
   );
